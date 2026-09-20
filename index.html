@@ -7,7 +7,7 @@
 <title>Liyana's Wonderland</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@500;700&display=swap" media="print" onload="this.media='all'">
 <style>
 :root{
   --ground:#F1ECFF;--ground2:#E3F6F0;--ink:#3D3358;--soft:#6B5F8C;--text:#3D3358;--textsoft:#6B5F8C;
@@ -538,6 +538,35 @@ body[data-screen=welcome] #room{display:none}
 @media (prefers-reduced-motion:reduce){.rbunt .fl,.rlamp .lsw,.rteddy,.rballs,.rcactus,.rrug,.tile::before,.topbar .btn.round[data-go=home]{animation:none}}
 </style>
 <style>.cth .r.s,.pth .r.s,.stage svg.pic .r.s{stroke-width:2.6}.cth .r.s,.pth .r.s{stroke-width:2}</style>
+<style>
+/* ===== performance pass: fewer always-running animations ===== */
+.nightfx{display:none}.town[data-tod=night] .nightfx{display:block}
+.tile::before{animation:none;transform:skewX(-18deg)}
+.tile.shine::before{animation:shine 1.2s ease-in-out}
+@keyframes shine{from{transform:translateX(0) skewX(-18deg)}to{transform:translateX(640%) skewX(-18deg)}}
+.tile .ticon,.spot .plate{animation:none}
+.rbunt .fl{animation:none}
+.rbunt{transform-origin:50% 0;will-change:transform;animation:buntsway 4.2s ease-in-out infinite}
+@keyframes buntsway{0%,100%{transform:skewX(-.9deg)}50%{transform:skewX(.9deg)}}
+/* live blur behind big panels is very costly on iPad and barely visible: removed */
+.play,.hud .btn,.hud button{backdrop-filter:none;-webkit-backdrop-filter:none}
+/* eyes blink in short bursts (one timer) instead of 8 endless animations */
+.bl{animation:none}
+body.blinking .bl{animation:blink2 .22s ease-in-out}
+@keyframes blink2{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.08)}}
+/* the toy-room backdrop only moves on the home/welcome screens, so games and drawing get the full frame budget */
+body:not([data-screen=home]):not([data-screen=welcome]) #room,body:not([data-screen=home]):not([data-screen=welcome]) #room *{animation-play-state:paused}
+/* lite mode: switched on automatically when the device can't hold ~40fps */
+body.lite #room,body.lite #room *,body.lite .bfly,body.lite .bfly .wl,body.lite .bfly .wr,body.lite .birds,body.lite .bw,body.lite .sway,body.lite .petals i,body.lite .wsp,body.lite .wbal,body.lite .wcl,body.lite .flag,body.lite .sunglow,body.lite [class*=blink],body.lite .bl{animation:none!important}
+body.lite .petals,body.lite .tile::before{display:none}
+body.lite .spot .struct{filter:drop-shadow(0 6px 3px rgba(40,80,40,.25))}
+body.lite .hud .btn,body.lite .hud button{backdrop-filter:none;-webkit-backdrop-filter:none}
+body.lite .avf:not(.walk) svg,body.lite .wpet svg{animation:none}
+</style>
+<style>
+/* picture arrows: keep them pinned to the picture's left/right edges */
+.btn.arrow{position:absolute;top:50%;translate:0 -50%;z-index:3}.btn.arrow.l{left:14px;right:auto}.btn.arrow.r{right:14px;left:auto}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -814,8 +843,9 @@ function confetti(n = 18) {
 function cheer(x = innerWidth / 2, y = innerHeight / 2, n = 8) {
   const ring = document.createElement('i'); ring.className = 'fx-ring'; ring.style.cssText = `left:${x}px;top:${y}px`; document.body.appendChild(ring); setTimeout(() => ring.remove(), 900);
   const cols = ['#FFE29A', '#FF9DB0', '#A9D2FF', '#A6E8D2', '#CDB8FF', '#FFC46B'];
-  for (let i = 0; i < 20; i++) {
-    const s = document.createElement('i'); s.className = 'fx-star big'; const a = i / 20 * 6.283 + rnd(-.15, .15), r = rnd(140, 300), sz = rnd(22, 42);
+  const N = document.body.classList.contains('lite') ? 10 : 20;
+  for (let i = 0; i < N; i++) {
+    const s = document.createElement('i'); s.className = 'fx-star big'; const a = i / N * 6.283 + rnd(-.15, .15), r = rnd(140, 300), sz = rnd(22, 42);
     s.style.cssText = `left:${x - sz / 2}px;top:${y - sz / 2}px;width:${sz}px;height:${sz}px;color:${pick(cols)};--dx:${Math.cos(a) * r}px;--dy:${Math.sin(a) * r}px;--r:${rnd(-260, 260)}deg;animation-delay:${rnd(0, .12)}s`;
     s.innerHTML = STARSVG; document.body.appendChild(s); setTimeout(() => s.remove(), 1500);
   }
@@ -1203,8 +1233,8 @@ SCREENS.world = el => {
   const fresh = S.stickers.length >= 2 && unlockedCount(S.stickers.length) > (S.seenUnlock || 1);
   const flowers = Array.from({ length: 150 }, () => { const x = rnd(10, WW - 10), y = rnd(345, 705), c = pick(['#FFFFFF', '#FFE29A', '#FF9DB0', '#CDB8FF']); return `<circle cx="${x}" cy="${y}" r="${rnd(4, 7)}" fill="${c}" opacity=".9"/><circle cx="${x}" cy="${y}" r="2.2" fill="#FFD84D"/>`; }).join('');
   const bushes = Array.from({ length: 22 }, (_, i) => bush(90 + i * 150 + rnd(-30, 30), 345 + rnd(0, 6), rnd(.8, 1.2))).join('');
-  const pebbles = Array.from({ length: 70 }, () => `<ellipse cx="${rnd(-200, WW + 200)}" cy="${rnd(400, 700)}" rx="${rnd(3, 6)}" ry="${rnd(2, 4)}" fill="#D9C79B" opacity=".8"/>`).join('');
-  const tufts1 = Array.from({ length: 70 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join(''), tufts2 = Array.from({ length: 70 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join('');
+  const pebbles = Array.from({ length: 36 }, () => `<ellipse cx="${rnd(-200, WW + 200)}" cy="${rnd(400, 700)}" rx="${rnd(3, 6)}" ry="${rnd(2, 4)}" fill="#D9C79B" opacity=".8"/>`).join('');
+  const tufts1 = Array.from({ length: 44 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join(''), tufts2 = Array.from({ length: 44 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join('');
   const trees = Array.from({ length: 22 }, (_, i) => tree(60 + i * 165 + rnd(-30, 30), 300, rnd(.8, 1.1))).join('');
   el.innerHTML = `<div class="town" id="town" data-tod="${todNow()}"><svg width="0" height="0" style="position:absolute"><defs><filter id="puff" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur in="SourceAlpha" stdDeviation="2.6" result="b"/><feSpecularLighting in="b" surfaceScale="5" specularConstant=".8" specularExponent="16" lighting-color="#fff" result="sp"><feDistantLight azimuth="235" elevation="52"/></feSpecularLighting><feComposite in="sp" in2="SourceAlpha" operator="in" result="sp2"/><feComposite in="SourceGraphic" in2="sp2" operator="arithmetic" k1="0" k2="1" k3=".26" k4="0"/></filter></defs></svg>
   <div class="nightfx" aria-hidden="true">${Array.from({ length: 46 }, () => `<i class="star" style="left:${rnd(0, 100)}%;top:${rnd(0, 42)}%;--s:${rnd(2, 5)}px;animation-delay:${rnd(0, 3)}s"></i>`).join('')}<svg class="moon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="#FFF6D2"/><circle cx="40" cy="44" r="6" fill="#F0E4B0"/><circle cx="58" cy="62" r="8" fill="#F0E4B0"/><circle cx="30" cy="64" r="4" fill="#F0E4B0"/></svg>${Array.from({ length: 14 }, () => `<i class="ffly" style="left:${rnd(4, 96)}%;top:${rnd(48, 88)}%;--x:${rnd(-60, 60)}px;--y:${rnd(-40, 40)}px;animation-duration:${rnd(6, 11)}s;animation-delay:${rnd(0, 5)}s"></i>`).join('')}</div>
@@ -1502,7 +1532,7 @@ SCREENS.draw = (el, mode) => {
     };
     const fillR = r => {
       if (!r || !r.classList || !r.classList.contains('r') || r.getAttribute('fill') === color) return; r.setAttribute('fill', color); r.dataset.c = 1; sfx.pop(); r.classList.remove('pulse'); void r.getBoundingClientRect(); r.classList.add('pulse'); const b = r.getBoundingClientRect(); sparkle(b.left + b.width / 2, b.top + b.height / 2, 4, [color]);
-      const rs = $$('.r', pic); if (rs.filter(x => x.dataset.c).length >= Math.ceil(rs.length * (PICS[picIdx].scene ? .6 : .88)) && !finished) { finished = true; markDone(); reward('You colored the whole picture!'); setTimeout(() => { picIdx = (picIdx + 1) % PICS.length; show(); finished = false; }, 2400); }
+      const rs = $$('.r', pic); if (rs.filter(x => x.dataset.c).length >= Math.ceil(rs.length * (PICS[picIdx].scene ? .6 : .88)) && !finished) { finished = true; markDone(); reward('You colored the whole picture!'); setTimeout(() => { picIdx = picStep(picIdx, 1); show(); finished = false; }, 2400); }
     };
     let finished = false, painting = false;
     const markDone = () => { S.coloredPics = [...new Set([...(S.coloredPics || []), picIdx])]; save(); };
@@ -1513,7 +1543,7 @@ SCREENS.draw = (el, mode) => {
     show();
     $('#reset', el).onclick = () => { sfx.whoosh(); show(); };
     $('#pick', el).onclick = () => {
-      const o = document.createElement('div'); o.className = 'overlay'; o.innerHTML = `<div class="sheet pics"><h2>Pick a picture</h2><div class="pgrid">${PICS.map((p, i) => `<button class="pth" data-i="${i}" aria-label="Picture ${i + 1}"><svg viewBox="0 0 400 300">${p()}</svg></button>`).join('')}</div><button class="btn go big" id="pcx">Close</button></div>`;
+      const o = document.createElement('div'); o.className = 'overlay'; o.innerHTML = `<div class="sheet pics"><h2>Pick a picture</h2><div class="pgrid">${PIC_ORDER.map(i => `<button class="pth" data-i="${i}" aria-label="Picture ${i + 1}"><svg viewBox="0 0 400 300">${PICS[i]()}</svg></button>`).join('')}</div><button class="btn go big" id="pcx">Close</button></div>`;
       document.body.appendChild(o); sfx.pop(); $('#pcx', o).onclick = () => o.remove(); o.addEventListener('click', e => { const b = e.target.closest('.pth'); if (b) { picIdx = +b.dataset.i; sfx.boop(); o.remove(); show(); } else if (e.target === o) o.remove(); });
     };
     $('#done', el).onclick = () => {
@@ -1522,8 +1552,8 @@ SCREENS.draw = (el, mode) => {
       im.onload = () => { const t = document.createElement('canvas'); t.width = 520; t.height = 390; t.getContext('2d').drawImage(im, 0, 0, 520, 390); gallery.unshift(t.toDataURL('image/jpeg', .76)); gallery = gallery.slice(0, 30); saveGallery(); S.coloredPics = [...new Set([...(S.coloredPics || []), picIdx])]; save(); reward('Beautiful! Your picture is saved.'); go('studio'); };
       im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(x);
     };
-    $('#pn', el).onclick = () => { picIdx = (picIdx + 1) % PICS.length; sfx.boop(); show(); };
-    $('#pp', el).onclick = () => { picIdx = (picIdx - 1 + PICS.length) % PICS.length; sfx.boop(); show(); };
+    $('#pn', el).onclick = () => { picIdx = picStep(picIdx, 1); sfx.boop(); show(); };
+    $('#pp', el).onclick = () => { picIdx = picStep(picIdx, -1); sfx.boop(); show(); };
     return;
   }
 
@@ -1858,6 +1888,143 @@ const PIC_CATS = [['Animals', [4, 5, 22, 23, 24, 25, 33, 10, 13]], ['Ocean', [1,
   const base = PICS.length; PICS.push(...SCENES);
   PIC_CATS.unshift(['Big scenes', SCENES.map((_, i) => base + i)]);
 })();
+/* ===== "Friends": original chunky coloring pictures (one big friendly subject, big shapes, thick lines, lots of space) =====
+   Benchmarked against toddler coloring-page guidance: big closed shapes, bold outline, single subject, friendly face, minimal detail.
+   All artwork is original code-drawn SVG. viewBox 0 0 400 300. Fill regions = class "r"; faces/lines are non-interactive so taps reach the region below. */
+const kNo = 'style="pointer-events:none"';
+const kR = d => `<path class="r" d="${d}"/>`;
+const kEl = (cx, cy, rx, ry, t) => `<ellipse class="r" cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"${t ? ` transform="${t}"` : ''}/>`;
+const kCi = (cx, cy, r) => `<circle class="r" cx="${cx}" cy="${cy}" r="${r}"/>`;
+const kSt = (d, w = 5) => `<path d="${d}" fill="none" stroke="#3D3358" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" ${kNo}/>`;
+const kEye = (x, y, r = 10) => `<g ${kNo}><circle cx="${x}" cy="${y}" r="${r}" fill="#3D3358"/><circle cx="${(x + r * .32).toFixed(1)}" cy="${(y - r * .36).toFixed(1)}" r="${(r * .38).toFixed(1)}" fill="#fff"/></g>`;
+const kCheek = (x, y, r = 14) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${(r * .68).toFixed(1)}" fill="#FF8FAE" opacity=".5" ${kNo}/>`;
+const kSmile = (x, y, w = 20, d = 10) => kSt(`M${x - w} ${y} Q${x} ${y + d * 2} ${x + w} ${y}`);
+const kNose = (x, y, w = 9) => `<path d="M${x - w} ${y} Q${x} ${y - w * .7} ${x + w} ${y} Q${x + w * .4} ${y + w * 1.1} ${x} ${y + w * 1.2} Q${x - w * .4} ${y + w * 1.1} ${x - w} ${y}Z" fill="#FF8FAE" stroke="#3D3358" stroke-width="3.5" stroke-linejoin="round" ${kNo}/>`;
+const kMir = s => `<g transform="translate(400 0) scale(-1 1)">${s}</g>`;
+const kStar = (cx, cy, r) => { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, q = i % 2 ? r * .46 : r; d += (i ? 'L' : 'M') + (cx + Math.cos(a) * q).toFixed(1) + ' ' + (cy + Math.sin(a) * q).toFixed(1); } return kR(d + 'Z'); };
+const kScallop = (cx, cy, r, n, b) => { let d = ''; for (let i = 0; i < n; i++) { const a0 = i / n * 6.2832, a1 = (i + 1) / n * 6.2832, am = (a0 + a1) / 2, P = (a, q) => (cx + Math.cos(a) * q).toFixed(1) + ' ' + (cy + Math.sin(a) * q).toFixed(1); d += (i ? '' : 'M' + P(a0, r)) + ' Q' + P(am, r + b) + ' ' + P(a1, r); } return kR(d + 'Z'); };
+const kRot = (n, cx, cy, make) => Array.from({ length: n }, (_, i) => make(i * 360 / n, cx, cy)).join('');
+
+const FRIENDS = {
+  cat: () => kR('M262 262 Q348 274 346 204 Q346 182 362 178 Q380 218 364 250 Q346 284 262 284Z') +
+    kR('M132 206 Q98 286 150 288 H250 Q302 286 268 206Z') + kEl(200, 248, 32, 34) + kEl(168, 280, 30, 14) + kEl(232, 280, 30, 14) +
+    kR('M112 104 Q104 40 118 24 Q158 36 182 62Z') + kR('M288 104 Q296 40 282 24 Q242 36 218 62Z') + kEl(200, 136, 98, 82) +
+    kR('M128 82 Q124 52 132 42 Q152 50 164 66Z') + kR('M272 82 Q276 52 268 42 Q248 50 236 66Z') +
+    kSt('M200 66 V86 M176 70 L182 88 M224 70 L218 88') + kEye(158, 128, 11) + kEye(242, 128, 11) + kNose(200, 148) +
+    kSt('M200 160 V168 M200 168 Q188 180 176 170 M200 168 Q212 180 224 170') + kSt('M92 148 H138 M98 168 L140 160 M308 148 H262 M302 168 L260 160', 4) + kCheek(130, 160) + kCheek(270, 160),
+
+  puppy: () => kR('M262 250 Q312 246 322 208 Q340 214 334 240 Q322 282 262 282Z') + kR('M160 170 Q108 280 150 288 H250 Q292 280 240 170Z') + kEl(200, 244, 30, 38) +
+    kEl(170, 282, 26, 13) + kEl(230, 282, 26, 13) +
+    kR('M128 84 Q60 74 60 150 Q62 194 108 180 Q124 140 128 84Z') + kR('M272 84 Q340 74 340 150 Q338 194 292 180 Q276 140 272 84Z') + kEl(200, 118, 86, 76) +
+    kEl(164, 106, 26, 24) + kEl(200, 146, 42, 32) + kEye(164, 106, 11) + kEye(236, 106, 11) +
+    `<ellipse cx="200" cy="134" rx="16" ry="11" fill="#3D3358" ${kNo}/><ellipse cx="205" cy="130" rx="5" ry="3" fill="#fff" ${kNo}/>` +
+    kSt('M200 145 V156 M200 156 Q186 172 172 160 M200 156 Q214 172 228 160') + kR('M190 164 Q200 194 212 164Z') + kCheek(134, 140, 12) + kCheek(266, 140, 12),
+
+  bunny: () => kEl(160, 68, 27, 62, 'rotate(-8 160 68)') + kEl(240, 68, 27, 62, 'rotate(8 240 68)') + kEl(161, 74, 12, 42, 'rotate(-8 161 74)') + kEl(239, 74, 12, 42, 'rotate(8 239 74)') +
+    kEl(200, 262, 68, 34) + kEl(150, 286, 32, 12) + kEl(250, 286, 32, 12) + kCi(282, 258, 20) + kEl(200, 158, 86, 70) +
+    kEye(166, 146, 11) + kEye(234, 146, 11) + kNose(200, 166, 10) + kSt('M200 176 Q190 190 176 182 M200 176 Q210 190 224 182') + kR('M192 186 H208 V204 H192Z') +
+    kSt('M96 166 H140 M100 184 L140 176 M304 166 H260 M300 184 L260 176', 4) + kCheek(136, 176) + kCheek(264, 176),
+
+  bear: () => kEl(200, 244, 76, 46) + kEl(200, 250, 42, 32) + kEl(150, 282, 28, 14) + kEl(250, 282, 28, 14) +
+    kCi(122, 60, 36) + kCi(278, 60, 36) + kCi(122, 60, 17) + kCi(278, 60, 17) + kEl(200, 128, 96, 82) + kEl(200, 152, 40, 31) +
+    kEye(162, 112, 11) + kEye(238, 112, 11) + `<ellipse cx="200" cy="140" rx="15" ry="11" fill="#3D3358" ${kNo}/><ellipse cx="205" cy="136" rx="5" ry="3" fill="#fff" ${kNo}/>` +
+    kSt('M200 150 V160 M200 160 Q188 172 176 164 M200 160 Q212 172 224 164') + kCheek(128, 148) + kCheek(272, 148),
+
+  elephant: () => kCi(84, 130, 68) + kCi(316, 130, 68) + kCi(90, 132, 42) + kCi(310, 132, 42) + kEl(200, 118, 84, 78) +
+    kR('M172 150 Q158 238 194 268 Q222 296 254 262 Q264 248 248 244 Q236 262 222 250 Q216 226 228 150Z') + kSt('M184 192 H206 M186 218 H210') +
+    kEye(164, 104, 11) + kEye(236, 104, 11) + kSt('M146 84 Q164 74 180 84 M220 84 Q236 74 254 84', 4) + kCheek(132, 138) + kCheek(268, 138) + kSt('M200 44 Q190 30 176 36 M200 44 Q210 30 224 36', 4),
+
+  lion: () => kScallop(200, 152, 108, 12, 44) + kCi(138, 96, 22) + kCi(262, 96, 22) + kEl(200, 156, 74, 70) + kEl(200, 180, 38, 28) +
+    kEye(168, 144, 11) + kEye(232, 144, 11) + kNose(200, 168, 10) + kSt('M200 180 V188 M200 188 Q188 200 176 190 M200 188 Q212 200 224 190') + kCheek(146, 172, 12) + kCheek(254, 172, 12),
+
+  pig: () => kR('M112 100 Q86 40 132 32 Q170 40 180 74Z') + kR('M288 100 Q314 40 268 32 Q230 40 220 74Z') + kEl(200, 152, 116, 98) + kEl(200, 182, 46, 34) +
+    `<ellipse cx="184" cy="182" rx="6" ry="10" fill="#3D3358" ${kNo}/><ellipse cx="216" cy="182" rx="6" ry="10" fill="#3D3358" ${kNo}/>` +
+    kEye(150, 128, 11) + kEye(250, 128, 11) + kSmile(200, 222, 18, 6) + kCheek(112, 170, 15) + kCheek(288, 170, 15),
+
+  duck: () => kR('M84 190 Q46 172 40 146 Q82 146 104 166Z') + kEl(200, 216, 120, 66) + kEl(176, 220, 54, 32, 'rotate(-10 176 220)') + kCi(228, 96, 60) +
+    kR('M272 96 Q330 90 334 114 Q326 134 268 124Z') + kEye(236, 82, 10) + kCheek(250, 116, 12) + kSt('M282 112 Q300 118 316 112', 4) +
+    kR('M170 278 H214 L204 292 H180Z') + kR('M236 278 H280 L270 292 H246Z') + kSt('M228 44 Q222 28 232 22 M240 46 Q244 30 254 30', 4),
+
+  owl: () => kR('M30 272 Q200 256 370 272 V292 Q200 278 30 292Z') + kR('M116 88 L104 32 L160 66Z') + kR('M284 88 L296 32 L240 66Z') + kEl(200, 166, 104, 108) + kEl(200, 212, 60, 62) +
+    kR('M98 150 Q56 216 100 262 Q126 222 124 166Z') + kR('M302 150 Q344 216 300 262 Q274 222 276 166Z') + kCi(158, 128, 44) + kCi(242, 128, 44) +
+    kEye(158, 130, 21) + kEye(242, 130, 21) + kR('M186 152 L214 152 L200 182Z') + kSt('M170 206 q10 12 20 0 M190 206 q10 12 20 0 M210 206 q10 12 20 0 M180 232 q10 12 20 0 M200 232 q10 12 20 0', 4) + kEl(170, 268, 22, 8) + kEl(230, 268, 22, 8),
+
+  turtle: () => `<g transform="translate(0 22)">` + kR('M72 206 L34 226 L76 226Z') + kEl(120, 226, 28, 16) + kEl(280, 226, 28, 16) + kEl(334, 176, 40, 34) +
+    kR('M76 204 Q78 92 200 90 Q322 92 324 204Z') + kR('M168 122 H232 L258 156 L232 190 H168 L142 156Z') + kCi(120, 170, 16) + kCi(280, 170, 16) + kCi(200, 108, 12) +
+    kSt('M168 122 L146 100 M232 122 L254 100 M258 156 L300 156 M142 156 L100 156 M168 190 L150 204 M232 190 L250 204', 4) +
+    kEye(344, 166, 8) + kSmile(346, 186, 12, 5) + kCheek(322, 184, 8) + `</g>`,
+
+  fish: () => kR('M300 150 L374 92 Q388 150 374 208Z') + kR('M170 72 Q200 18 244 66Z') + kR('M170 228 Q190 278 236 236Z') +
+    kR('M56 150 Q116 40 236 62 Q304 84 320 150 Q304 216 236 238 Q116 260 56 150Z') + kEl(196, 166, 38, 22, 'rotate(20 196 166)') + kCi(120, 128, 22) + kEye(120, 130, 11) +
+    kSt('M62 166 Q84 182 104 172') + kSt('M212 112 q14 14 0 30 M248 116 q14 14 0 30 M280 130 q10 12 0 24', 4) + kCheek(112, 168, 12) + kCi(40, 92, 14) + kCi(74, 60, 9) + kCi(30, 50, 7),
+
+  octopus: () => kEl(104, 224, 20, 56, 'rotate(20 104 224)') + kEl(152, 244, 20, 54, 'rotate(6 152 244)') + kEl(200, 250, 20, 46) + kEl(248, 244, 20, 54, 'rotate(-6 248 244)') + kEl(296, 224, 20, 56, 'rotate(-20 296 224)') +
+    kEl(200, 112, 98, 88) + kCi(150, 62, 12) + kCi(250, 66, 10) + kCi(200, 48, 8) + kEye(160, 116, 13) + kEye(240, 116, 13) + kSmile(200, 146, 24, 10) + kCheek(126, 142, 15) + kCheek(274, 142, 15),
+
+  whale: () => kR('M0 272 Q50 250 100 272 T200 272 T300 272 T400 272 V300 H0Z') +
+    kR('M262 176 Q300 176 306 138 Q308 112 292 98 Q326 92 344 116 Q352 88 372 82 Q384 128 364 168 Q340 204 296 206 Q272 206 262 196Z') +
+    kEl(150, 174, 122, 82) + kEl(150, 226, 80, 22) + kEl(178, 196, 36, 15, 'rotate(24 178 196)') + kEye(90, 152, 11) + kSt('M40 176 Q64 200 100 192') + kCheek(108, 178, 13) +
+    kSt('M150 92 V68') + kCi(130, 48, 12) + kCi(170, 42, 12) + kCi(150, 24, 9),
+
+  frog: () => kEl(200, 200, 122, 80) + kEl(112, 270, 30, 15) + kEl(288, 270, 30, 15) + kCi(138, 104, 42) + kCi(262, 104, 42) + kEye(140, 108, 18) + kEye(260, 108, 18) +
+    kSt('M114 208 Q200 268 286 208') + kCi(158, 176, 9) + kCi(246, 176, 9) + kCi(200, 168, 7) + kCheek(112, 200, 15) + kCheek(288, 200, 15) + kSt('M192 148 H196 M204 148 H208', 5),
+
+  butterfly: () => kR('M196 150 Q120 20 56 50 Q20 100 100 150Z') + kR('M204 150 Q280 20 344 50 Q380 100 300 150Z') + kR('M196 162 Q100 172 84 236 Q110 278 160 232 Q186 202 196 162Z') + kR('M204 162 Q300 172 316 236 Q290 278 240 232 Q214 202 204 162Z') +
+    kCi(96, 92, 20) + kCi(304, 92, 20) + kCi(126, 216, 14) + kCi(274, 216, 14) + kEl(200, 170, 15, 70) + kCi(200, 86, 26) + kSt('M188 66 Q170 26 148 30 M212 66 Q230 26 252 30') + kCi(146, 30, 6) + kCi(254, 30, 6) +
+    kEye(190, 84, 5) + kEye(210, 84, 5) + kSmile(200, 96, 8, 4),
+
+  ladybug: () => kSt('M104 130 L66 108 M98 176 L56 176 M104 224 L66 252 M296 130 L334 108 M302 176 L344 176 M296 224 L334 252', 7) +
+    kR('M200 62 A108 108 0 0 0 200 280Z') + kR('M200 62 A108 108 0 0 1 200 280Z') + kCi(150, 130, 17) + kCi(150, 206, 19) + kCi(250, 134, 17) + kCi(250, 210, 19) + kEl(200, 66, 56, 40) +
+    kSt('M178 34 Q160 8 140 14 M222 34 Q240 8 260 14') + kEye(182, 60, 8) + kEye(218, 60, 8) + kSmile(200, 76, 10, 5),
+
+  sun: () => kRot(12, 200, 150, (a, cx, cy) => `<path class="r" d="M200 14 L222 62 H178Z" transform="rotate(${a} ${cx} ${cy})"/>`) + kCi(200, 150, 82) +
+    kEye(172, 138, 11) + kEye(228, 138, 11) + kCheek(146, 168, 15) + kCheek(254, 168, 15) + kSt('M168 170 Q200 208 232 170'),
+
+  flower: () => kR('M192 168 Q186 230 196 298 H212 Q216 230 208 168Z') + kR('M198 246 Q140 206 96 232 Q128 278 198 260Z') + kR('M204 232 Q262 192 306 218 Q274 264 204 246Z') +
+    kRot(8, 200, 112, (a, cx, cy) => `<ellipse class="r" cx="200" cy="50" rx="28" ry="42" transform="rotate(${a} ${cx} ${cy})"/>`) + kCi(200, 112, 48) +
+    kEye(184, 104, 7) + kEye(216, 104, 7) + kSmile(200, 122, 14, 7) + kCheek(172, 122, 9) + kCheek(228, 122, 9),
+
+  apple: () => kR('M200 84 Q150 50 100 92 Q56 140 84 214 Q116 280 170 270 Q190 264 200 268 Q210 264 230 270 Q284 280 316 214 Q344 140 300 92 Q250 50 200 84Z') +
+    kR('M192 84 Q190 40 210 22 L226 30 Q210 48 212 84Z') + kR('M224 62 Q264 18 304 42 Q282 86 228 70Z') + kEye(158, 160, 12) + kEye(242, 160, 12) + kCheek(126, 190, 16) + kCheek(274, 190, 16) + kSt('M172 192 Q200 226 228 192'),
+
+  icecream: () => kR('M128 150 L200 292 L272 150Z') + kSt('M140 168 L212 262 M172 154 L232 224 M228 154 L170 224 M260 168 L188 262', 4) +
+    kR('M108 154 Q98 106 142 98 Q200 84 258 98 Q302 106 292 154 Q272 170 250 154 Q230 176 200 158 Q170 176 150 154 Q130 170 108 154Z') + kEl(200, 74, 50, 46) + kCi(200, 22, 15) + kSt('M200 10 Q206 -2 216 2', 4) +
+    kEye(170, 130, 10) + kEye(230, 130, 10) + kSmile(200, 140, 16, 6) + kCheek(146, 144, 12) + kCheek(254, 144, 12),
+
+  cupcake: () => kR('M108 176 H292 L270 286 H130Z') + kSt('M148 178 L154 284 M188 178 L190 284 M212 178 L210 284 M252 178 L246 284', 4) +
+    kR('M92 182 Q82 140 130 136 Q170 130 200 136 Q240 130 270 136 Q318 140 308 182Z') + kR('M120 138 Q116 98 160 92 Q200 86 240 92 Q284 98 280 138Z') + kR('M156 96 Q160 56 200 36 Q240 56 244 96Z') + kCi(200, 26, 15) +
+    kEye(172, 226, 10) + kEye(228, 226, 10) + kSmile(200, 240, 16, 7) + kCheek(150, 244, 12) + kCheek(250, 244, 12),
+
+  car: () => kR('M40 202 Q40 160 80 156 L118 102 Q128 90 150 90 H250 Q272 90 282 102 L320 156 Q362 160 362 202 V240 H40Z') + kR('M134 108 Q142 100 162 100 H192 V152 H112Z') + kR('M208 100 H238 Q258 100 266 110 L290 152 H208Z') +
+    kCi(110, 246, 38) + kCi(290, 246, 38) + kCi(110, 246, 15) + kCi(290, 246, 15) + kCi(338, 184, 17) + kEye(340, 186, 9) + kSmile(346, 214, 11, 4) + kR('M40 196 H62 V214 H40Z'),
+
+  rocket: () => kR('M130 170 L70 250 L70 278 L132 244Z') + kR('M270 170 L330 250 L330 278 L268 244Z') + kR('M200 18 Q290 90 282 224 H118 Q110 90 200 18Z') +
+    kCi(200, 116, 40) + kCi(200, 116, 22) + kR('M150 224 H250 L236 250 H164Z') + kR('M170 250 Q200 302 230 250Z') + kSt('M172 184 Q200 206 228 184') + kCheek(150, 184, 12) + kCheek(250, 184, 12) +
+    kStar(54, 66, 22) + kStar(350, 60, 20) + kStar(354, 150, 16) + kStar(48, 150, 14),
+
+  dino: () => kR('M84 200 Q40 220 22 262 Q60 252 94 240Z') + kR('M112 250 H152 V290 H112Z') + kR('M232 250 H272 V290 H232Z') + kEl(190, 206, 112, 58) +
+    kR('M254 200 Q302 152 296 104 L346 98 Q352 156 318 234Z') + kR('M112 156 L130 120 L150 152Z') + kR('M156 146 L176 108 L196 144Z') + kR('M204 146 L224 110 L242 146Z') +
+    kEl(324, 72, 46, 36) + kCi(150, 200, 14) + kCi(200, 226, 12) + kCi(230, 194, 14) + kEye(338, 62, 9) + kSt('M328 88 Q346 98 362 84') + kCheek(324, 84, 9),
+};
+
+const FRIEND_IDS = Object.keys(FRIENDS);
+const FRIEND_BASE = PICS.length;
+FRIEND_IDS.forEach(k => PICS.push(FRIENDS[k]));
+const fi = k => FRIEND_BASE + FRIEND_IDS.indexOf(k);
+/* picker: replace the old crude list with the new set; big scenes stay at the end */
+{
+  const scenes = PIC_CATS.find(c => c[0] === 'Big scenes');
+  PIC_CATS.length = 0;
+  PIC_CATS.push(
+    ['Animal friends', ['cat', 'puppy', 'bunny', 'bear', 'elephant', 'lion', 'pig', 'duck', 'owl', 'frog', 'dino'].map(fi)],
+    ['Ocean & bugs', ['fish', 'octopus', 'whale', 'turtle', 'butterfly', 'ladybug'].map(fi)],
+    ['Sunny & yummy', ['sun', 'flower', 'apple', 'icecream', 'cupcake'].map(fi)],
+    ['Go go go!', ['car', 'rocket'].map(fi)]
+  );
+  if (scenes) PIC_CATS.push(scenes);
+}
+const PIC_ORDER = PIC_CATS.flatMap(c => c[1]);
+const picStep = (cur, d) => { const i = PIC_ORDER.indexOf(cur); return PIC_ORDER[((i < 0 ? 0 : i) + d + PIC_ORDER.length) % PIC_ORDER.length]; };
 /* ===== games ===== */
 const speakerIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
 const later = (fn, ms) => { const id = navId; setTimeout(() => { if (id === navId) fn(); }, ms); };
@@ -2051,7 +2218,25 @@ SCREENS.music = el => {
 };
 
 /* ===== boot ===== */
-setInterval(() => { const t = $$('.tiles .tile'); if (!t.length || document.hidden) return; const x = pick(t); x.classList.add('wig2'); setTimeout(() => x.classList.remove('wig2'), 850); }, 3600);
+setInterval(() => { const t = $$('.tiles .tile'); if (!t.length || document.hidden) return; const x = pick(t); x.classList.add('wig2', 'shine'); setTimeout(() => x.classList.remove('wig2', 'shine'), 1300); }, 3600);
+(function blinker() { const go = () => { if (!document.hidden) { document.body.classList.add('blinking'); setTimeout(() => document.body.classList.remove('blinking'), 260); } setTimeout(go, 2600 + Math.random() * 2600); }; setTimeout(go, 1800); })();
+/* adaptive lite mode: measure real frame rate; if the device struggles, drop decorative animations (remembered for next launch) */
+(function perfGuard() {
+  try { if (localStorage.getItem('lw1lite') === '1') document.body.classList.add('lite'); } catch (e) { }
+  let bad = 0, frames = 0, t0 = 0, last = 0;
+  const tick = now => {
+    if (document.hidden) { frames = 0; t0 = 0; return requestAnimationFrame(tick); }
+    if (last && now - last > 500) { frames = 0; t0 = 0; }   /* tab was paused; ignore */
+    last = now; if (!t0) { t0 = now; frames = 0; }
+    frames++;
+    if (now - t0 >= 2500) {
+      const fps = frames / ((now - t0) / 1000); t0 = 0;
+      if (fps < 38) { if (++bad >= 2) { document.body.classList.add('lite'); try { localStorage.setItem('lw1lite', '1'); } catch (e) { } return; } } else bad = 0;
+    }
+    requestAnimationFrame(tick);
+  };
+  setTimeout(() => requestAnimationFrame(tick), 2500);
+})();
 renderWorld(); renderPet();
 go('welcome');
 </script>
