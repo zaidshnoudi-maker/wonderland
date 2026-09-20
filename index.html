@@ -567,6 +567,18 @@ body.lite .avf:not(.walk) svg,body.lite .wpet svg{animation:none}
 /* picture arrows: keep them pinned to the picture's left/right edges */
 .btn.arrow{position:absolute;top:50%;translate:0 -50%;z-index:3}.btn.arrow.l{left:14px;right:auto}.btn.arrow.r{right:14px;left:auto}
 </style>
+<style>
+/* ===== SPEED FIRST: no endless ambient motion, no filters. Only walking, riding and tap-feedback animations remain. ===== */
+#world .rays,#world .cloud,#world .floater,#world .twinkle,.avbody,.shelf.fresh::after,.tile .ticon,.bubble>span,.pet .bod,.pet .tail,.bl,.spot .plate,.birds,.bw,.bfly,.bfly .wl,.bfly .wr,.sway,.star,.ffly,.petals i,.wsun,.wcl,.wbal,.wsp,.wtitle span,.wav,.wplay,.rbunt,.rbunt .fl,.rlamp .lsw,.rlamp .lcone,.rteddy,.rballs,.rcactus,.rrug,.tile::before,.topbar .btn.round[data-go=home],.avf:not(.walk) svg,.wpet svg,.piece{animation:none!important}
+.petals,.nightfx,.tile::before{display:none!important}
+*,*::before,*::after{filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;will-change:auto!important}
+.rbunt{will-change:auto}
+</style>
+<style>
+/* logo */
+.wtitle{top:2.5%;left:0;right:0;display:flex;justify-content:center;font-weight:400}
+.wlogo{display:block;width:min(92vw,70vh);height:auto;overflow:visible;filter:none;font-family:Fredoka,Nunito,'Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;font-weight:700}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -789,6 +801,7 @@ petBox.addEventListener('click', () => { sfx.boop(); petHappy(); say(`I'm ${petN
 
 /* ---------- world backdrop (follows her favorite) ---------- */
 function renderWorld() {
+  if (true) return; /* #world is hidden (toy room replaced it); building it only costs startup time */
   const t = favThemes()[0].id, w = WORLD[t] || WORLD.animals, el = $('#world');
   document.body.classList.toggle('night', !!w.night);
   el.style.background = `linear-gradient(180deg,${w.a},${w.b})`;
@@ -811,17 +824,17 @@ function sparkle(x, y, n = 7, colors = ['#FFE29A', '#FF9DB0', '#A9D2FF', '#A6E8D
     s.innerHTML = STARSVG; document.body.appendChild(s); setTimeout(() => s.remove(), 900);
   }
 }
-function sparkBurst(x, y, colors) { sparkle(x, y, 10, colors); }
+function sparkBurst(x, y, colors) { sparkle(x, y, 7, colors); }
 const NO_FX = 'canvas,.piece,.overlay,input,.bubble,.keys';
 document.addEventListener('pointerdown', e => {
   if (e.target.closest(NO_FX)) return;
   const interactive = e.target.closest('button,.tile,.acard,.sp,.pcard,.card,.spot,.st');
-  sparkle(e.clientX, e.clientY, interactive ? 4 : 8); if (!interactive) sfx.chime();
+  sparkle(e.clientX, e.clientY, interactive ? 3 : 5); if (!interactive) sfx.chime();
 }, { passive: true });
 let lastTrail = 0;
 document.addEventListener('pointermove', e => {
   if (e.buttons !== 1 || !['home', 'studio', 'stickers', 'wardrobe', 'gallery'].includes(screen)) return;
-  if (e.target.closest(NO_FX) || Date.now() - lastTrail < 70) return; lastTrail = Date.now(); sparkle(e.clientX, e.clientY, 2);
+  if (e.target.closest(NO_FX) || Date.now() - lastTrail < 140) return; lastTrail = Date.now(); sparkle(e.clientX, e.clientY, 1);
 }, { passive: true });
 let lookRaf = 0, lookX = 0, lookY = 0;
 function look() {
@@ -833,7 +846,7 @@ function look() {
 /* ---------- celebration, rewards, meter ---------- */
 function confetti(n = 18) {
   const ids = pool().map(p => p[0]);
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < Math.min(n, 10); i++) {
     const c = document.createElement('div'); c.className = 'confetti'; c.innerHTML = art(pick(ids));
     c.style.left = rnd(2, 95) + 'vw'; c.style.setProperty('--rot', rnd(-300, 300) + 'deg'); c.style.animationDuration = rnd(1.4, 2.4) + 's'; c.style.animationDelay = rnd(0, .5) + 's';
     document.body.appendChild(c); setTimeout(() => c.remove(), 3200);
@@ -843,7 +856,7 @@ function confetti(n = 18) {
 function cheer(x = innerWidth / 2, y = innerHeight / 2, n = 8) {
   const ring = document.createElement('i'); ring.className = 'fx-ring'; ring.style.cssText = `left:${x}px;top:${y}px`; document.body.appendChild(ring); setTimeout(() => ring.remove(), 900);
   const cols = ['#FFE29A', '#FF9DB0', '#A9D2FF', '#A6E8D2', '#CDB8FF', '#FFC46B'];
-  const N = document.body.classList.contains('lite') ? 10 : 20;
+  const N = 12;
   for (let i = 0; i < N; i++) {
     const s = document.createElement('i'); s.className = 'fx-star big'; const a = i / N * 6.283 + rnd(-.15, .15), r = rnd(140, 300), sz = rnd(22, 42);
     s.style.cssText = `left:${x - sz / 2}px;top:${y - sz / 2}px;width:${sz}px;height:${sz}px;color:${pick(cols)};--dx:${Math.cos(a) * r}px;--dy:${Math.sin(a) * r}px;--r:${rnd(-260, 260)}deg;animation-delay:${rnd(0, .12)}s`;
@@ -1231,13 +1244,13 @@ const todNow = () => 'day';
 const IRIS = { 't-pink': '#FFA9BE', 't-sky': '#8CC4FF', 't-butter': '#FFD670', 't-lilac': '#B79BFF', 't-mint': '#7FDDBB', 't-peach': '#FFB98A' };
 SCREENS.world = el => {
   const fresh = S.stickers.length >= 2 && unlockedCount(S.stickers.length) > (S.seenUnlock || 1);
-  const flowers = Array.from({ length: 150 }, () => { const x = rnd(10, WW - 10), y = rnd(345, 705), c = pick(['#FFFFFF', '#FFE29A', '#FF9DB0', '#CDB8FF']); return `<circle cx="${x}" cy="${y}" r="${rnd(4, 7)}" fill="${c}" opacity=".9"/><circle cx="${x}" cy="${y}" r="2.2" fill="#FFD84D"/>`; }).join('');
-  const bushes = Array.from({ length: 22 }, (_, i) => bush(90 + i * 150 + rnd(-30, 30), 345 + rnd(0, 6), rnd(.8, 1.2))).join('');
-  const pebbles = Array.from({ length: 36 }, () => `<ellipse cx="${rnd(-200, WW + 200)}" cy="${rnd(400, 700)}" rx="${rnd(3, 6)}" ry="${rnd(2, 4)}" fill="#D9C79B" opacity=".8"/>`).join('');
-  const tufts1 = Array.from({ length: 44 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join(''), tufts2 = Array.from({ length: 44 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join('');
-  const trees = Array.from({ length: 22 }, (_, i) => tree(60 + i * 165 + rnd(-30, 30), 300, rnd(.8, 1.1))).join('');
+  const flowers = Array.from({ length: 36 }, () => { const x = rnd(10, WW - 10), y = rnd(345, 705), c = pick(['#FFFFFF', '#FFE29A', '#FF9DB0', '#CDB8FF']); return `<circle cx="${x}" cy="${y}" r="${rnd(4, 7)}" fill="${c}" opacity=".9"/><circle cx="${x}" cy="${y}" r="2.2" fill="#FFD84D"/>`; }).join('');
+  const bushes = Array.from({ length: 9 }, (_, i) => bush(90 + i * 370 + rnd(-30, 30), 345 + rnd(0, 6), rnd(.8, 1.2))).join('');
+  const pebbles = Array.from({ length: 10 }, () => `<ellipse cx="${rnd(-200, WW + 200)}" cy="${rnd(400, 700)}" rx="${rnd(3, 6)}" ry="${rnd(2, 4)}" fill="#D9C79B" opacity=".8"/>`).join('');
+  const tufts1 = Array.from({ length: 16 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join(''), tufts2 = Array.from({ length: 16 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join('');
+  const trees = Array.from({ length: 11 }, (_, i) => tree(60 + i * 330 + rnd(-30, 30), 300, rnd(.8, 1.1))).join('');
   el.innerHTML = `<div class="town" id="town" data-tod="${todNow()}"><svg width="0" height="0" style="position:absolute"><defs><filter id="puff" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur in="SourceAlpha" stdDeviation="2.6" result="b"/><feSpecularLighting in="b" surfaceScale="5" specularConstant=".8" specularExponent="16" lighting-color="#fff" result="sp"><feDistantLight azimuth="235" elevation="52"/></feSpecularLighting><feComposite in="sp" in2="SourceAlpha" operator="in" result="sp2"/><feComposite in="SourceGraphic" in2="sp2" operator="arithmetic" k1="0" k2="1" k3=".26" k4="0"/></filter></defs></svg>
-  <div class="nightfx" aria-hidden="true">${Array.from({ length: 46 }, () => `<i class="star" style="left:${rnd(0, 100)}%;top:${rnd(0, 42)}%;--s:${rnd(2, 5)}px;animation-delay:${rnd(0, 3)}s"></i>`).join('')}<svg class="moon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="#FFF6D2"/><circle cx="40" cy="44" r="6" fill="#F0E4B0"/><circle cx="58" cy="62" r="8" fill="#F0E4B0"/><circle cx="30" cy="64" r="4" fill="#F0E4B0"/></svg>${Array.from({ length: 14 }, () => `<i class="ffly" style="left:${rnd(4, 96)}%;top:${rnd(48, 88)}%;--x:${rnd(-60, 60)}px;--y:${rnd(-40, 40)}px;animation-duration:${rnd(6, 11)}s;animation-delay:${rnd(0, 5)}s"></i>`).join('')}</div>
+  <div class="nightfx" aria-hidden="true">${Array.from({ length: 0 }, () => `<i class="star" style="left:${rnd(0, 100)}%;top:${rnd(0, 42)}%;--s:${rnd(2, 5)}px;animation-delay:${rnd(0, 3)}s"></i>`).join('')}<svg class="moon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="#FFF6D2"/><circle cx="40" cy="44" r="6" fill="#F0E4B0"/><circle cx="58" cy="62" r="8" fill="#F0E4B0"/><circle cx="30" cy="64" r="4" fill="#F0E4B0"/></svg>${Array.from({ length: 0 }, () => `<i class="ffly" style="left:${rnd(4, 96)}%;top:${rnd(48, 88)}%;--x:${rnd(-60, 60)}px;--y:${rnd(-40, 40)}px;animation-duration:${rnd(6, 11)}s;animation-delay:${rnd(0, 5)}s"></i>`).join('')}</div>
   <div class="sunglow" aria-hidden="true"></div>
   <svg class="birds" viewBox="0 0 200 40" aria-hidden="true"><g stroke="#5b5478" stroke-width="2.4" fill="none" stroke-linecap="round"><path class="bw" d="M10 20 q6 -8 12 0 q6 -8 12 0"/><path class="bw" style="animation-delay:.2s" d="M60 10 q5 -7 10 0 q5 -7 10 0"/><path class="bw" style="animation-delay:.1s" d="M110 24 q5 -7 10 0 q5 -7 10 0"/></g></svg><svg class="tmid" id="tmid" viewBox="0 0 3000 300" preserveAspectRatio="none"><path d="M0 300 V200 Q200 120 420 200 T900 190 T1400 205 T1900 165 T2400 200 T3000 175 V300Z" fill="#8FD08A" opacity=".75"/></svg><svg class="tfar" id="tfar" viewBox="0 0 3000 300" preserveAspectRatio="none"><path d="M0 300 V190 Q250 100 500 190 T1000 170 T1500 200 T2000 150 T2500 190 T3000 160 V300Z" fill="#B8E6B0" opacity=".8"/><path d="M0 300 V230 Q300 160 600 230 T1200 220 T1800 235 T2400 210 T3000 230 V300Z" fill="#9AD98F"/></svg>
   <div class="tstage" id="ts">
@@ -1255,8 +1268,8 @@ SCREENS.world = el => {
     ${S.pet ? `<div class="tpet" id="tpet"><div class="flip">${petSVG(S.pet)}</div></div>` : ''}
     <div class="avf" id="tav"><div class="flip">${avatarFull(S.avatar, accent())}</div></div>
   </div>
-  <div class="petals" aria-hidden="true">${Array.from({ length: 12 }, () => `<i style="left:${rnd(0, 100)}%;--d:${rnd(9, 18)}s;--dl:${rnd(-16, 0)}s;--w:${rnd(9, 16)}px;--c:${pick(['#FFC1D6', '#fff', '#FFE2A8', '#E3D4FF'])};--sw:${rnd(30, 120)}px"></i>`).join('')}</div>
-  <svg class="fgrass" id="fgr" viewBox="0 0 3600 90" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6BC66F"/><stop offset="1" stop-color="#3F9B54"/></linearGradient></defs>${Array.from({ length: 190 }, (_, i) => { const x = i * 19 + rnd(-6, 6), h = rnd(36, 78), l = rnd(-14, 14); return `<path d="M${x} 90 Q${x + l * .3} ${90 - h * .55} ${x + l} ${90 - h} Q${x + l * .6 + 5} ${90 - h * .5} ${x + 9} 90Z" fill="url(#bl)"/>`; }).join('')}</svg>
+  <div class="petals" aria-hidden="true">${Array.from({ length: 0 }, () => `<i style="left:${rnd(0, 100)}%;--d:${rnd(9, 18)}s;--dl:${rnd(-16, 0)}s;--w:${rnd(9, 16)}px;--c:${pick(['#FFC1D6', '#fff', '#FFE2A8', '#E3D4FF'])};--sw:${rnd(30, 120)}px"></i>`).join('')}</div>
+  <svg class="fgrass" id="fgr" viewBox="0 0 3600 90" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6BC66F"/><stop offset="1" stop-color="#3F9B54"/></linearGradient></defs>${Array.from({ length: 60 }, (_, i) => { const x = i * 60 + rnd(-10, 10), h = rnd(36, 78), l = rnd(-14, 14); return `<path d="M${x} 90 Q${x + l * .3} ${90 - h * .55} ${x + l} ${90 - h} Q${x + l * .6 + 5} ${90 - h * .5} ${x + 9} 90Z" fill="url(#bl)"/>`; }).join('')}</svg>
   <div class="thud"><div class="greet"><span class="mini">${avatarSVG(S.avatar, accent())}</span><div>Hi ${esc(S.name)}!<small>${S.stickers.length} sticker${S.stickers.length === 1 ? '' : 's'}</small></div></div><span class="spacer"></span>
     <button class="shelf t-sky viewtoggle" id="vt" aria-label="All games">${VIEW_ICON.grid}</button>
     <button class="shelf t-peach" data-go="stickers" data-say="My stickers!" aria-label="Stickers">${tileIcon('stickers')}<b>${S.stickers.length}</b></button>
@@ -1273,11 +1286,12 @@ SCREENS.world = el => {
   let target = null, pending = null, face = 1, stepT = 0, busy = false, alive = true, raf = 0, last = performance.now();
   const clampP = (x, y) => ({ x: Math.max(60, Math.min(WW - 60, x)), y: Math.max(380, Math.min(695, y)) });
   const persp = y => .82 + .28 * ((y - 380) / 315);
+  const setT = (e, v) => { if (e._t !== v) { e._t = v; e.style.transform = v; } };
   const place = () => {
     const s = persp(pos.y);
-    av.style.transform = `translate(${pos.x - 56}px,${pos.y - 224 * s}px) scale(${s})`; av.style.transformOrigin = '50% 100%'; av.style.zIndex = Math.round(pos.y) + 1;
-    if (tp) { const s2 = persp(pp.y); tp.style.transform = `translate(${pp.x - 37}px,${pp.y - 74 * s2}px) scale(${s2})`; tp.style.transformOrigin = '50% 100%'; tp.style.zIndex = Math.round(pp.y) + 1; }
-    $('.flip', av).style.transform = `scaleX(${face})`;
+    setT(av, `translate(${(pos.x - 56).toFixed(1)}px,${(pos.y - 224 * s).toFixed(1)}px) scale(${s.toFixed(3)})`); av.style.transformOrigin = '50% 100%'; av.style.zIndex = Math.round(pos.y) + 1;
+    if (tp) { const s2 = persp(pp.y); setT(tp, `translate(${(pp.x - 37).toFixed(1)}px,${(pp.y - 74 * s2).toFixed(1)}px) scale(${s2.toFixed(3)})`); tp.style.transformOrigin = '50% 100%'; tp.style.zIndex = Math.round(pp.y) + 1; }
+    setT(av._fl || (av._fl = $('.flip', av)), `scaleX(${face})`);
   };
   const camGoal = () => Math.max(vw - WW * sc, Math.min(0, vw / 2 - pos.x * sc));
   const setPos = p => { pos.x = TOWN.x = p.x; pos.y = TOWN.y = p.y; };
@@ -1301,10 +1315,10 @@ SCREENS.world = el => {
       else { pos.x += dx / d * step; pos.y += dy / d * step; moving = true; if (Math.abs(dx) > 4) face = dx < 0 ? -1 : 1; stepT += dt; if (stepT > .3) { stepT = 0; sfx.step(); } }
       setPos(pos);
     }
-    av.classList.toggle('walk', moving);
-    if (tp) { const gx = pos.x - 80 * face, gy = pos.y + 6, dx = gx - pp.x, dy = gy - pp.y, d = Math.hypot(dx, dy), k = Math.min(1, 4.2 * dt); const pm = d > 14; if (pm) { pp.x += dx * k; pp.y += dy * k; } tp.classList.toggle('walk', pm); const f = dx < -2 ? -1 : dx > 2 ? 1 : (tp._f || 1); tp._f = f; $('.flip', tp).style.transform = `scaleX(${f})`; }
-    const g = camGoal(); camX = snapCam ? g : camX + (g - camX) * Math.min(1, 5 * dt); snapCam = false;
-    ts.style.transform = `translate(${camX}px,0) scale(${sc})`; far.style.transform = `translateX(${camX * .3}px)`; mid.style.transform = `translateX(${camX * .55}px)`; fg.style.transform = `translateX(${camX * 1.15}px)`;
+    if (av._w !== moving) { av._w = moving; av.classList.toggle('walk', moving); }
+    if (tp) { const gx = pos.x - 80 * face, gy = pos.y + 6, dx = gx - pp.x, dy = gy - pp.y, d = Math.hypot(dx, dy), k = Math.min(1, 4.2 * dt); const pm = d > 14; if (pm) { pp.x += dx * k; pp.y += dy * k; } tp.classList.toggle('walk', pm); const f = dx < -2 ? -1 : dx > 2 ? 1 : (tp._f || 1); tp._f = f; setT(tp._fl || (tp._fl = $('.flip', tp)), `scaleX(${f})`); }
+    const g = camGoal(); camX = snapCam ? g : camX + (g - camX) * Math.min(1, 5 * dt); if (Math.abs(g - camX) < .4) camX = g; snapCam = false;
+    setT(ts, `translate(${camX.toFixed(1)}px,0) scale(${sc})`); setT(far, `translateX(${(camX * .3).toFixed(1)}px)`); setT(mid, `translateX(${(camX * .55).toFixed(1)}px)`); setT(fg, `translateX(${(camX * 1.15).toFixed(1)}px)`);
     place(); raf = requestAnimationFrame(tick);
   }
   raf = requestAnimationFrame(tick); onLeave(() => { alive = false; cancelAnimationFrame(raf); });
@@ -1414,16 +1428,42 @@ SCREENS.games = el => {
 };
 SCREENS.home = (el, arg) => { const v = S.view === 'grid' ? 'grid' : 'world'; document.body.dataset.view = v; (v === 'grid' ? SCREENS.games : SCREENS.world)(el, arg); };
 /* ===== welcome screen ===== */
+/* ---- logo: sticker-style rainbow crest + bouncy colorful lettering. Static SVG (zero animation cost). ---- */
+function logoSVG(nm) {
+  const cols = ['#FF5F8F', '#FFA928', '#3FA9F5', '#4CCB76', '#A67BFF'], INK = '#3D3358', CX = 350, CY = 340;
+  const arcs = ['#FF5F6F', '#FFA24D', '#FFDB4D', '#5CD68A', '#5CB8FF', '#A98BFF'];
+  const arc = (r, col, w, extra = '') => `<path d="M${CX - r} ${CY} A${r} ${r} 0 0 1 ${CX + r} ${CY}" fill="none" stroke="${col}" stroke-width="${w}" ${extra}/>`;
+  const cloud = (cx, cy, k) => { const c = [[-44, 4, 30], [-10, -18, 38], [30, -8, 34], [60, 8, 24], [4, 14, 30]].map(([x, y, r]) => [cx + x * k, cy + y * k, r * k]); const grp = (grow, fill) => c.map(([x, y, r]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + grow).toFixed(1)}" fill="${fill}"/>`).join(''); return grp(7, INK) + grp(0, '#fff') + `<ellipse cx="${cx + 8 * k}" cy="${cy + 26 * k}" rx="${70 * k}" ry="${10 * k}" fill="#fff"/>`; };
+  const spark = (x, y, r, f = '#fff') => `<path d="M${x} ${y - r} Q${x + r * .18} ${y - r * .18} ${x + r} ${y} Q${x + r * .18} ${y + r * .18} ${x} ${y + r} Q${x - r * .18} ${y + r * .18} ${x - r} ${y} Q${x - r * .18} ${y - r * .18} ${x} ${y - r}Z" fill="${f}"/>`;
+  const star = (cx, cy, r) => { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, q = i % 2 ? r * .5 : r; d += (i ? 'L' : 'M') + (cx + Math.cos(a) * q).toFixed(1) + ' ' + (cy + Math.sin(a) * q).toFixed(1); } return d + 'Z'; };
+  const heart = (x, y, k, f) => `<path transform="translate(${x} ${y}) scale(${k})" d="M0 14 C-22 -2 -14 -20 0 -8 C14 -20 22 -2 0 14Z" fill="${f}" stroke="${INK}" stroke-width="${3 / k}" stroke-linejoin="round"/>`;
+  const offs = [0, -7, 5, -4, 7, -2, 4, -6, 3, -3, 6];
+  const line = (txt, y, fs, o0) => {
+    const ch = [...txt].map(c => c === "'" ? '&#8217;' : c);
+    const tsp = ch.map((c, i) => { const d = offs[(i + o0) % offs.length] - (i ? offs[(i - 1 + o0) % offs.length] : 0); return `<tspan dy="${d}">${c}</tspan>`; }).join('');
+    const col = ch.map((c, i) => { const d = offs[(i + o0) % offs.length] - (i ? offs[(i - 1 + o0) % offs.length] : 0); return `<tspan dy="${d}" fill="${cols[(i + o0) % 5]}">${c}</tspan>`; }).join('');
+    const T = (extra, inner) => `<text x="${CX}" y="${y}" text-anchor="middle" font-size="${fs}" ${extra}>${inner}</text>`;
+    return T(`transform="translate(0 9)" fill="${INK}" stroke="${INK}" stroke-width="26" stroke-linejoin="round" opacity=".22"`, tsp) + T(`fill="${INK}" stroke="${INK}" stroke-width="24" stroke-linejoin="round"`, tsp) + T('fill="#fff" stroke="#fff" stroke-width="12" stroke-linejoin="round"', tsp) + T('', col);
+  };
+  const L1 = `${nm}'s`, f1 = Math.max(46, Math.min(84, Math.floor(400 / (L1.length * .6))));
+  return `<svg class="wlogo" viewBox="0 -78 700 470" role="img" aria-label="${nm}'s Wonderland">
+    <g>${spark(58, 60, 20)}${spark(648, 40, 26)}${spark(150, -12, 14, '#FFF6B0')}${spark(556, -20, 16, '#FFF6B0')}${spark(24, 196, 14)}${spark(676, 210, 16)}${spark(96, 150, 9, '#FFF6B0')}${spark(608, 130, 10)}</g>
+    ${arc(298, INK, 106)}${arcs.map((c, i) => arc(258 + i * 16, c, 16.5)).join('')}
+    ${arc(250, '#fff', 3, 'opacity=".55"')}
+    ${cloud(96, 338, 1.05)}${cloud(604, 338, 1.05)}
+    <path d="${star(CX, -26, 50)}" fill="${INK}" stroke="${INK}" stroke-width="16" stroke-linejoin="round"/><path d="${star(CX, -26, 50)}" fill="#FFD84D" stroke="#FFD84D" stroke-width="6" stroke-linejoin="round"/><path d="M${CX - 22} -34 Q${CX - 18} -50 ${CX - 4} -56" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".85"/>
+    ${heart(216, 12, 1, '#FF7A9A')}${heart(484, 12, 1, '#FF7A9A')}
+    ${line(L1, 178, f1, 0)}
+    ${line('Wonderland', 292, 84, 2)}
+  </svg>`;
+}
 SCREENS.welcome = (el) => {
   const nm = (S.name || 'Liyana').trim() || 'Liyana';
-  const title = `${nm}'s`.split('').map((c, i) => `<span style="--i:${i};color:${['#FF7A9A', '#FFB020', '#5CB8FF', '#7DD87F', '#B79BFF'][i % 5]}">${c === ' ' ? '&nbsp;' : c}</span>`).join('');
-  const title2 = 'Wonderland'.split('').map((c, i) => `<span style="--i:${i + 8};color:${['#B79BFF', '#FF7A9A', '#FFB020', '#5CB8FF', '#7DD87F'][i % 5]}">${c}</span>`).join('');
-  const balloons = ['#FF7A9A', '#FFD84D', '#5CB8FF', '#B79BFF', '#7DD87F', '#FF9F6B'].map((c, i) => `<i class="wbal" style="left:${8 + i * 16 + rnd(-3, 3)}%;--c:${c};--d:${11 + i * 1.7}s;--dl:${-i * 2.3}s"><b></b></i>`).join('');
   const clouds = [[8, 12, 1], [58, 6, .8], [30, 24, .6]].map(([x, y, s], i) => `<svg class="wcl" viewBox="0 0 120 50" style="left:${x}%;top:${y}%;transform:scale(${s});--d:${60 + i * 25}s;--dl:${-i * 20}s"><path d="M20 44 Q4 44 6 30 Q8 18 24 20 Q28 4 48 8 Q62 -2 78 10 Q98 6 102 24 Q118 26 114 40 Q112 46 98 44Z" fill="#fff" opacity=".92"/></svg>`).join('');
-  const sparks = Array.from({ length: 16 }, () => `<i class="wsp" style="left:${rnd(4, 96)}%;top:${rnd(6, 60)}%;--s:${rnd(6, 14)}px;animation-delay:${rnd(0, 3)}s"></i>`).join('');
+  const sparks = Array.from({ length: 8 }, () => `<i class="wsp" style="left:${rnd(4, 96)}%;top:${rnd(6, 60)}%;--s:${rnd(6, 14)}px;animation-delay:${rnd(0, 3)}s"></i>`).join('');
   el.innerHTML = `<div class="welcome">
-    <div class="wsun"></div>${clouds}${balloons}${sparks}
-    <div class="wtitle" aria-label="${nm}'s Wonderland"><div class="w1">${title}</div><div class="w2">${title2}</div></div>
+    <div class="wsun"></div>${clouds}${sparks}
+    <div class="wtitle">${logoSVG(nm)}</div>
     <svg class="whill" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"><path d="M0 120 Q200 40 420 110 T820 90 T1200 100 V300 H0Z" fill="#9ADFA0"/><path d="M0 170 Q260 110 540 170 T1200 150 V300 H0Z" fill="#7DD87F"/><path d="M0 230 Q300 190 620 230 T1200 220 V300 H0Z" fill="#5CC46A"/></svg>
     <div class="wchars"><div class="wav" id="wav">${avatarFull(S.avatar, accent(), S.wear.av)}</div><div class="wpet">${S.pet ? petSVG(S.pet) : ''}</div></div>
     <button class="wplay" id="wplay" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="#fff"/></svg></button>
@@ -2218,8 +2258,7 @@ SCREENS.music = el => {
 };
 
 /* ===== boot ===== */
-setInterval(() => { const t = $$('.tiles .tile'); if (!t.length || document.hidden) return; const x = pick(t); x.classList.add('wig2', 'shine'); setTimeout(() => x.classList.remove('wig2', 'shine'), 1300); }, 3600);
-(function blinker() { const go = () => { if (!document.hidden) { document.body.classList.add('blinking'); setTimeout(() => document.body.classList.remove('blinking'), 260); } setTimeout(go, 2600 + Math.random() * 2600); }; setTimeout(go, 1800); })();
+setInterval(() => { const t = $$('.tiles .tile'); if (!t.length || document.hidden) return; const x = pick(t); x.classList.add('wig2'); setTimeout(() => x.classList.remove('wig2'), 850); }, 3600);
 /* adaptive lite mode: measure real frame rate; if the device struggles, drop decorative animations (remembered for next launch) */
 (function perfGuard() {
   try { if (localStorage.getItem('lw1lite') === '1') document.body.classList.add('lite'); } catch (e) { }
