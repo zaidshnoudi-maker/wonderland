@@ -613,6 +613,98 @@ body.lite .avf:not(.walk) svg,body.lite .wpet svg{animation:none}
 .wav{height:min(38vh,360px)}
 .wpet{width:min(19vh,160px)}
 </style>
+<style>
+/* ===== pet care ===== */
+body[data-screen=petcare] #petbox{display:none!important}
+.carestars{display:flex;gap:6px;background:rgba(255,255,255,.75);border-radius:26px;padding:8px 14px}
+.carestars .cs svg{width:34px;height:34px;display:block;fill:#DCD3EF}.carestars .cs.on svg{fill:#FFC93D}
+.care{position:relative;overflow:hidden}
+.cstage{position:absolute;inset:0}
+.cmodes{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:clamp(14px,3vw,30px);z-index:8}
+.cmode{position:relative;width:clamp(84px,12vw,108px);aspect-ratio:1;border:5px solid #fff;background:#F6F1FF;border-radius:30px;padding:10px;box-shadow:0 6px 0 var(--shadow);cursor:pointer}
+.cmode .art,.cmode>svg{width:100%;height:100%;display:block}
+.cmode[aria-pressed=true]{border-color:var(--ink);background:#fff}
+.cmode .cchk{position:absolute;right:-8px;top:-8px;width:32px;height:32px;border-radius:50%;background:#5CD68A;border:4px solid #fff;display:none;place-items:center;padding:4px}
+.cmode.done .cchk{display:grid}.cmode .cchk svg{width:100%;height:100%;stroke:#fff}
+.cpet{position:absolute;left:50%;translate:-50% 0;width:min(50vh,400px)}
+.cpet svg{width:100%;height:auto;display:block;overflow:visible}
+.cpet.munch svg{animation:munch .5s ease}
+@keyframes munch{0%{transform:scale(1)}25%{transform:scale(1.1,.9)}55%{transform:scale(.94,1.08)}100%{transform:scale(1)}}
+.cpet.asleep .bl{transform:scaleY(.08)}
+/* eat */
+.m-eat .cpet{top:5%}
+.foods{position:absolute;left:0;right:0;bottom:calc(clamp(84px,12vw,108px) + 46px);display:flex;justify-content:center;gap:clamp(16px,4vw,44px)}
+.food{width:clamp(84px,14vw,128px);aspect-ratio:1;border:0;background:rgba(255,255,255,.7);border-radius:50%;padding:12px;touch-action:none;cursor:grab;position:relative;box-shadow:0 6px 0 var(--shadow);transition:transform .3s cubic-bezier(.3,1.7,.5,1)}
+.food .art{width:100%;height:100%;display:block;pointer-events:none}
+.food.drag{z-index:20;box-shadow:0 14px 0 rgba(61,51,88,.12)}
+.food.gone{pointer-events:none}
+/* bath */
+.m-bath .tubwrap{position:absolute;left:50%;translate:-50% 0;bottom:calc(clamp(84px,12vw,108px) + 40px);width:min(74vh,560px);touch-action:none}
+.m-bath .cpet{position:relative;left:auto;translate:none;width:62%;margin:0 auto -22%;z-index:1}
+.tubsvg{position:relative;z-index:3;width:100%;height:auto;display:block;pointer-events:none}
+.foams{position:absolute;inset:0;z-index:4;pointer-events:none}
+.foam{position:absolute;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff 0,#fff 45%,#E3F2FF 100%);border:3px solid #fff;box-shadow:0 2px 0 rgba(120,170,220,.5);animation:foamin .25s cubic-bezier(.3,1.7,.5,1) backwards}
+@keyframes foamin{from{transform:scale(0)}}
+.foams.rinse .foam{transition:transform .9s ease-in,opacity .8s;transform:translateY(220px);opacity:0}
+.shower{position:absolute;top:24px;right:24px;width:clamp(90px,13vw,124px);aspect-ratio:1;border:5px solid #fff;background:#F6F1FF;border-radius:32px;padding:12px;box-shadow:0 6px 0 var(--shadow);cursor:pointer;z-index:6}
+.shower[hidden]{display:none}.shower svg{width:100%;height:100%;display:block}
+/* sleep */
+.m-sleep .bedroom{position:absolute;left:50%;translate:-50% 0;bottom:calc(clamp(84px,12vw,108px) + 36px);width:min(96vh,660px);height:min(62vh,420px)}
+.bedroom .wnd{position:absolute;right:2%;top:-8%;width:24%;height:auto}
+.bedroom .bedsvg{position:absolute;left:0;right:0;bottom:0;width:100%;height:auto}
+.bedroom .cpet{top:auto;bottom:17%;width:42%;left:52%;z-index:2}
+.blanket{position:absolute;bottom:8%;left:50%;width:56%;aspect-ratio:1;border:0;background:none;padding:0;z-index:3;cursor:pointer;translate:-8% 0;transform:translate(46%,6%) scale(.55) rotate(6deg);transition:transform .7s cubic-bezier(.3,1.3,.5,1)}
+.blanket svg{width:100%;height:100%;display:block}
+.blanket.tucked{transform:translate(0,4%) scale(1) rotate(0);pointer-events:none}
+.lampbtn{position:absolute;top:22px;right:22px;width:clamp(84px,12vw,108px);aspect-ratio:1;border:5px solid #fff;background:#FFF6D2;border-radius:30px;padding:12px;box-shadow:0 6px 0 var(--shadow);cursor:pointer;z-index:10}
+.lampbtn .art{width:100%;height:100%;display:block}
+.dim{position:absolute;inset:0;background:rgba(14,18,66,.66);opacity:0;pointer-events:none;transition:opacity .8s;z-index:5}
+.night .dim{opacity:1}
+.zzz{position:absolute;left:58%;top:16%;z-index:9;display:flex;gap:6px;align-items:flex-end;color:#fff;font:700 44px var(--display);text-shadow:0 3px 0 rgba(61,51,88,.5);cursor:pointer}
+.zzz[hidden]{display:none}.zzz b:nth-child(2){font-size:56px}.zzz b:nth-child(3){font-size:70px}
+</style>
+<style>
+/* pet care layout tuning */
+.m-eat .cpet{top:3%;width:min(42vh,330px)}
+.m-bath .tubwrap{width:min(64vh,480px)}
+.m-bath .cpet{width:58%;margin:0 auto -26%}
+.foam{border-width:2px}
+.m-sleep .bedroom .cpet{left:41%;bottom:19%;width:36%}
+.blanket{left:14%;translate:none;width:52%;bottom:9%;transform:translate(78%,6%) scale(.5) rotate(8deg)}
+.blanket.tucked{transform:translate(0,0) scale(1) rotate(0)}
+</style>
+<style>
+.blanket{left:22%;width:38%;bottom:6%;transform:translate(120%,4%) scale(.5) rotate(8deg)}
+.blanket.tucked{transform:translate(0,0) scale(1) rotate(0)}
+</style>
+<style>
+/* ===== bedtime screen, wind-down badge, grown-up progress ===== */
+#winddown{position:fixed;top:10px;left:50%;translate:-50% 0;z-index:40;width:56px;height:56px;padding:8px;border-radius:50%;background:rgba(255,255,255,.85);box-shadow:0 4px 0 var(--shadow);pointer-events:none}
+#winddown .art{width:100%;height:100%;display:block}
+#timesup{position:fixed;inset:0;z-index:200;background:linear-gradient(180deg,#1B1F5E 0%,#3A3F94 55%,#5B4B9E 100%);display:grid;place-items:center;overflow:hidden}
+#timesup .tu-stars i{position:absolute;background:#fff;border-radius:50%;opacity:.85}
+#timesup .tu-moon{position:absolute;top:8%;right:12%;width:min(22vh,190px)}
+#timesup .tu-moon .art,#timesup .tu-pet svg{width:100%;height:auto;display:block}
+#timesup .tu-pet{width:min(44vh,340px);margin-top:14vh}
+#timesup .tu-pet.asleep .bl{transform:scaleY(.08)}
+#timesup .tu-zzz{position:absolute;left:56%;top:32%;display:flex;gap:6px;align-items:flex-end;color:#fff;font:700 44px var(--display);text-shadow:0 3px 0 rgba(0,0,0,.3)}
+#timesup .tu-zzz b:nth-child(2){font-size:56px}#timesup .tu-zzz b:nth-child(3){font-size:70px}
+.tu-gate{position:absolute;left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;font-size:20px;cursor:pointer}
+.tu-gate svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.tu-gate circle{fill:none;stroke-width:4}.tu-gate .ring{stroke:#fff;stroke-dasharray:132;stroke-dashoffset:132}
+.tu-gate.hold .ring{stroke-dashoffset:0;transition:stroke-dashoffset 2.4s linear}
+.tu-sheet{position:absolute;inset:auto 0 0 0;margin:auto;bottom:12%;width:min(420px,88vw);background:#fff;border-radius:30px;padding:22px;display:flex;flex-direction:column;gap:12px;font-family:var(--body);font-weight:700;color:var(--ink);text-align:center}
+.tu-sheet[hidden]{display:none}.tu-sheet h2{margin:0 0 4px;font-family:var(--display)}
+.progress{width:100%;display:flex;flex-direction:column;gap:8px}
+.pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pstats>div{background:#F6F1FF;border-radius:18px;padding:10px 6px;text-align:center;display:flex;flex-direction:column}
+.pstats b{font:700 26px var(--display)}.pstats small,.ptitle{font-size:13px;opacity:.75}
+.pbars{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;height:96px;align-items:end}
+.pbar{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:2px}
+.pbar span{display:block;width:100%;max-width:34px;background:#B79BFF;border-radius:8px 8px 4px 4px}.pbar.today span{background:#FF7A9A}
+.pbar em{font-style:normal;font-size:12px}.pbar small{font-size:12px;opacity:.7}
+.ptop{display:flex;flex-wrap:wrap;gap:6px}.pchip{background:#FFF1D6;border-radius:14px;padding:6px 10px;font-size:14px}.pchip b{margin-left:4px}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -737,7 +829,7 @@ const CHORDS = [[130.81, 164.81, 196], [110, 130.81, 164.81], [87.31, 110, 130.8
 const CH_TONES = [[523.25, 659.25, 783.99, 1046.5], [440, 523.25, 659.25, 880], [523.25, 698.46, 880, 1046.5], [587.33, 783.99, 987.77, 1174.66]];
 let musicIv = 0, mNext = 0, mStepI = 0, mChord = 0, mLast = 1, mDuckT = 0;
 const MOODS = { home: { bpm: 84, p: .7 }, play: { bpm: 76, p: .6 }, calm: { bpm: 62, p: .34 } };
-const musicMood = () => (screen === 'home' || screen === 'welcome') ? MOODS.home : (screen === 'draw' || screen === 'studio' || screen === 'gallery' || screen === 'wardrobe' || screen === 'stickers') ? MOODS.calm : MOODS.play;
+const musicMood = () => (screen === 'home' || screen === 'welcome') ? MOODS.home : (screen === 'petcare' || screen === 'draw' || screen === 'studio' || screen === 'gallery' || screen === 'wardrobe' || screen === 'stickers') ? MOODS.calm : MOODS.play;
 const musicLevel = () => ({ soft: 1, med: 1.8 }[S.mlevel] || 1);
 function musicVoice(f, dur, vol, kind, when) { note(f, { dur, vol: vol * musicLevel(), kind, when, out: mbus, force: true }); }
 function pad(f, t, dur, vol) { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f; const v = vol * musicLevel(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + dur * .32); g.gain.linearRampToValueAtTime(0, t + dur); o.connect(g); g.connect(mbus); o.start(t); o.stop(t + dur + .05); }
@@ -831,7 +923,7 @@ function petSVG(kind, acc = S.wear.pet) {
 const petBox = $('#petbox');
 function renderPet() { if (!S.pet) { petBox.hidden = true; return; } petBox.hidden = false; petBox.innerHTML = petSVG(S.pet); petBox.setAttribute('aria-label', petName()); }
 function petHappy() { petBox.classList.remove('happy'); void petBox.offsetWidth; petBox.classList.add('happy'); setTimeout(() => petBox.classList.remove('happy'), 900); }
-petBox.addEventListener('click', () => { sfx.boop(); petHappy(); say(`I'm ${petName()}! ${petInfo().say}`); });
+petBox.addEventListener('click', () => { if (screen === 'home' && S.view === 'grid') { sfx.boop(); go('petcare'); return; } sfx.boop(); petHappy(); say(`I'm ${petName()}! ${petInfo().say}`); });
 
 /* ---------- world backdrop (follows her favorite) ---------- */
 function renderWorld() {
@@ -924,7 +1016,7 @@ const onLeave = fn => cleanups.push(fn);
 let screen = 'home', screenArg = null;
 function go(name, arg) {
   cleanups.forEach(f => { try { f(); } catch (e) { } }); cleanups = []; navId++;
-  screen = name; screenArg = arg; document.body.dataset.screen = name; startMusic();
+  screen = name; screenArg = arg; try { trackPlay(name, arg); } catch (e) { } document.body.dataset.screen = name; startMusic();
   const fn = SCREENS[name]; const el = document.createElement('div'); el.className = 'screen';
   app.replaceChildren(el); fn(el, arg); renderPet();
 }
@@ -1028,6 +1120,7 @@ const sc = (id, s, x, y) => `<g transform="translate(${x} ${y}) scale(${s})">${A
 
 /* ---------- illustrated tile icons ---------- */
 const TILE = {
+  petcare: `<path d="M50 90 C12 62 6 30 28 20 C42 13 50 24 50 32 C50 24 58 13 72 20 C94 30 88 62 50 90Z" fill="#FF7A9A" stroke="#3D3358" stroke-width="5" stroke-linejoin="round"/><ellipse cx="50" cy="58" rx="12" ry="10" fill="#fff"/><circle cx="33" cy="46" r="5" fill="#fff"/><circle cx="44" cy="37" r="5" fill="#fff"/><circle cx="56" cy="37" r="5" fill="#fff"/><circle cx="67" cy="46" r="5" fill="#fff"/>`,
   studio: `<path d="M50 12 C22 12 8 32 10 52 C12 72 30 90 52 88 C62 87 62 78 56 74 C50 70 54 62 62 62 H74 C88 62 94 52 92 42 C88 22 70 12 50 12Z" fill="#FFF0D6" stroke="#F0B56E" stroke-width="3.5"/><circle cx="30" cy="36" r="7" fill="#FF6B81"/><circle cx="48" cy="26" r="7" fill="#FFD84D"/><circle cx="68" cy="30" r="7" fill="#5CD68A"/><circle cx="26" cy="58" r="7" fill="#4DA3FF"/><rect x="62" y="44" width="34" height="9" rx="4.5" fill="#9B6B4A" transform="rotate(-38 79 48)"/>`,
   bubbles: `<circle cx="38" cy="58" r="28" fill="#DFF3FF" stroke="#fff" stroke-width="4"/><circle cx="72" cy="34" r="19" fill="#DFF3FF" stroke="#fff" stroke-width="4"/><circle cx="76" cy="76" r="12" fill="#DFF3FF" stroke="#fff" stroke-width="3.5"/><path d="M24 50 Q28 40 38 38" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 28 Q69 23 75 22" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>`,
   animals: sc('cow', .74, -4, 14) + sc('duck', .52, 52, 42) + sc('pig', .4, 58, 4),
@@ -1180,6 +1273,7 @@ function openParent() {
   o.innerHTML = `<div class="sheet"><h2>Grown-ups</h2>
   <div class="opt-row"><label>Child's name</label><input id="pn" class="field" maxlength="16" aria-label="Child's name"></div>
   <div class="opt-row"><label>Pet's name</label><input id="ppn" class="field" maxlength="16" aria-label="Pet's name"></div>
+  ${parentExtras()}
   <div class="opt-row"><label>Age (sets how hard the games are)</label>${[2, 3, 4].map(a => `<button class="chip" data-age="${a}" aria-pressed="${S.age === a}">${a} years</button>`).join('')}</div>
   <div class="opt-row"><button class="chip" id="pa">Edit avatar</button><button class="chip" id="pf">Change favorites</button><button class="chip" id="pp">Change pet</button></div>
   <div class="opt-row"><label>Home screen</label><button class="chip" data-hv="world" aria-pressed="${S.view !== 'grid'}">Playground</button><button class="chip" data-hv="grid" aria-pressed="${S.view === 'grid'}">All games</button></div>
@@ -1210,6 +1304,7 @@ function openParent() {
   const sample = () => say(`Hi ${S.name}! Let's play together!`, true);
   $$('[data-vs]', o).forEach(b => b.onclick = () => { S.vstyle = b.dataset.vs; $$('[data-vs]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); sample(); });
   $$('[data-vn]', o).forEach(b => b.onclick = () => { S.voiceName = b.dataset.vn; pickVoice(); $$('[data-vn]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); sample(); });
+  bindParentExtras(o);
   let armE = false, armR = false;
   $('#pe', o).onclick = e => { if (!armE) { armE = true; e.target.textContent = 'Tap again to erase'; return; } gallery = []; saveGallery(); e.target.textContent = 'Erased'; };
   $('#pr', o).onclick = e => { if (!armR) { armR = true; e.target.textContent = 'Tap again to reset all'; return; } S = defaults(); save(); gallery = []; saveGallery(); o.remove(); renderPet(); renderWorld(); go('setup1'); };
@@ -1306,6 +1401,7 @@ SCREENS.world = el => {
   <svg class="fgrass" id="fgr" viewBox="0 0 3600 90" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6BC66F"/><stop offset="1" stop-color="#3F9B54"/></linearGradient></defs>${Array.from({ length: 60 }, (_, i) => { const x = i * 60 + rnd(-10, 10), h = rnd(36, 78), l = rnd(-14, 14); return `<path d="M${x} 90 Q${x + l * .3} ${90 - h * .55} ${x + l} ${90 - h} Q${x + l * .6 + 5} ${90 - h * .5} ${x + 9} 90Z" fill="url(#bl)"/>`; }).join('')}</svg>
   <div class="thud"><div class="greet"><span class="mini">${avatarSVG(S.avatar, accent())}</span><div>Hi ${esc(S.name)}!<small>${S.stickers.length} sticker${S.stickers.length === 1 ? '' : 's'}</small></div></div><span class="spacer"></span>
     <button class="shelf t-sky viewtoggle" id="vt" aria-label="All games">${VIEW_ICON.grid}</button>
+    ${S.pet ? `<button class="shelf t-peach" data-go="petcare" data-say="Let's take care of ${esc(petName())}!" aria-label="Pet care">${tileIcon('petcare')}</button>` : ''}
     <button class="shelf t-peach" data-go="stickers" data-say="My stickers!" aria-label="Stickers">${tileIcon('stickers')}<b>${S.stickers.length}</b></button>
     <button class="shelf t-lilac ${fresh ? 'fresh' : ''}" data-go="wardrobe" data-say="Let's get dressed up!" aria-label="Dress up">${tileIcon('wardrobe')}</button></div></div>`;
   $$('.shelf', el).forEach(t => t.addEventListener('click', () => say(t.dataset.say)));
@@ -1453,6 +1549,7 @@ SCREENS.games = el => {
   const fresh = S.stickers.length >= 2 && unlockedCount(S.stickers.length) > (S.seenUnlock || 1);
   el.innerHTML = `<div class="hello"><button class="me" aria-label="Me">${avatarSVG(S.avatar, accent())}</button><div class="hi"><h1>Hi ${esc(S.name)}!</h1><p class="lead">${S.stickers.length} sticker${S.stickers.length === 1 ? '' : 's'}</p></div><span class="spacer"></span>
     <button class="shelf t-sky viewtoggle" id="vt" aria-label="Playground">${VIEW_ICON.park}</button>
+    ${S.pet ? `<button class="shelf t-peach" data-go="petcare" data-say="Let's take care of ${esc(petName())}!" aria-label="Pet care">${tileIcon('petcare')}</button>` : ''}
     <button class="shelf t-peach" data-go="stickers" data-say="My stickers!" aria-label="Stickers">${tileIcon('stickers')}<b>${S.stickers.length}</b></button>
     <button class="shelf t-lilac ${fresh ? 'fresh' : ''}" data-go="wardrobe" data-say="Let's get dressed up!" aria-label="Dress up">${tileIcon('wardrobe')}</button></div>
   <div class="tiles g10">${HOME_GAMES.map(([id, l, tone, say], i) => tileHTML(id, l, tone, say, i, id)).join('')}</div>`;
@@ -1555,13 +1652,21 @@ const MODES = [
 ];
 
 let studioTab = 'color';
+/* thumbnails are drawn only when they scroll into view (keeps the picture picker fast) */
+function lazyThumbs(root) {
+  const fill = sv => { if (!sv.firstChild) sv.innerHTML = PICS[+sv.dataset.p](); };
+  const all = $$('svg[data-p]', root); if (!('IntersectionObserver' in window)) { all.forEach(fill); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { fill(e.target); io.unobserve(e.target); } }), { rootMargin: '400px' });
+  all.forEach(sv => io.observe(sv)); onLeave(() => io.disconnect());
+}
 SCREENS.studio = (el, tab) => {
   if (tab === 'color' || tab === 'free') studioTab = tab; tab = studioTab;
   const done = new Set(S.coloredPics || []);
   el.innerHTML = `<div class="topbar">${homeBtn}<h1>Art studio</h1><span class="spacer"></span><div class="tabs"><button class="tab" data-t="color" aria-pressed="${tab === 'color'}">Coloring</button><button class="tab" data-t="free" aria-pressed="${tab === 'free'}">Free draw</button><button class="tab" data-go="gallery" data-say="My pictures">My pictures${gallery.length ? ` (${gallery.length})` : ''}</button></div></div>` + (tab === 'color'
-    ? `<div class="play cbook"><div class="cscroll">${PIC_CATS.map(([name, ids]) => `<h2 class="chead">${name}</h2><div class="cgrid">${ids.map(i => `<button class="cth" data-go="draw" data-arg="color:${i}" data-say="Let's color!" aria-label="Color picture ${i + 1}"><svg viewBox="0 0 400 300">${PICS[i]()}</svg>${done.has(i) ? '<b class="cstar">★</b>' : ''}</button>`).join('')}</div>`).join('')}</div></div>`
+    ? `<div class="play cbook"><div class="cscroll">${PIC_CATS.map(([name, ids]) => `<h2 class="chead">${name}</h2><div class="cgrid">${ids.map(i => `<button class="cth" data-go="draw" data-arg="color:${i}" data-say="Let's color!" aria-label="Color picture ${i + 1}"><svg viewBox="0 0 400 300" data-p="${i}"></svg>${done.has(i) ? '<b class="cstar">★</b>' : ''}</button>`).join('')}</div>`).join('')}</div></div>`
     : `<div class="tiles">${MODES.filter(m => m[0] !== 'color').map(([id, l, tone, say], i) => tileHTML(id, l, tone, say, i, 'draw', id)).join('')}</div>`);
   $$('.tab[data-t]', el).forEach(b => b.addEventListener('click', () => { sfx.pop(); go('studio', b.dataset.t); }));
+  lazyThumbs(el);
   $$('.tile,.cth,.tab[data-go]', el).forEach(t => t.addEventListener('click', () => say(t.dataset.say)));
 };
 
@@ -1617,8 +1722,8 @@ SCREENS.draw = (el, mode) => {
     show();
     $('#reset', el).onclick = () => { sfx.whoosh(); show(); };
     $('#pick', el).onclick = () => {
-      const o = document.createElement('div'); o.className = 'overlay'; o.innerHTML = `<div class="sheet pics"><h2>Pick a picture</h2><div class="pgrid">${PIC_ORDER.map(i => `<button class="pth" data-i="${i}" aria-label="Picture ${i + 1}"><svg viewBox="0 0 400 300">${PICS[i]()}</svg></button>`).join('')}</div><button class="btn go big" id="pcx">Close</button></div>`;
-      document.body.appendChild(o); sfx.pop(); $('#pcx', o).onclick = () => o.remove(); o.addEventListener('click', e => { const b = e.target.closest('.pth'); if (b) { picIdx = +b.dataset.i; sfx.boop(); o.remove(); show(); } else if (e.target === o) o.remove(); });
+      const o = document.createElement('div'); o.className = 'overlay'; o.innerHTML = `<div class="sheet pics"><h2>Pick a picture</h2><div class="pgrid">${PIC_ORDER.map(i => `<button class="pth" data-i="${i}" aria-label="Picture ${i + 1}"><svg viewBox="0 0 400 300" data-p="${i}"></svg></button>`).join('')}</div><button class="btn go big" id="pcx">Close</button></div>`;
+      document.body.appendChild(o); lazyThumbs(o); sfx.pop(); $('#pcx', o).onclick = () => o.remove(); o.addEventListener('click', e => { const b = e.target.closest('.pth'); if (b) { picIdx = +b.dataset.i; sfx.boop(); o.remove(); show(); } else if (e.target === o) o.remove(); });
     };
     $('#done', el).onclick = () => {
       if (!$$('.r', pic).some(r => r.dataset.c)) { sfx.oops(); say('Color something first!'); return; }
@@ -2099,6 +2204,268 @@ const fi = k => FRIEND_BASE + FRIEND_IDS.indexOf(k);
 }
 const PIC_ORDER = PIC_CATS.flatMap(c => c[1]);
 const picStep = (cur, d) => { const i = PIC_ORDER.indexOf(cur); return PIC_ORDER[((i < 0 ? 0 : i) + d + PIC_ORDER.length) % PIC_ORDER.length]; };
+/* ===== "More friends": 24 more original chunky coloring pictures (same rules as 04e: one friendly subject, big shapes, thick lines, faces) ===== */
+const kBand = (cx, cy, ro, ri) => kR(`M${cx - ro} ${cy} A${ro} ${ro} 0 0 1 ${cx + ro} ${cy} L${cx + ri} ${cy} A${ri} ${ri} 0 0 0 ${cx - ri} ${cy}Z`);
+const kDot = (x, y, rx, ry = rx) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#3D3358" ${kNo}/>`;
+
+const FRIENDS2 = {
+  cow: () => kEl(88, 92, 42, 20, 'rotate(-20 88 92)') + kEl(312, 92, 42, 20, 'rotate(20 312 92)') + kR('M140 56 Q126 22 150 24 Q160 40 166 60Z') + kR('M260 56 Q274 22 250 24 Q240 40 234 60Z') +
+    kEl(200, 128, 98, 84) + kEl(148, 96, 34, 28, 'rotate(-20 148 96)') + kEl(264, 124, 26, 22) + kEl(200, 186, 66, 44) + kDot(180, 186, 7, 11) + kDot(220, 186, 7, 11) +
+    kEye(158, 118, 11) + kEye(242, 118, 11) + kSmile(200, 214, 22, 6) + kCheek(120, 160) + kCheek(280, 160),
+
+  sheep: () => kR('M150 236 H174 V288 H150Z') + kR('M226 236 H250 V288 H226Z') + kScallop(200, 150, 92, 10, 34) + kEl(134, 148, 30, 14, 'rotate(28 134 148)') + kEl(266, 148, 30, 14, 'rotate(-28 266 148)') +
+    kEl(200, 176, 50, 58) + kScallop(200, 108, 34, 6, 12) + kEye(182, 166, 9) + kEye(218, 166, 9) + kNose(200, 188, 8) + kSmile(200, 206, 12, 4) + kCheek(164, 196, 10) + kCheek(236, 196, 10),
+
+  horse: () => kR('M132 64 Q104 22 126 8 Q156 26 166 62Z') + kR('M268 64 Q296 22 274 8 Q244 26 234 62Z') + kR('M132 66 Q98 130 110 228 Q132 186 142 96Z') + kR('M268 66 Q302 130 290 228 Q268 186 258 96Z') +
+    kR('M140 70 Q134 210 166 256 Q200 274 234 256 Q266 210 260 70 Q200 40 140 70Z') + kR('M166 44 Q200 20 234 44 Q226 94 200 116 Q174 94 166 44Z') + kEl(200, 228, 50, 34) +
+    kDot(184, 232, 6, 9) + kDot(216, 232, 6, 9) + kEye(166, 138, 11) + kEye(234, 138, 11) + kSmile(200, 258, 14, 4) + kCheek(150, 190, 12) + kCheek(250, 190, 12),
+
+  chicken: () => kEl(200, 200, 100, 80) + kEl(112, 196, 30, 50, 'rotate(18 112 196)') + kEl(288, 196, 30, 50, 'rotate(-18 288 196)') + kCi(176, 58, 18) + kCi(200, 46, 20) + kCi(224, 58, 18) + kCi(200, 112, 60) +
+    kR('M184 118 L216 118 L200 146Z') + kR('M194 146 Q200 178 206 146Z') + kEye(174, 100, 11) + kEye(226, 100, 11) + kCheek(150, 122, 12) + kCheek(250, 122, 12) +
+    kSt('M168 278 V292 M158 292 H178 M232 278 V292 M222 292 H242', 6) + kEl(200, 224, 40, 30),
+
+  penguin: () => kEl(200, 158, 92, 118) + kEl(104, 184, 24, 60, 'rotate(14 104 184)') + kEl(296, 184, 24, 60, 'rotate(-14 296 184)') + kEl(200, 216, 58, 62) +
+    kR('M200 92 Q148 58 136 106 Q138 154 200 162 Q262 154 264 106 Q252 58 200 92Z') + kR('M184 118 L216 118 L200 140Z') + kEye(170, 102, 10) + kEye(230, 102, 10) + kCheek(146, 130, 11) + kCheek(254, 130, 11) +
+    kEl(166, 282, 30, 11) + kEl(234, 282, 30, 11),
+
+  panda: () => kCi(124, 62, 32) + kCi(276, 62, 32) + kEl(200, 252, 74, 44) + kEl(130, 240, 26, 36, 'rotate(24 130 240)') + kEl(270, 240, 26, 36, 'rotate(-24 270 240)') + kEl(200, 130, 96, 84) +
+    kEl(158, 126, 26, 34, 'rotate(24 158 126)') + kEl(242, 126, 26, 34, 'rotate(-24 242 126)') + kEye(160, 124, 10) + kEye(240, 124, 10) + kEl(200, 168, 36, 28) + kDot(200, 154, 15, 11) +
+    kSt('M200 164 V174 M200 174 Q188 186 176 178 M200 174 Q212 186 224 178') + kCheek(126, 160) + kCheek(274, 160) + kR('M334 80 H352 V292 H334Z') + kSt('M334 140 H352 M334 200 H352 M334 260 H352', 4) + kR('M352 104 Q384 92 392 62 Q360 72 352 104Z'),
+
+  monkey: () => kCi(104, 134, 30) + kCi(296, 134, 30) + kCi(104, 134, 15) + kCi(296, 134, 15) + kEl(200, 252, 72, 44) + kEl(200, 128, 90, 80) +
+    kR('M200 124 Q140 86 126 132 Q130 204 200 218 Q270 204 274 132 Q260 86 200 124Z') + kEye(170, 130, 11) + kEye(230, 130, 11) + kDot(188, 160, 4) + kDot(212, 160, 4) + kSt('M160 178 Q200 220 240 178') + kCheek(146, 172) + kCheek(254, 172) +
+    kR('M306 100 Q378 104 382 192 Q376 258 318 266 Q350 216 340 172 Q332 124 306 100Z') + kSt('M318 108 L326 88', 6),
+
+  giraffe: () => kR('M160 296 L172 150 L240 150 L258 296Z') + kCi(206, 206, 16) + kCi(220, 262, 13) + kCi(192, 170, 10) +
+    '<g transform="translate(205 118) scale(1.3) translate(-205 -118)">' + kEl(150, 96, 24, 12, 'rotate(-30 150 96)') + kEl(262, 88, 24, 12, 'rotate(30 262 88)') +
+    kEl(184, 54, 8, 20, 'rotate(-14 184 54)') + kCi(178, 36, 10) + kEl(228, 50, 8, 20, 'rotate(14 228 50)') + kCi(234, 32, 10) + kEl(205, 104, 54, 44, 'rotate(-8 205 104)') + kEl(216, 128, 32, 22) +
+    kEye(188, 94, 8) + kEye(226, 90, 8) + kDot(208, 130, 3) + kDot(224, 128, 3) + kSmile(216, 140, 10, 3) + kCheek(178, 116, 8) + '</g>',
+
+  tiger: () => kCi(128, 72, 30) + kCi(272, 72, 30) + kCi(128, 72, 14) + kCi(272, 72, 14) + kEl(200, 262, 72, 34) + kEl(200, 140, 98, 84) + kSt('M200 62 V92 M172 68 L178 96 M228 68 L222 96 M100 112 Q122 118 132 136 M98 148 Q120 150 134 160 M300 112 Q278 118 268 136 M302 148 Q280 150 266 160', 7) +
+    kEl(200, 180, 44, 32) + kEye(160, 132, 11) + kEye(240, 132, 11) + kNose(200, 168, 10) + kSt('M200 180 V188 M200 188 Q188 200 176 190 M200 188 Q212 200 224 190') + kCheek(132, 170, 12) + kCheek(268, 170, 12) + kEl(166, 290, 30, 10) + kEl(234, 290, 30, 10),
+
+  hippo: () => kEl(104, 80, 24, 20) + kEl(296, 80, 24, 20) + kEl(200, 138, 112, 82) + kCi(150, 84, 26) + kCi(250, 84, 26) + kEye(150, 86, 11) + kEye(250, 86, 11) + kEl(200, 200, 92, 56) +
+    kDot(166, 176, 8, 10) + kDot(234, 176, 8, 10) + kSt('M138 222 Q200 262 262 222') + kR('M178 236 H198 V254 H178Z') + kR('M202 236 H222 V254 H202Z') + kCheek(100, 170, 14) + kCheek(300, 170, 14),
+
+  crab: () => kSt('M116 200 L66 226 M124 220 L80 262 M138 234 L112 278 M284 200 L334 226 M276 220 L320 262 M262 234 L288 278', 8) +
+    kR('M100 150 Q40 130 44 84 Q70 70 84 96 Q92 74 114 84 Q124 120 112 150Z') + kR('M300 150 Q360 130 356 84 Q330 70 316 96 Q308 74 286 84 Q276 120 288 150Z') +
+    kSt('M170 132 V100 M230 132 V100', 7) + kEl(200, 184, 98, 62) + kCi(170, 88, 18) + kCi(230, 88, 18) + kEye(170, 90, 8) + kEye(230, 90, 8) + kEye(172, 168, 9) + kEye(228, 168, 9) + kSmile(200, 192, 24, 8) + kCheek(140, 190, 13) + kCheek(260, 190, 13),
+
+  dolphin: () => kR('M0 272 Q50 250 100 272 T200 272 T300 272 T400 272 V300 H0Z') + kR('M306 146 Q340 140 362 100 Q372 128 396 124 Q382 158 352 172 Q380 186 390 214 Q346 216 322 184Z') + kR('M176 94 Q204 32 248 48 Q226 70 230 102Z') +
+    kR('M14 180 Q30 170 42 150 Q60 96 156 88 Q252 80 316 140 Q324 194 250 228 Q140 262 62 214 Q40 200 14 180Z') + kEl(170, 212, 34, 13, 'rotate(28 170 212)') +
+    kEye(104, 140, 10) + kSt('M36 190 Q64 206 96 196') + kCheek(122, 170, 13) + kCi(346, 40, 12) + kCi(372, 70, 8),
+
+  snail: () => kR('M60 244 Q60 204 112 198 L300 216 Q352 216 352 252 Q342 276 290 276 H92 Q60 272 60 244Z') + kEl(322, 190, 34, 46, 'rotate(-10 322 190)') + kSt('M312 156 L298 104 M336 158 L348 106', 7) + kCi(298, 96, 13) + kCi(348, 98, 13) +
+    kCi(160, 150, 82) + kSt('M160 150 Q160 126 184 128 Q206 136 202 160 Q194 198 152 192 Q108 182 114 136 Q124 86 178 90 Q236 98 240 156', 6) +
+    kEye(298, 98, 6) + kEye(348, 100, 6) + kSmile(326, 208, 12, 4) + kCheek(340, 200, 9),
+
+  strawberry: () => kR('M200 270 Q88 214 94 132 Q98 88 160 94 Q180 98 200 92 Q220 98 240 94 Q302 88 306 132 Q312 214 200 270Z') + kR('M200 98 Q160 94 136 62 Q182 62 200 98Z') + kR('M200 98 Q240 94 264 62 Q218 62 200 98Z') + kR('M200 98 Q184 62 200 34 Q216 62 200 98Z') +
+    kSt('M134 130 v7 M166 120 v7 M234 120 v7 M266 130 v7 M126 172 v7 M274 172 v7 M154 214 v7 M246 214 v7 M200 232 v7 M200 118 v7', 6) + kEye(166, 160, 12) + kEye(234, 160, 12) + kCheek(136, 190, 15) + kCheek(264, 190, 15) + kSt('M172 192 Q200 224 228 192'),
+
+  banana: () => kR('M100 40 Q42 128 82 214 Q142 298 262 272 Q352 250 374 160 Q350 148 330 168 Q290 224 220 228 Q150 226 124 152 Q110 100 134 54Z') + kR('M100 40 L88 12 L122 6 L134 54Z') +
+    kSt('M108 60 Q76 138 104 208', 4) + kEye(190, 250, 10) + kEye(246, 244, 10) + kSmile(218, 262, 14, 5) + kCheek(160, 258, 10) + kCheek(278, 250, 10),
+
+  pizza: () => kR('M56 66 Q200 6 344 66 L200 292Z') + kR('M48 64 Q200 -8 352 64 Q356 90 342 96 Q200 42 58 96 Q44 90 48 64Z') + kCi(138, 112, 20) + kCi(262, 116, 20) + kCi(200, 226, 18) + kCi(178, 82, 7) + kCi(226, 84, 7) +
+    kEye(172, 150, 10) + kEye(228, 150, 10) + kSmile(200, 172, 16, 6) + kCheek(150, 168, 11) + kCheek(250, 168, 11),
+
+  cookie: () => kScallop(200, 150, 104, 16, 9) + kEl(148, 92, 15, 11, 'rotate(20 148 92)') + kEl(250, 86, 14, 10, 'rotate(-24 250 86)') + kEl(104, 168, 13, 10) + kEl(296, 164, 14, 10, 'rotate(30 296 164)') + kEl(156, 228, 14, 10, 'rotate(-10 156 228)') + kEl(248, 232, 15, 11, 'rotate(18 248 232)') +
+    kEye(166, 140, 11) + kEye(234, 140, 11) + kSmile(200, 172, 22, 8) + kCheek(138, 168, 14) + kCheek(262, 168, 14),
+
+  bus: () => kR('M30 92 Q30 68 54 68 H328 Q368 68 372 112 V232 H30Z') + kR('M48 88 H108 V142 H48Z') + kR('M120 88 H180 V142 H120Z') + kR('M192 88 H252 V142 H192Z') + kR('M300 88 H344 Q358 88 360 104 V142 H300Z') + kR('M30 178 H372 V198 H30Z') +
+    kCi(112, 240, 36) + kCi(300, 240, 36) + kCi(112, 240, 14) + kCi(300, 240, 14) + kCi(362, 214, 9) + kEye(78, 116, 11) + kEye(150, 116, 11) + kSmile(114, 160, 22, 6) + kCheek(58, 160, 10) + kCheek(172, 160, 10),
+
+  train: () => kR('M290 132 L284 84 H328 L322 132Z') + kCi(306, 62, 16) + kCi(336, 40, 12) + kR('M150 132 H330 Q348 132 348 152 V232 H150Z') + kR('M50 96 H152 V234 H50Z') + kR('M38 82 H164 V98 H38Z') + kR('M64 112 H136 V164 H64Z') +
+    kCi(96, 252, 30) + kCi(196, 260, 22) + kCi(284, 260, 22) + kCi(96, 252, 12) + kCi(346, 190, 11) + kEye(250, 176, 12) + kSmile(270, 210, 18, 6) + kCheek(224, 202, 10),
+
+  plane: () => kR('M190 110 L166 58 L216 58 L242 110Z') + kR('M60 132 L34 68 L92 108Z') + kR('M40 152 Q40 112 120 108 H290 Q362 106 372 152 Q362 198 290 196 H120 Q40 192 40 152Z') +
+    kR('M172 152 L128 254 L204 254 L254 152Z') + kCi(150, 140, 13) + kCi(190, 140, 13) + kCi(230, 140, 13) + kEye(322, 138, 11) + kSmile(324, 170, 16, 6) + kCheek(298, 164, 10) + kEl(374, 152, 9, 34),
+
+  balloons: () => kSt('M130 158 Q160 232 200 296 M270 154 Q240 232 200 296 M200 232 V296', 5) + kEl(128, 96, 54, 66) + kEl(272, 92, 54, 66) + kR('M120 160 L128 172 L136 160Z') + kR('M264 156 L272 168 L280 156Z') +
+    kEl(200, 172, 54, 64) + kR('M192 234 L200 246 L208 234Z') + kEye(110, 88, 8) + kEye(146, 88, 8) + kSmile(128, 110, 12, 5) + kEye(254, 84, 8) + kEye(290, 84, 8) + kSmile(272, 106, 12, 5) + kEye(182, 164, 8) + kEye(218, 164, 8) + kSmile(200, 186, 12, 5),
+
+  rainbow: () => [[170, 146], [146, 122], [122, 98], [98, 74], [74, 50]].map(([o, i]) => kBand(200, 240, o, i)).join('') +
+    kR('M20 276 Q-2 276 2 252 Q6 228 34 232 Q40 202 76 206 Q102 194 120 224 Q150 222 150 252 Q150 276 124 276Z') + kMir(kR('M20 276 Q-2 276 2 252 Q6 228 34 232 Q40 202 76 206 Q102 194 120 224 Q150 222 150 252 Q150 276 124 276Z')) +
+    kEye(60, 246, 8) + kEye(96, 246, 8) + kSmile(78, 258, 10, 4) + kCheek(44, 260, 8) + kCheek(112, 260, 8) + kEye(304, 246, 8) + kEye(340, 246, 8) + kSmile(322, 258, 10, 4) + kCheek(288, 260, 8) + kCheek(356, 260, 8),
+
+  moon: () => kCi(200, 150, 112) + kCi(140, 98, 20) + kCi(262, 92, 15) + kCi(270, 210, 24) + kStar(64, 60, 26) + kStar(342, 46, 22) + kStar(346, 254, 20) + kStar(52, 244, 16) +
+    kSt('M144 140 q14 -14 28 0 M228 140 q14 -14 28 0', 6) + kSt('M172 184 Q200 214 228 184') + kCheek(128, 172, 15) + kCheek(272, 172, 15),
+
+  house: () => kR('M276 90 V40 H312 V112Z') + kR('M80 132 H320 V272 H80Z') + kR('M54 140 L200 30 L346 140Z') + kR('M170 190 H230 V272 H170Z') + kR('M100 160 H154 V212 H100Z') + kR('M246 160 H300 V212 H246Z') +
+    kEye(127, 187, 10) + kEye(273, 187, 10) + kDot(218, 234, 5) + kSt('M100 186 H154 M127 160 V212', 3) + kSt('M246 186 H300 M273 160 V212', 3) + kCheek(112, 232, 10) + kCheek(288, 232, 10),
+};
+
+{
+  const ids = Object.keys(FRIENDS2), base = PICS.length;
+  ids.forEach(k => PICS.push(FRIENDS2[k]));
+  const f2 = k => base + ids.indexOf(k);
+  const at = Math.max(0, PIC_CATS.findIndex(c => c[0] === 'Big scenes'));
+  PIC_CATS.splice(at < 0 ? PIC_CATS.length : at, 0,
+    ['Farm friends', ['cow', 'sheep', 'horse', 'chicken'].map(f2)],
+    ['Wild & cuddly', ['penguin', 'panda', 'monkey', 'giraffe', 'tiger', 'hippo'].map(f2)],
+    ['Sea & garden', ['crab', 'dolphin', 'snail'].map(f2)],
+    ['More yummy', ['strawberry', 'banana', 'pizza', 'cookie'].map(f2)],
+    ['More go go go', ['bus', 'train', 'plane'].map(f2)],
+    ['Happy things', ['balloons', 'rainbow', 'moon', 'house'].map(f2)]);
+  PIC_ORDER.length = 0; PIC_ORDER.push(...PIC_CATS.flatMap(c => c[1]));
+  window.FRIENDS2_IDS = ids; window.f2 = f2;
+}
+/* ===== pet care: eat, bath, sleep (open-ended pretend play; one star per activity per day) ===== */
+const FOODS = ['apple', 'banana', 'strawberry', 'icecream', 'fish'];
+const CARE_MODES = [['eat', 'Eat'], ['bath', 'Bath'], ['sleep', 'Sleep']];
+const careToday = () => { const d = new Date().toLocaleDateString('en-CA'); if (!S.care || S.care.d !== d) S.care = { d, eat: 0, bath: 0, sleep: 0 }; return S.care; };
+const CARE_ICON = {
+  eat: () => art('apple'),
+  bath: () => `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><circle cx="36" cy="58" r="22" fill="#CFEAFF" stroke="#3D3358" stroke-width="4"/><circle cx="66" cy="44" r="16" fill="#E6F4FF" stroke="#3D3358" stroke-width="4"/><circle cx="68" cy="72" r="10" fill="#fff" stroke="#3D3358" stroke-width="4"/><circle cx="28" cy="50" r="5" fill="#fff"/></svg>`,
+  sleep: () => art('moon'),
+};
+const SHOWER_SVG = `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M20 30 Q50 6 80 30Z" fill="#B79BFF" stroke="#3D3358" stroke-width="5" stroke-linejoin="round"/><path d="M30 44 V56 M50 44 V62 M70 44 V56 M40 68 V80 M60 72 V86" stroke="#5CB8FF" stroke-width="7" stroke-linecap="round"/></svg>`;
+const BED_SVG = `<svg class="bedsvg" viewBox="0 0 400 190" aria-hidden="true"><rect x="16" y="14" width="64" height="160" rx="22" fill="#8F73E6" stroke="#3D3358" stroke-width="5"/><rect x="16" y="70" width="368" height="92" rx="26" fill="#B79BFF" stroke="#3D3358" stroke-width="5"/><rect x="102" y="52" width="112" height="46" rx="23" fill="#fff" stroke="#3D3358" stroke-width="5"/><rect x="16" y="146" width="368" height="30" rx="12" fill="#8F73E6" stroke="#3D3358" stroke-width="5"/><rect x="36" y="172" width="26" height="16" rx="6" fill="#3D3358"/><rect x="338" y="172" width="26" height="16" rx="6" fill="#3D3358"/></svg>`;
+const TUB_SVG = `<svg class="tubsvg" viewBox="0 0 340 130" aria-hidden="true"><path d="M14 26 H326 Q326 118 170 120 Q14 118 14 26Z" fill="#8ED0FF" stroke="#3D3358" stroke-width="5" stroke-linejoin="round"/><rect x="4" y="12" width="332" height="24" rx="12" fill="#fff" stroke="#3D3358" stroke-width="5"/><path d="M60 62 q20 -14 40 0 M150 78 q20 -14 40 0 M240 60 q20 -14 40 0" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/><rect x="40" y="116" width="34" height="14" rx="6" fill="#3D3358"/><rect x="266" y="116" width="34" height="14" rx="6" fill="#3D3358"/></svg>`;
+const WINDOW_SVG = `<svg class="wnd" viewBox="0 0 100 100" aria-hidden="true"><rect x="6" y="6" width="88" height="88" rx="18" fill="#23286B" stroke="#fff" stroke-width="6"/><path d="M62 30 a20 20 0 1 0 8 30 a16 16 0 1 1 -8 -30z" fill="#FFE29A"/><path d="M26 30 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z M34 68 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2z" fill="#fff"/></svg>`;
+
+SCREENS.petcare = el => {
+  const kind = S.pet || 'puppy'; let mode = 'eat';
+  el.innerHTML = `<div class="topbar">${homeBtn}<h1>${esc(petName())}'s day</h1><span class="spacer"></span><div class="carestars" id="cst"></div></div>
+  <div class="play care"><div class="cstage" id="cstage"></div><div class="cmodes">${CARE_MODES.map(([k, l]) => `<button class="cmode" data-m="${k}" aria-label="${l}">${CARE_ICON[k]()}<i class="cchk">${tickIcon}</i></button>`).join('')}</div></div>`;
+  const stage = $('#cstage', el), pet = () => `<div class="cpet" id="cpet">${petSVG(kind)}</div>`;
+  const stars = () => { const c = careToday(); $('#cst', el).innerHTML = CARE_MODES.map(([k]) => `<span class="cs ${c[k] ? 'on' : ''}">${STARSVG}</span>`).join(''); $$('.cmode', el).forEach(b => { b.classList.toggle('done', !!careToday()[b.dataset.m]); b.setAttribute('aria-pressed', b.dataset.m === mode); }); };
+  const done = k => { const c = careToday(), first = !c[k]; c[k]++; save(); stars(); if (first && c.eat && c.bath && c.sleep) later(() => reward('Best pet parent today!'), 1800); };
+  const munch = cp => { cp.classList.remove('munch'); void cp.offsetWidth; cp.classList.add('munch'); };
+
+  /* ---- eat: drag (or tap) food to the pet ---- */
+  function eat() {
+    stage.className = 'cstage m-eat'; let eaten = 0;
+    stage.innerHTML = pet() + `<div class="foods" id="foods"></div>`; const foods = $('#foods', stage), cp = $('#cpet', stage);
+    const fill = () => { eaten = 0; foods.innerHTML = shuffle(FOODS).slice(0, 3).map(f => `<button class="food" data-f="${f}" aria-label="${f}">${art(f)}</button>`).join(''); }; fill();
+    later(() => say(`${petName()} is hungry!`), 250);
+    foods.addEventListener('pointerdown', e => {
+      const b = e.target.closest('.food'); if (!b || b.classList.contains('gone')) return; try { b.setPointerCapture(e.pointerId); } catch (_) { }
+      const sx = e.clientX, sy = e.clientY; let moved = false, cx = 0, cy = 0; b.classList.add('drag'); b.style.transition = 'none'; sfx.boop();
+      const move = ev => { cx = ev.clientX - sx; cy = ev.clientY - sy; if (Math.hypot(cx, cy) > 8) moved = true; b.style.transform = `translate(${cx}px,${cy}px) scale(1.15)`; };
+      const up = () => {
+        b.removeEventListener('pointermove', move); b.removeEventListener('pointerup', up); b.removeEventListener('pointercancel', up); b.classList.remove('drag');
+        const pr = cp.getBoundingClientRect(), br = b.getBoundingClientRect(), mx = br.left + br.width / 2, my = br.top + br.height / 2;
+        if (!moved || (mx > pr.left && mx < pr.right && my > pr.top && my < pr.bottom)) feed(b, cx, cy);
+        else { b.style.transition = 'transform .4s cubic-bezier(.3,1.5,.5,1)'; b.style.transform = ''; sfx.oops(); }
+      };
+      b.addEventListener('pointermove', move); b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+    });
+    function feed(b, cx, cy) {
+      b.classList.add('gone'); const pr = cp.getBoundingClientRect(), br = b.getBoundingClientRect();
+      const dx = cx + (pr.left + pr.width / 2 - (br.left + br.width / 2)), dy = cy + (pr.top + pr.height * .45 - (br.top + br.height / 2));
+      b.style.transition = 'transform .32s ease-in, opacity .32s'; b.style.transform = `translate(${dx}px,${dy}px) scale(.25)`; b.style.opacity = '0'; sfx.whoosh();
+      later(() => {
+        munch(cp); sfx.pop(); sfx.star(); sparkle(pr.left + pr.width / 2, pr.top + pr.height * .3, 6, ['#FF8FAE', '#FF5F8F', '#FFC1D2']); eaten++;
+        if (eaten >= 3) { done('eat'); later(() => { cheer(); say(`Yum yum! ${petName()} is full!`); }, 250); later(fill, 2600); }
+      }, 320);
+    }
+  }
+
+  /* ---- bath: rub to make bubbles, then rinse with the shower ---- */
+  function bath() {
+    stage.className = 'cstage m-bath'; let n = 0, rubbing = false, rinsed = false, last = { x: -99, y: -99 };
+    stage.innerHTML = `<div class="tubwrap" id="tw">${pet()}${TUB_SVG}<div class="foams" id="foams"></div></div><button class="shower" id="shower" aria-label="Shower" hidden>${SHOWER_SVG}</button>`;
+    const tw = $('#tw', stage), foams = $('#foams', stage), sh = $('#shower', stage), cp = $('#cpet', stage);
+    later(() => say('Rub rub rub! Make bubbles!'), 250);
+    const spawn = e => {
+      if (rinsed || n >= 24) return; const r = tw.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; if (Math.hypot(x - last.x, y - last.y) < 36) return; last = { x, y }; n++;
+      const s = rnd(30, 56); foams.insertAdjacentHTML('beforeend', `<i class="foam" style="left:${(x - s / 2).toFixed(0)}px;top:${(y - s / 2).toFixed(0)}px;width:${s.toFixed(0)}px;height:${s.toFixed(0)}px"></i>`);
+      if (n % 3 === 1) sfx.pop(); if (n === 10) { sh.hidden = false; sfx.star(); say('Now rinse with the shower!'); }
+    };
+    tw.addEventListener('pointerdown', e => { rubbing = true; spawn(e); }); tw.addEventListener('pointermove', e => { if (rubbing) spawn(e); });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => tw.addEventListener(ev, () => { rubbing = false; }));
+    sh.onclick = () => {
+      if (rinsed) return; rinsed = true; sfx.whoosh(); foams.classList.add('rinse'); const r = tw.getBoundingClientRect(); sparkle(r.left + r.width / 2, r.top + r.height * .3, 10, ['#8ED0FF', '#CFEAFF', '#fff']);
+      later(() => { foams.innerHTML = ''; foams.classList.remove('rinse'); sh.hidden = true; munch(cp); sfx.yay(); cheer(undefined, undefined, 4); done('bath'); say(`${petName()} is clean and shiny!`); }, 900);
+      later(() => { rinsed = false; n = 0; }, 2400);
+    };
+  }
+
+  /* ---- sleep: tuck in the blanket, turn off the light ---- */
+  function sleep() {
+    stage.className = 'cstage m-sleep'; let tucked = false, dark = false, asleep = false;
+    stage.innerHTML = `<div class="bedroom" id="bed">${WINDOW_SVG}${BED_SVG}${pet()}<button class="blanket" id="blk" aria-label="Blanket"><svg viewBox="0 0 100 100">${COVERS.blanket}</svg></button></div><button class="lampbtn" id="lamp" aria-label="Light">${art('bulb')}</button><div class="dim" id="dim"></div><div class="zzz" id="zzz" hidden><b>z</b><b>z</b><b>Z</b></div>`;
+    const cp = $('#cpet', stage), blk = $('#blk', stage), lamp = $('#lamp', stage), zzz = $('#zzz', stage);
+    later(() => say(`${petName()} is sleepy. Time for bed!`), 250);
+    const check = () => {
+      if (!tucked || !dark || asleep) return; asleep = true; cp.classList.add('asleep'); zzz.hidden = false; [0, 2, 4, 2, 0].forEach((k, i) => note(PENTA[k] / 2, { dur: 1.4, vol: .07, kind: 'box', when: .3 + i * .7 }));
+      later(() => { sfx.star(); done('sleep'); say(`Shh, ${petName()} is sleeping. Good night!`); }, 2200);
+    };
+    const wake = () => { if (!asleep) return; asleep = false; tucked = false; dark = false; cp.classList.remove('asleep'); zzz.hidden = true; blk.classList.remove('tucked'); stage.classList.remove('night'); sfx.boop(); say('Good morning!'); };
+    blk.onclick = e => { e.stopPropagation(); if (tucked) return; tucked = true; blk.classList.add('tucked'); sfx.whoosh(); say('Snuggle up!'); check(); };
+    lamp.onclick = () => { if (asleep) return; dark = !dark; stage.classList.toggle('night', dark); sfx.pop(); check(); };
+    cp.addEventListener('click', wake); zzz.addEventListener('click', wake);
+  }
+
+  const MODES = { eat, bath, sleep };
+  $$('.cmode', el).forEach(b => b.addEventListener('click', () => { mode = b.dataset.m; sfx.boop(); stars(); MODES[mode](); }));
+  stars(); eat();
+};
+/* ===== play stats, play timer (gentle bedtime wind-down) and the grown-up progress summary ===== */
+const dayKey = (d = new Date()) => d.toLocaleDateString('en-CA');
+const STAT_NAMES = { studio: 'Art studio', coloring: 'Coloring', draw: 'Drawing', bubbles: 'Bubbles', animals: 'Animals', shapes: 'Shapes', spy: 'Find it', count: 'Counting', memory: 'Memory', peek: 'Peek-a-boo', music: 'Music', puzzle: 'Puzzles', petcare: 'Pet care', wardrobe: 'Dress up', stickers: 'Stickers', gallery: 'My pictures' };
+const stats = () => (S.stats = S.stats && S.stats.plays ? S.stats : { plays: {}, days: {} });
+function trackPlay(name, arg) {
+  const k = name === 'draw' && String(arg || '').startsWith('color') ? 'coloring' : name; if (!STAT_NAMES[k]) return;
+  const p = stats().plays; p[k] = (p[k] || 0) + 1;
+}
+
+let lastAct = Date.now(), sessSec = 0, warned = false, blocked = false, hiddenAt = 0, statTick = 0;
+document.addEventListener('pointerdown', () => { lastAct = Date.now(); }, { passive: true, capture: true });
+function resetSession() { sessSec = 0; warned = false; }
+setInterval(() => {
+  if (document.hidden || blocked || Date.now() - lastAct > 90000) return;     /* only count real, active play */
+  const st = stats(), k = dayKey(); st.days[k] = (st.days[k] || 0) + 10; sessSec += 10;
+  if (++statTick % 3 === 0) { const cut = dayKey(new Date(Date.now() - 45 * 864e5)); Object.keys(st.days).forEach(d => { if (d < cut) delete st.days[d]; }); save(); }
+  const lim = (S.limit || 0) * 60; if (!lim) return;
+  if (!warned && sessSec >= lim - 60) { warned = true; windDown(); }
+  if (sessSec >= lim) timesUp();
+}, 10000);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { hiddenAt = Date.now(); return; }
+  if (hiddenAt && Date.now() - hiddenAt > 10 * 60 * 1000 && !blocked) resetSession();
+});
+
+function windDown() {
+  if ($('#winddown')) return; document.body.insertAdjacentHTML('beforeend', `<div id="winddown" aria-hidden="true">${art('moon')}</div>`);
+  [0, 2, 4].forEach((k, i) => note(PENTA[k] / 2, { dur: 1.6, vol: .08, kind: 'box', when: i * .6 }));
+}
+function timesUp() {
+  if (blocked) return; blocked = true; const wd = $('#winddown'); if (wd) wd.remove();
+  const stars = Array.from({ length: 14 }, () => `<i style="left:${rnd(4, 96).toFixed(0)}%;top:${rnd(4, 60).toFixed(0)}%;width:${rnd(5, 11).toFixed(0)}px;height:${rnd(5, 11).toFixed(0)}px"></i>`).join('');
+  document.body.insertAdjacentHTML('beforeend', `<div id="timesup"><div class="tu-stars">${stars}</div><div class="tu-moon">${art('moon')}</div>
+    <div class="tu-pet asleep">${S.pet ? petSVG(S.pet) : art('bear')}</div><div class="tu-zzz"><b>z</b><b>z</b><b>Z</b></div>
+    <button class="tu-gate" aria-label="Grown-ups: hold to continue"><svg viewBox="0 0 46 46"><circle cx="23" cy="23" r="21" stroke="rgba(255,255,255,.3)"/><circle class="ring" cx="23" cy="23" r="21"/></svg><span>⏻</span></button>
+    <div class="tu-sheet" hidden><h2>Bedtime!</h2><button class="chip" data-add="5">5 more minutes</button><button class="chip" data-add="15">15 more minutes</button><button class="chip" data-add="off">Turn timer off</button><button class="chip" data-add="x">Keep sleeping</button></div></div>`);
+  if (ac) ac.suspend(); const o = $('#timesup'), gate = $('.tu-gate', o), sheet = $('.tu-sheet', o); let t;
+  gate.addEventListener('pointerdown', e => { e.preventDefault(); gate.classList.add('hold'); t = setTimeout(() => { gate.classList.remove('hold'); sheet.hidden = false; }, 2450); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => gate.addEventListener(ev, () => { clearTimeout(t); gate.classList.remove('hold'); }));
+  sheet.addEventListener('click', e => {
+    const b = e.target.closest('[data-add]'); if (!b) return; const a = b.dataset.add;
+    if (a === 'x') { sheet.hidden = true; return; }
+    if (a === 'off') { S.limit = 0; save(); resetSession(); } else { sessSec = Math.max(0, (S.limit || 0) * 60 - (+a) * 60); warned = +a <= 1; }
+    o.remove(); blocked = false; if (ac) ac.resume();
+  });
+}
+
+/* ---- grown-up panel: play timer + progress ---- */
+function progressHTML() {
+  const st = stats(), today = dayKey(), mins = k => Math.round((st.days[k] || 0) / 60);
+  const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (6 - i)); return [dayKey(d), d.toLocaleDateString('en-US', { weekday: 'narrow' })]; });
+  const max = Math.max(10, ...days.map(([k]) => mins(k)));
+  const bars = days.map(([k, l]) => `<div class="pbar${k === today ? ' today' : ''}"><em>${mins(k)}</em><span style="height:${Math.max(5, mins(k) / max * 100).toFixed(0)}%"></span><small>${l}</small></div>`).join('');
+  const top = Object.entries(st.plays).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([k, n]) => `<span class="pchip">${STAT_NAMES[k] || k} <b>${n}</b></span>`).join('') || '<span class="pchip">Nothing yet</span>';
+  const c = careToday(), care = (c.eat ? 1 : 0) + (c.bath ? 1 : 0) + (c.sleep ? 1 : 0);
+  return `<div class="progress"><div class="pstats"><div><b>${mins(today)}</b><small>min today</small></div><div><b>${(S.coloredPics || []).length}</b><small>pictures colored</small></div><div><b>${gallery.length}</b><small>pictures saved</small></div><div><b>${care}/3</b><small>pet care today</small></div></div>
+    <small class="ptitle">Minutes played, last 7 days</small><div class="pbars">${bars}</div><small class="ptitle">Most played</small><div class="ptop">${top}</div></div>`;
+}
+function parentExtras() {
+  return `<div class="opt-row"><label>Play timer (a gentle bedtime screen appears when time is up)</label>${[0, 10, 15, 20, 30].map(m => `<button class="chip" data-tm="${m}" aria-pressed="${(S.limit || 0) === m}">${m ? m + ' min' : 'Off'}</button>`).join('')}</div>
+  <div class="opt-row"><label>How she has been playing</label>${progressHTML()}</div>`;
+}
+function bindParentExtras(o) {
+  $$('[data-tm]', o).forEach(b => b.onclick = () => { S.limit = +b.dataset.tm; save(); resetSession(); $$('[data-tm]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); sfx.pop(); });
+}
 /* ===== games ===== */
 const speakerIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
 const later = (fn, ms) => { const id = navId; setTimeout(() => { if (id === navId) fn(); }, ms); };
