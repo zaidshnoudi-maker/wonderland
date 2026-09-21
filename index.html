@@ -705,6 +705,24 @@ body[data-screen=petcare] #petbox{display:none!important}
 .pbar em{font-style:normal;font-size:12px}.pbar small{font-size:12px;opacity:.7}
 .ptop{display:flex;flex-wrap:wrap;gap:6px}.pchip{background:#FFF1D6;border-radius:14px;padding:6px 10px;font-size:14px}.pchip b{margin-left:4px}
 </style>
+<style>
+/* ===== playground v2 ===== */
+.decor::before{display:none}
+.decor{transform-origin:50% 100%}
+.dfr{position:absolute;pointer-events:none;display:none;z-index:700}
+.dfr>svg{width:100%;height:100%;overflow:visible;display:block}
+.prt{position:absolute;border-radius:50%;pointer-events:none;z-index:701}
+.avf.sit .legL,.avf.sit .legR{transform:scaleY(.5)}
+.avf.wee .armL{transform:rotate(150deg)}.avf.wee .armR{transform:rotate(-150deg)}
+.avf.climb .legL{animation:clmL .4s ease-in-out infinite alternate}.avf.climb .legR{animation:clmL .4s ease-in-out infinite alternate-reverse}
+.avf.climb .armL{animation:clmA .4s ease-in-out infinite alternate}.avf.climb .armR{animation:clmA .4s ease-in-out infinite alternate-reverse}
+@keyframes clmL{from{transform:translateY(-12px) scaleY(.75)}to{transform:translateY(0) scaleY(1)}}
+@keyframes clmA{from{transform:rotate(150deg)}to{transform:rotate(172deg)}}
+</style>
+<style>
+/* riders: hide the avatar's ground shadow while seated/climbing so nobody looks like they float */
+.avf.sit svg>ellipse:first-of-type,.avf.climb svg>ellipse:first-of-type{opacity:0}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1363,7 +1381,7 @@ const DECOR = {
 };
 DECOR.sandbox = `<path d="M18 128 L40 100 H160 L182 128 V146 H18Z" fill="#C9975B"/><path d="M28 128 H172 L160 106 H40Z" fill="#F6D89A"/><g class="castle"><path d="M116 106 V82 h9 v-8 h8 v8 h9 v24Z" fill="#F0C36C"/></g><rect x="150" y="96" width="14" height="12" rx="3" fill="#FF7A9A"/>`;
 DECOR.merry = `<ellipse cx="100" cy="140" rx="86" ry="14" fill="#B79BFF"/><ellipse cx="100" cy="134" rx="82" ry="12" fill="#D8C8FF"/><rect x="94" y="30" width="12" height="104" rx="5" fill="#FFD84D"/><path d="M14 44 Q100 -20 186 44Q160 34 143 44Q120 30 100 44Q80 30 57 44Q40 34 14 44Z" fill="#FF7A9A"/><g class="h1"><path d="M52 60 V120" stroke="#fff" stroke-width="4"/><rect x="36" y="112" width="34" height="12" rx="6" fill="#5CB8FF"/></g><g class="h2"><path d="M148 60 V120" stroke="#fff" stroke-width="4"/><rect x="132" y="112" width="34" height="12" rx="6" fill="#FFB020"/></g>`;
-const DECOR_AT = [['swing', 390, 690], ['seesaw', 700, 675], ['slide', 1010, 690], ['sandbox', 1320, 690], ['merry', 1630, 690], ['swing', 1940, 690], ['seesaw', 2250, 675], ['slide', 2560, 690], ['sandbox', 2870, 690], ['merry', 3170, 690]];
+const DECOR_AT = [['swing', 330, 695], ['slide', 560, 695], ['sandbox', 1130, 695], ['seesaw', 1540, 695], ['merry', 1860, 695], ['swing', 2160, 695], ['slide', 2400, 695], ['sandbox', 2960, 695]];
 const tree = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="14" cy="4" rx="58" ry="12" fill="rgba(30,80,40,.28)"/><rect x="-9" y="-44" width="18" height="48" rx="7" fill="url(#bark)"/><circle cx="0" cy="-72" r="40" fill="url(#leaf)"/><circle cx="-26" cy="-50" r="27" fill="url(#leaf2)"/><circle cx="26" cy="-54" r="27" fill="url(#leaf)"/><circle cx="-12" cy="-86" r="10" fill="#fff" opacity=".18"/></g>`;
 const bush = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="6" cy="2" rx="40" ry="8" fill="rgba(30,80,40,.25)"/><circle cx="-16" cy="-12" r="18" fill="url(#leaf2)"/><circle cx="14" cy="-14" r="22" fill="url(#leaf)"/><circle cx="34" cy="-8" r="14" fill="url(#leaf2)"/></g>`;
 const tuft = (x, y) => `<path d="M${x} ${y} q-3 -9 -7 -12 M${x} ${y} q1 -12 0 -17 M${x} ${y} q4 -8 8 -11" stroke="#3FA556" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/>`;
@@ -1390,8 +1408,8 @@ SCREENS.world = el => {
       <pattern id="mow" width="260" height="10" patternUnits="userSpaceOnUse"><rect width="130" height="10" fill="#fff" opacity=".08"/></pattern></defs>
       <rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#gg)"/><rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#mow)"/><rect x="-400" y="300" width="${WW + 800}" height="70" fill="url(#haze)"/>${trees}${bushes}${fence}
       <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
-    ${Array.from({ length: 9 }, (_, i) => `<button class="bfly" style="left:${rnd(150, WW - 150)}px;top:${rnd(380, 600)}px;z-index:1500;--a:${rnd(-160, 160)}px;--b:${rnd(-70, 40)}px;--c:${rnd(-200, 200)}px;--d:${rnd(-60, 60)}px;--t:${rnd(13, 22)}s;--h:${pick([330, 20, 50, 280, 190])}" aria-label="Butterfly"><svg viewBox="0 0 40 30"><g class="wl"><path d="M20 15 Q4 -2 6 12 Q6 24 20 17Z" fill="hsl(var(--h) 90% 70%)"/></g><g class="wr"><path d="M20 15 Q36 -2 34 12 Q34 24 20 17Z" fill="hsl(var(--h) 90% 76%)"/></g><rect x="19" y="8" width="2" height="14" rx="1" fill="#5b5478"/></svg></button>`).join('')}
-    ${DECOR_AT.map(([k, x, y], i) => `<button class="decor" data-k="${k}" style="left:${x - 100}px;top:${y - 150}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 200 150">${DECOR[k]}</svg></button>`).join('')}
+    ${Array.from({ length: 0 }, (_, i) => `<button class="bfly" style="left:${rnd(150, WW - 150)}px;top:${rnd(380, 600)}px;z-index:1500;--a:${rnd(-160, 160)}px;--b:${rnd(-70, 40)}px;--c:${rnd(-200, 200)}px;--d:${rnd(-60, 60)}px;--t:${rnd(13, 22)}s;--h:${pick([330, 20, 50, 280, 190])}" aria-label="Butterfly"><svg viewBox="0 0 40 30"><g class="wl"><path d="M20 15 Q4 -2 6 12 Q6 24 20 17Z" fill="hsl(var(--h) 90% 70%)"/></g><g class="wr"><path d="M20 15 Q36 -2 34 12 Q34 24 20 17Z" fill="hsl(var(--h) 90% 76%)"/></g><rect x="19" y="8" width="2" height="14" rx="1" fill="#5b5478"/></svg></button>`).join('')}
+    ${PGRAD}${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
     ${TOWN_SPOTS.map(([id, l, tone, s, x, y], i) => `<button class="spot" style="left:${x - 100}px;top:${y - 250}px;z-index:${y};--i:${i}" data-id="${id}" data-say="${esc(s)}" aria-label="${l}"><span class="plate ${tone}">${tileIcon(id)}</span><span class="sign">${l}</span><svg class="struct" viewBox="0 -10 200 160">${STRUCT[id]}</svg></button>`).join('')}
     <button class="ball" id="ball" style="left:1150px;top:620px" aria-label="Ball"><i></i></button>
     ${S.pet ? `<div class="tpet" id="tpet"><div class="flip">${petSVG(S.pet)}</div></div>` : ''}
@@ -1415,7 +1433,7 @@ SCREENS.world = el => {
   const pos = { x: TOWN.x, y: TOWN.y }, pp = { x: TOWN.x - 80, y: TOWN.y + 6 };
   let target = null, pending = null, face = 1, stepT = 0, busy = false, alive = true, raf = 0, last = performance.now();
   const clampP = (x, y) => ({ x: Math.max(60, Math.min(WW - 60, x)), y: Math.max(380, Math.min(695, y)) });
-  const persp = y => .82 + .28 * ((y - 380) / 315);
+  const persp = y => .76 + .24 * ((y - 380) / 315); let riding = false;
   const setT = (e, v) => { if (e._t !== v) { e._t = v; e.style.transform = v; } };
   const place = () => {
     const s = persp(pos.y);
@@ -1441,15 +1459,15 @@ SCREENS.world = el => {
     let moving = false;
     if (target && !busy) {
       const dx = target.x - pos.x, dy = target.y - pos.y, d = Math.hypot(dx, dy), step = 340 * dt;
-      if (d <= step) { pos.x = target.x; pos.y = target.y; target = null; if (pending) { const fn = pending; pending = null; setPos(pos); fn(); } }
+      if (d <= step) { pos.x = target.x; pos.y = target.y; target = null; if (pending) { const fn = pending; pending = null; setPos(pos); try { fn(); } catch (err) { busy = false; riding = false; } } }
       else { pos.x += dx / d * step; pos.y += dy / d * step; moving = true; if (Math.abs(dx) > 4) face = dx < 0 ? -1 : 1; stepT += dt; if (stepT > .3) { stepT = 0; sfx.step(); } }
       setPos(pos);
     }
     if (av._w !== moving) { av._w = moving; av.classList.toggle('walk', moving); }
-    if (tp) { const gx = pos.x - 80 * face, gy = pos.y + 6, dx = gx - pp.x, dy = gy - pp.y, d = Math.hypot(dx, dy), k = Math.min(1, 4.2 * dt); const pm = d > 14; if (pm) { pp.x += dx * k; pp.y += dy * k; } tp.classList.toggle('walk', pm); const f = dx < -2 ? -1 : dx > 2 ? 1 : (tp._f || 1); tp._f = f; setT(tp._fl || (tp._fl = $('.flip', tp)), `scaleX(${f})`); }
+    if (tp && !riding) { const gx = pos.x - 80 * face, gy = pos.y + 6, dx = gx - pp.x, dy = gy - pp.y, d = Math.hypot(dx, dy), k = Math.min(1, 4.2 * dt); const pm = d > 14; if (pm) { pp.x += dx * k; pp.y += dy * k; } tp.classList.toggle('walk', pm); const f = dx < -2 ? -1 : dx > 2 ? 1 : (tp._f || 1); tp._f = f; setT(tp._fl || (tp._fl = $('.flip', tp)), `scaleX(${f})`); }
     const g = camGoal(); camX = snapCam ? g : camX + (g - camX) * Math.min(1, 5 * dt); if (Math.abs(g - camX) < .4) camX = g; snapCam = false;
     setT(ts, `translate(${camX.toFixed(1)}px,0) scale(${sc})`); setT(far, `translateX(${(camX * .3).toFixed(1)}px)`); setT(mid, `translateX(${(camX * .55).toFixed(1)}px)`); setT(fg, `translateX(${(camX * 1.15).toFixed(1)}px)`);
-    place(); raf = requestAnimationFrame(tick);
+    if (!riding) place(); raf = requestAnimationFrame(tick);
   }
   raf = requestAnimationFrame(tick); onLeave(() => { alive = false; cancelAnimationFrame(raf); });
 
@@ -1500,27 +1518,25 @@ SCREENS.world = el => {
     for (let i = 0; i < 6; i++) T(() => sfx.pop(), 300 + i * 600);
   }
   function ride(d) {
-    busy = true; av.classList.remove('walk'); tp && tp.classList.remove('walk');
-    const k = d.dataset.k, svg = $('svg', d), skin = SKIN[S.avatar.skin]; let ms = 3700, extra = '';
-    av.style.visibility = 'hidden'; d.classList.remove('wig');
-    if (k === 'swing') { svg.querySelector('.sw1').insertAdjacentHTML('beforeend', legs(76, 108, skin) + rider(60, 40, 56, 68)); if (S.pet) svg.querySelector('.sw2').insertAdjacentHTML('beforeend', petRider(110, 52, 46, 46)); }
-    else if (k === 'seesaw') seesawRide(svg);
-    else if (k === 'slide') { ms = 5400; slideRide(svg); }
-    else if (k === 'merry') { ms = 3800; svg.querySelector('.h1').insertAdjacentHTML('beforeend', rider(24, 50, 56, 68)); if (S.pet) svg.querySelector('.h2').insertAdjacentHTML('beforeend', petRider(120, 62, 50, 52)); }
-    else { ms = 3600; svg.insertAdjacentHTML('beforeend', `<g class="digger">${rider(70, 44, 52, 62)}</g>`); }
-    void d.offsetWidth; d.classList.add('ride'); tp && tp.classList.add('hop');
-    if (k === 'slide') say('Up we go!'); else { sfx.yay(); say(pick(['Wheee!', 'Whoosh!', 'Wow, so fun!'])); [500, 1300, 2100, 2900].forEach(t => setTimeout(() => alive && sfx.pop(), t)); }
+    busy = true; riding = true; av.classList.remove('walk'); tp && tp.classList.remove('walk'); d.classList.remove('wig');
+    const k = d.dataset.k, i = +d.dataset.i, [, x, y] = DECOR_AT[i], P = PLAY[k], fr = $('.dfr[data-i="' + i + '"]', el);
+    const g = playRig({ av, tp, ts, fr, decor: d, ox: x - P.ax, oy: y - P.ay, T, say, sfx, hasPet: !!tp });
+    g.start = av.style.transform; g.petStart = tp ? tp.style.transform : '';
+    av.style.zIndex = 699; av.style.transformOrigin = '50% 100%'; if (tp) { tp.style.zIndex = 698; tp.style.transformOrigin = '50% 100%'; }
+    let ms; try { ms = PLAY_RIDE[k](g); } catch (err) { g.anims.forEach(a => { try { a.cancel(); } catch (_) { } }); fr.style.display = 'none'; riding = false; busy = false; av.classList.remove('sit', 'wee', 'climb'); return; } d.classList.add('ride'); sfx.boop();
     const t = setTimeout(() => {
-      if (!alive) return; d.classList.remove('ride'); $$('.slider,.digger,.ppl,.cr', svg).forEach(x => x.remove()); $$('svg[width]', svg).forEach(x => x.remove()); $$('.rl', svg).forEach(x => x.remove());
-      av.style.visibility = ''; tp && tp.classList.remove('hop'); busy = false; petHappy();
+      if (!alive) return; g.anims.forEach(a => { try { a.cancel(); } catch (_) { } }); fr.style.display = 'none'; d.classList.remove('ride'); ['climb', 'sit', 'wee'].forEach(c => av.classList.remove(c));
+      $$('.castle,.mound,.shovel', d).forEach(n => { n.style.opacity = ''; n.style.transform = ''; }); const ch = $('.chunk', fr); if (ch) ch.style.opacity = 0; const shv = $('.shovel', fr); if (shv) { shv.style.opacity = 0; shv.style.transform = ''; }
+      const e = g.end; if (e) { const p = clampP(g.ox + e.av[0], g.oy + e.av[1]); setPos(p); if (tp) { const q = clampP(g.ox + e.pet[0], g.oy + e.pet[1]); pp.x = q.x; pp.y = q.y; } }
+      riding = false; place(); busy = false; petHappy(); snapCam = false;
       S.rides = (S.rides || 0) + 1; save(); if (S.rides % 3 === 0) reward('You love the playground!');
-    }, ms); onLeave(() => clearTimeout(t));
+    }, ms + 80); onLeave(() => clearTimeout(t));
   }
   $$('.decor', el).forEach(d => d.addEventListener('click', () => {
-    if (busy) return; const i = DECOR_AT.find(x => x[0] === d.dataset.k && Math.abs(x[1] - 100 - parseFloat(d.style.left)) < 2);
-    pending = () => { if (d.dataset.k === 'swing') face = 1; ride(d); }; target = clampP(i[1] + (d.dataset.k === 'slide' ? -45 : 0), 695); if (d.dataset.k === 'sandbox' || d.dataset.k === 'merry') target.y = 695; mark(target);
+    if (busy) return; const i = DECOR_AT[+d.dataset.i], P = PLAY[d.dataset.k];
+    pending = () => ride(d); target = clampP(i[1] + P.walk[0], i[2] + P.walk[1]); mark(target);
   }));
-  const ball = $('#ball', el); let bp = { x: 1150, y: 640 }; ball.style.left = bp.x - 24 + 'px'; ball.style.top = bp.y - 48 + 'px'; ball.style.zIndex = bp.y;
+  const ball = $('#ball', el); let bp = { x: 1356, y: 688 }; ball.style.left = bp.x - 24 + 'px'; ball.style.top = bp.y - 48 + 'px'; ball.style.zIndex = bp.y;
   ball.addEventListener('click', () => {
     if (busy) return; const dir = pos.x <= bp.x ? 1 : -1; const bx = Math.max(80, Math.min(WW - 80, bp.x - dir * 46));
     pending = () => { face = dir; av.classList.remove('hop'); void av.offsetWidth; av.classList.add('hop'); sfx.pop();
@@ -1629,6 +1645,285 @@ SCREENS.welcome = (el) => {
   </div>`;
   $('#world').insertAdjacentHTML('afterend', html);
 })();
+/* ===== playground v2: bigger, shaded (faux-3D) props with a back layer + a front layer, so the real avatar and pet can
+   climb, sit INSIDE and slide through them. Static art only (gradients, no filters, no ambient animation).
+   Coordinates: every prop is drawn in its own viewBox; (ax, ay) is the point that maps to the prop's world position. ===== */
+const PGRAD = `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="pgWoodV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDBF86"/><stop offset="1" stop-color="#B98149"/></linearGradient>
+  <linearGradient id="pgWoodH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F3CB94"/><stop offset=".5" stop-color="#D9A164"/><stop offset="1" stop-color="#AE7440"/></linearGradient>
+  <linearGradient id="pgWoodD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C58E56"/><stop offset="1" stop-color="#8E5C30"/></linearGradient>
+  <linearGradient id="pgPinkH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFC0D2"/><stop offset=".45" stop-color="#FF7A9A"/><stop offset="1" stop-color="#CF4470"/></linearGradient>
+  <linearGradient id="pgPinkV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFA3BC"/><stop offset="1" stop-color="#E0557C"/></linearGradient>
+  <linearGradient id="pgBlueS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4EBFF"/><stop offset="1" stop-color="#5DB8F6"/></linearGradient>
+  <linearGradient id="pgBlueW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4FA6EC"/><stop offset="1" stop-color="#2D72C2"/></linearGradient>
+  <linearGradient id="pgYel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE887"/><stop offset="1" stop-color="#F4B435"/></linearGradient>
+  <linearGradient id="pgMint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B5F0D8"/><stop offset="1" stop-color="#4DC99A"/></linearGradient>
+  <linearGradient id="pgLil" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E0D2FF"/><stop offset="1" stop-color="#9F7FF0"/></linearGradient>
+  <linearGradient id="pgRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF9A9A"/><stop offset="1" stop-color="#E24A5A"/></linearGradient>
+  <linearGradient id="pgMetal" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F6F3FF"/><stop offset=".5" stop-color="#CBC3E4"/><stop offset="1" stop-color="#9990BE"/></linearGradient>
+  <radialGradient id="pgSand" cx=".5" cy=".35" r=".85"><stop offset="0" stop-color="#FFF3CB"/><stop offset=".7" stop-color="#F6D386"/><stop offset="1" stop-color="#E9BB62"/></radialGradient>
+  <radialGradient id="pgSh" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#1E5028" stop-opacity=".42"/><stop offset="1" stop-color="#1E5028" stop-opacity="0"/></radialGradient>
+</defs></svg>`;
+const bz3 = (P, t) => { const u = 1 - t; return [u * u * u * P[0][0] + 3 * u * u * t * P[1][0] + 3 * u * t * t * P[2][0] + t * t * t * P[3][0], u * u * u * P[0][1] + 3 * u * u * t * P[1][1] + 3 * u * t * t * P[2][1] + t * t * t * P[3][1]]; };
+const poly = (pts, fill, extra = '') => `<path d="M${pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L')}Z" fill="${fill}" ${extra}/>`;
+const shd = (cx, cy, rx, ry, o = 1) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#pgSh)" opacity="${o}"/>`;
+const rr = (x, y, w, h, r, fill, extra = '') => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${fill}" ${extra}/>`;
+const LNC = { 'url(#pgPinkH)': '#FF7A9A', 'url(#pgMetal)': '#C9C1E2', 'url(#pgWoodH)': '#D9A164' };
+const ln = (x1, y1, x2, y2, w, col, extra = '') => (col = (x1 === x2 || y1 === y2) && LNC[col] || col, `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${col}" stroke-width="${w}" stroke-linecap="round" fill="none" ${extra}/>`);
+const INKS = '#3D3358';
+
+/* ---------------- SLIDE ---------------- */
+const SL_C = [[176, 128], [244, 134], [304, 290], [380, 294]];      /* chute centre line (near edge) */
+const SL_D = [12, -22];                                             /* depth vector: far rim = near edge + D */
+const slPt = t => bz3(SL_C, t);
+function slideBack() {
+  const N = 28, near = [], far = [], nearL = []; for (let i = 0; i <= N; i++) { const p = slPt(i / N); near.push(p); far.push([p[0] + SL_D[0], p[1] + SL_D[1]]); nearL.push([p[0], p[1] + 12]); }
+  const D = [18, -12], L = (x, y) => [x + D[0], y + D[1]];
+  let rungs = ''; for (let i = 1; i <= 6; i++) { const u = i / 7, x = 38 + 56 * u, y = 300 - 168 * u; rungs += ln(x, y, x + D[0], y + D[1], 6, '#B98149'); }
+  return `<g>${shd(150, 302, 120, 11)}${shd(300, 304, 96, 9, .8)}
+  <!-- far posts + far rail -->
+  ${rr(116, 128, 8, 168, 4, '#A66F3B')}${rr(190, 124, 8, 168, 4, '#A66F3B')}
+  ${ln(56, 290, 112, 122, 8, '#AE7440')}
+  <!-- ladder rungs (depth) then near rail -->${rungs}${ln(38, 300, 94, 132, 9, 'url(#pgWoodH)', 'stroke-opacity="1"')}${ln(38, 300, 94, 132, 9, '#8E5C30', 'stroke-opacity=".0"')}
+  <!-- deck -->${poly([[88, 130], [180, 130], [198, 118], [106, 118]], '#F3CB94')}${rr(88, 130, 92, 14, 3, 'url(#pgWoodV)')}${ln(96, 137, 172, 137, 2, '#8E5C30', 'opacity=".35"')}
+  <!-- near posts -->${rr(90, 142, 10, 156, 5, 'url(#pgWoodH)')}${rr(168, 142, 10, 156, 5, 'url(#pgWoodH)')}
+  ${ln(104, 296, 148, 200, 5, '#B98149')}${ln(172, 296, 148, 200, 5, '#B98149')}
+  <!-- guard rails (far then near) -->${ln(106, 118, 106, 64, 6, '#C99555')}${ln(198, 118, 198, 64, 6, '#C99555')}${ln(106, 64, 198, 64, 7, 'url(#pgPinkH)')}
+  ${ln(88, 130, 88, 70, 8, 'url(#pgPinkH)')}${ln(176, 130, 176, 70, 8, 'url(#pgPinkH)')}${ln(88, 70, 176, 70, 9, 'url(#pgPinkH)')}${ln(88, 100, 176, 100, 5, '#FF9DB8')}
+  ${ln(176, 70, 198, 64, 6, '#E0557C')}${ln(88, 70, 106, 64, 6, '#E0557C')}
+  <!-- flag -->${ln(198, 64, 198, 22, 4, '#8E5C30')}${poly([[198, 22], [230, 32], [198, 44]], 'url(#pgYel)', `stroke="${INKS}" stroke-width="3" stroke-linejoin="round"`)}
+  <!-- chute: far rim/surface, then far wall -->${poly([...near, ...far.slice().reverse()], 'url(#pgBlueS)')}
+  ${poly(far.concat(far.map(p => [p[0], p[1] - 7]).reverse()), 'url(#pgBlueW)')}
+  <path d="M${far.map(p => p[0].toFixed(1) + ' ' + (p[1] - 7).toFixed(1)).join(' L')}" fill="none" stroke="#DDF3FF" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+  <path d="M${near.map((p, i) => (p[0] + 6).toFixed(1) + ' ' + (p[1] - 10).toFixed(1)).join(' L')}" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+  ${poly([...near, ...nearL.slice().reverse()], 'url(#pgBlueW)')}
+  ${rr(366, 288, 34, 10, 5, '#F0C36C')}</g>`;
+}
+function slideFront() { const N = 28, near = [], nearL = []; for (let i = 0; i <= N; i++) { const p = slPt(i / N); near.push(p); nearL.push([p[0], p[1] + 12]); } return `<g>${poly([...near, ...nearL.slice().reverse()], 'url(#pgBlueW)')}<path d="M${near.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L')}" fill="none" stroke="#9AD6FF" stroke-width="3.5" stroke-linecap="round"/></g>`; }
+
+/* ---------------- SANDBOX ---------------- */
+function sandboxBack() {
+  let dots = ''; for (let i = 0; i < 34; i++) { const x = 60 + (i * 47) % 230, y = 102 + (i * 29) % 30; dots += `<circle cx="${x}" cy="${y}" r="${1 + (i % 3) * .6}" fill="#D9A94E" opacity=".55"/>`; }
+  return `<g>${shd(170, 192, 190, 14)}
+  ${rr(46, 74, 248, 24, 7, 'url(#pgWoodD)')}${rr(46, 74, 248, 7, 3.5, '#E9BE86')}
+  ${poly([[52, 98], [288, 98], [314, 136], [26, 136]], 'url(#pgSand)')}${dots}
+  <path d="M70 112 q22 -7 44 0 M196 118 q26 -8 52 0 M120 126 q18 -5 36 0" stroke="#E2B255" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>
+  ${poly([[16, 130], [46, 80], [62, 86], [34, 140]], 'url(#pgWoodD)')}${poly([[324, 130], [294, 80], [278, 86], [306, 140]], 'url(#pgWoodD)')}
+  <g class="mound"><path d="M104 122 Q134 88 172 122Z" fill="url(#pgSand)" stroke="#E2B255" stroke-width="2.5" stroke-linejoin="round"/><path d="M122 112 q12 -12 26 -4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".6"/></g>
+  <g class="castle" style="opacity:0"><path d="M102 124 V92 h11 v-8 h9 v8 h9 v-8 h9 v8 h9 v-8 h9 v8 h11 v32Z" fill="#F4CB78" stroke="#D8A040" stroke-width="2.5" stroke-linejoin="round"/><path d="M96 124 V78 h16 v-8 h6 v8 h6 v46Z M172 124 V78 h16 v-8 h6 v8 h6 v46Z" fill="#F0BE64" stroke="#D8A040" stroke-width="2.5" stroke-linejoin="round"/><path d="M142 124 v-16 a9 9 0 0 1 18 0 v16Z" fill="#B97D3A"/><path d="M181 70 V44" stroke="#8E5C30" stroke-width="3"/><path d="M181 44 l22 7 -22 8Z" fill="#FF7A9A" stroke="${INKS}" stroke-width="2.5" stroke-linejoin="round"/></g>
+  <g><path d="M336 176 L344 150 H368 L376 176Z" fill="url(#pgBlueS)" stroke="#2D72C2" stroke-width="3" stroke-linejoin="round"/><path d="M340 156 H372" stroke="#fff" stroke-width="3" opacity=".6"/><path d="M344 150 Q356 128 368 150" fill="none" stroke="#8E7BC0" stroke-width="3"/></g>
+  <path d="M322 178 L338 132" stroke="#B98149" stroke-width="5" stroke-linecap="round"/><path d="M332 132 q8 -8 16 0 l-4 12 h-8Z" fill="#FF7A9A" stroke="#C94870" stroke-width="2"/>
+  ${rr(8, 118, 24, 72, 7, 'url(#pgWoodH)')}${rr(8, 118, 24, 9, 4, '#F3CB94')}${rr(308, 118, 24, 72, 7, 'url(#pgWoodH)')}${rr(308, 118, 24, 9, 4, '#F3CB94')}
+  ${rr(20, 132, 300, 56, 9, 'url(#pgWoodV)')}${rr(20, 132, 300, 8, 4, '#F9DDB0')}${ln(28, 160, 312, 160, 2.5, '#8E5C30', 'opacity=".35"')}${ln(96, 140, 96, 186, 2, '#8E5C30', 'opacity=".25"')}${ln(240, 140, 240, 186, 2, '#8E5C30', 'opacity=".25"')}
+  <circle cx="30" cy="146" r="2.5" fill="#8E5C30"/><circle cx="310" cy="146" r="2.5" fill="#8E5C30"/><circle cx="30" cy="176" r="2.5" fill="#8E5C30"/><circle cx="310" cy="176" r="2.5" fill="#8E5C30"/></g>`;
+}
+function sandboxFront() { return `<g>${rr(8, 118, 24, 72, 7, 'url(#pgWoodH)')}${rr(8, 118, 24, 9, 4, '#F3CB94')}${rr(308, 118, 24, 72, 7, 'url(#pgWoodH)')}${rr(308, 118, 24, 9, 4, '#F3CB94')}${rr(20, 132, 300, 56, 9, 'url(#pgWoodV)')}${rr(20, 132, 300, 8, 4, '#F9DDB0')}${ln(28, 160, 312, 160, 2.5, '#8E5C30', 'opacity=".35"')}${ln(96, 140, 96, 186, 2, '#8E5C30', 'opacity=".25"')}${ln(240, 140, 240, 186, 2, '#8E5C30', 'opacity=".25"')}<circle cx="30" cy="146" r="2.5" fill="#8E5C30"/><circle cx="310" cy="146" r="2.5" fill="#8E5C30"/><circle cx="30" cy="176" r="2.5" fill="#8E5C30"/><circle cx="310" cy="176" r="2.5" fill="#8E5C30"/><g class="shovel" style="opacity:0"><path d="M0 0 L-30 34" stroke="#B98149" stroke-width="5" stroke-linecap="round"/><path d="M-40 32 L-24 46 L-14 38 L-30 24Z" fill="url(#pgRed)" stroke="#B33A4A" stroke-width="2.5" stroke-linejoin="round"/><circle class="chunk" cx="-30" cy="28" r="7" fill="#F2C868" style="opacity:0"/></g></g>`; }
+
+/* ---------------- SEESAW ---------------- */
+function seesawBack() {
+  return `<g>${shd(170, 196, 170, 11)}
+  ${poly([[130, 198], [210, 198], [196, 150], [144, 150]], 'url(#pgMint)', `stroke="#3AA57C" stroke-width="3" stroke-linejoin="round"`)}${rr(112, 190, 116, 12, 6, 'url(#pgMetal)')}
+  ${rr(20, 176, 22, 22, 6, '#3D3358')}${rr(298, 176, 22, 22, 6, '#3D3358')}
+  <g class="plank">${rr(14, 128, 312, 20, 9, 'url(#pgYel)')}${rr(14, 128, 312, 7, 3.5, '#FFF3B0')}${rr(14, 143, 312, 5, 2.5, '#D99A20')}
+  ${ln(60, 128, 60, 108, 5, 'url(#pgMetal)')}${ln(38, 108, 82, 108, 7, 'url(#pgRed)')}${ln(280, 128, 280, 108, 5, 'url(#pgMetal)')}${ln(258, 108, 302, 108, 7, 'url(#pgRed)')}
+  <circle cx="170" cy="138" r="7" fill="#8E7BC0"/></g>${rr(160, 130, 20, 14, 5, 'url(#pgMetal)')}</g>`;
+}
+
+/* ---------------- SWING ---------------- */
+function swingBack() {
+  return `<g>${shd(150, 296, 140, 10)}
+  ${ln(30, 296, 96, 34, 11, 'url(#pgPinkH)')}${ln(270, 296, 204, 34, 11, 'url(#pgPinkH)')}${ln(50, 296, 108, 40, 9, '#C9486F', 'opacity=".55"')}${ln(250, 296, 192, 40, 9, '#C9486F', 'opacity=".55"')}
+  ${rr(84, 22, 132, 16, 8, 'url(#pgPinkV)')}${rr(84, 22, 132, 5, 2.5, '#FFC0D2')}
+  <circle cx="98" cy="30" r="6" fill="url(#pgMetal)"/><circle cx="202" cy="30" r="6" fill="url(#pgMetal)"/>${swingSeat(124, '#FFD84D')}${swingSeat(176, '#5CD68A')}</g>`;
+}
+function swingSeat(x, col) { return `<g class="swseat" style="transform-origin:${x}px 34px">${ln(x - 17, 34, x - 17, 190, 3, '#8F86B4')}${ln(x + 17, 34, x + 17, 190, 3, '#8F86B4')}${rr(x - 24, 188, 48, 11, 5.5, col)}${rr(x - 24, 188, 48, 4, 2, '#fff', 'opacity=".5"')}</g>`; }
+
+/* ---------------- MERRY-GO-ROUND ---------------- */
+function merryBack() {
+  return `<g>${shd(130, 200, 122, 14)}
+  <ellipse cx="130" cy="176" rx="112" ry="30" fill="#7F62D8"/><ellipse cx="130" cy="166" rx="112" ry="30" fill="url(#pgLil)"/>
+  <ellipse cx="130" cy="166" rx="92" ry="23" fill="none" stroke="#fff" stroke-width="7" stroke-dasharray="26 22" class="mspin" opacity=".9"/>
+  <ellipse cx="130" cy="166" rx="30" ry="8" fill="#6E52C8"/>${rr(122, 60, 16, 108, 7, 'url(#pgYel)')}
+  <path d="M130 42 l0 -30" stroke="#8E5C30" stroke-width="4"/><path d="M130 12 l28 9 -28 10Z" fill="#FF7A9A" stroke="${INKS}" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="130" cy="58" r="14" fill="url(#pgRed)"/><circle cx="125" cy="53" r="4" fill="#fff" opacity=".6"/></g>`;
+}
+function merrySeatArt(col) { return `<g>${rr(-16, -8, 32, 13, 6, col)}${rr(-16, -8, 32, 4, 2, '#fff', 'opacity=".5"')}${rr(-16, -32, 6, 26, 3, '#fff', 'opacity=".0"')}${ln(-13, -8, -13, -28, 4, 'url(#pgMetal)')}${ln(13, -8, 13, -28, 4, 'url(#pgMetal)')}${ln(-13, -28, 13, -28, 5, 'url(#pgMetal)')}</g>`; }
+
+const PLAY = {
+  slide:   { w: 420, h: 320, ax: 50,  ay: 300, bk: slideBack,   fr: slideFront,   walk: [12, 0] },
+  sandbox: { w: 380, h: 200, ax: 170, ay: 190, bk: sandboxBack, fr: sandboxFront, walk: [-70, 6] },
+  seesaw:  { w: 340, h: 210, ax: 170, ay: 196, bk: seesawBack,  fr: () => '',     walk: [-120, 0] },
+  swing:   { w: 300, h: 310, ax: 150, ay: 296, bk: swingBack,   fr: () => '',     walk: [0, 0] },
+  merry:   { w: 260, h: 220, ax: 130, ay: 198, bk: merryBack,   fr: () => '',     walk: [-116, 8] },
+};
+
+/* =====================================================================================================
+   RIDE CHOREOGRAPHY. Each ride gets a rig `g` from the world screen: g.av / g.pet (the real avatar + pet elements),
+   svg-coordinate helpers, one long WAAPI track per element (so motion is exact and cancelable), pose classes on the avatar.
+   ===================================================================================================== */
+const rad = d => d * Math.PI / 180, lerp = (a, b, t) => a + (b - a) * t;
+const easeIn = t => t * t * (1.25 - .25 * t), easeIO = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+function playRig(w) {   /* w = { av, tp, ts, fr, decor, ox, oy, T, say, sfx, hasPet, persp } */
+  const g = { ...w, anims: [], HIP: 43 };
+  g.W = (sx, sy) => [g.ox + sx, g.oy + sy];
+  /* avatar: feet-based transform (bottom-centre at world point), then hip-based "seated" transform */
+  g.avF = (sx, sy, s = .82, r = 0) => { const [x, y] = g.W(sx, sy); return `translate(${(x - 56).toFixed(1)}px,${(y - 224).toFixed(1)}px) rotate(${r.toFixed(1)}deg) scale(${s})`; };
+  g.avS = (sx, sy, s = .82, r = 0) => { const a = rad(r), h = g.HIP * s; return g.avF(sx - h * Math.sin(a), sy + h * Math.cos(a), s, r); };
+  g.pt = (sx, sy, s = .8, r = 0) => { const [x, y] = g.W(sx, sy); return `translate(${(x - 37).toFixed(1)}px,${(y - 74).toFixed(1)}px) rotate(${r.toFixed(1)}deg) scale(${s})`; };
+  g.track = (el, pts, total, extra = {}) => { let last = 0; const f = pts.map(([t, tr, e]) => { last = Math.max(last, Math.min(1, t / total)); return { offset: last, transform: tr, easing: e || 'linear' }; }); if (f[0].offset > 0) f.unshift({ ...f[0], offset: 0 }); if (f[f.length - 1].offset < 1) f.push({ ...f[f.length - 1], offset: 1 }); const a = el.animate(f, { duration: total, fill: 'forwards', ...extra }); g.anims.push(a); return a; };
+  g.cls = (el, c, on, ms) => g.T(() => el.classList.toggle(c, on), ms);
+  g.frOn = ms => g.T(() => { g.fr.style.display = 'block'; }, ms); g.frOff = ms => g.T(() => { g.fr.style.display = 'none'; }, ms);
+  g.puff = (sx, sy, n = 6, cols = ['#F6D386', '#E9BB62', '#FFF0C2'], spread = 40, up = 46) => {
+    const [x, y] = g.W(sx, sy);
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement('i'); p.className = 'prt'; const sz = rnd(5, 10); p.style.cssText = `left:${x - sz / 2}px;top:${y - sz / 2}px;width:${sz}px;height:${sz}px;background:${pick(cols)}`; g.ts.appendChild(p);
+      const dx = rnd(-spread, spread), dy = -rnd(up * .4, up);
+      p.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: `translate(${dx * .6}px,${dy}px) scale(1.1)`, opacity: 1, offset: .45 }, { transform: `translate(${dx}px,${dy + rnd(30, 60)}px) scale(.4)`, opacity: 0 }], { duration: rnd(520, 800), easing: 'ease-out' }).onfinish = () => p.remove();
+    }
+  };
+  g.hopArc = (a, b, lift, n, fn) => { const out = []; for (let i = 0; i <= n; i++) { const u = i / n; out.push(fn(lerp(a[0], b[0], u), lerp(a[1], b[1], u) - Math.sin(Math.PI * u) * lift, u)); } return out; };
+  return g;
+}
+
+const PLAY_RIDE = {
+  /* ---------------------------------- SLIDE: climb the ladder, sit, whoosh down, land, cheer; pet follows ---------------------------------- */
+  slide(g) {
+    const A = .7, TOT = 6900, lad0 = [62, 298], lad1 = [112, 134];
+    const pts = [[0, g.start]]; pts.push([450, g.avF(lad0[0], lad0[1], A)]);
+    for (let i = 1; i <= 8; i++) { const u = i / 8; pts.push([450 + i * 200, g.avF(lerp(lad0[0], lad1[0], u), lerp(lad0[1], lad1[1], u) - (i % 2 ? 7 : 0), A)]); }   /* climb: 450 → 2050 */
+    pts.push([2500, g.avF(146, 128, A)]);                                                                         /* step across the deck */
+    pts.push([2850, g.avS(186, 104, A)]);                                                                         /* sit at the top */
+    pts.push([3350, g.avS(186, 104, A)]);
+    const c = t => { const p = slPt(t), q = slPt(Math.min(1, t + .02)), p0 = slPt(Math.max(0, t - .02)); return [p[0] + SL_D[0] / 2, p[1] + SL_D[1] / 2 - 9, Math.atan2(q[1] - p0[1], q[0] - p0[0]) * 180 / Math.PI * .32]; };
+    for (let j = 1; j <= 18; j++) { const u = j / 18, p = c(easeIn(u)); pts.push([3350 + u * 1500, g.avS(p[0], p[1], A, p[2])]); }  /* whoosh: 3350 → 4850 */
+    pts.push([5000, g.avS(392, 286, A, 0)]); pts.push([5250, g.avF(394, 298, A)]);                                    /* land + stand */
+    pts.push([5350, g.avF(394, 286, A)]); pts.push([5500, g.avF(394, 298, A)]); pts.push([TOT, g.avF(394, 298, A)]);   /* hop */
+    g.track(g.av, pts, TOT);
+    const cl = (c2, on, ms) => g.cls(g.av, c2, on, ms);
+    cl('climb', true, 450); cl('climb', false, 2100); cl('sit', true, 2850); cl('wee', true, 3350); cl('sit', false, 5250); cl('wee', false, 5900);
+    g.frOn(2850); g.frOff(5300);
+    g.T(() => g.say('Up we go!'), 300); g.T(() => g.say('Wheee!'), 3400); g.T(() => { g.sfx.yay(); }, 5300);
+    for (let i = 0; i < 8; i++) g.T(() => g.sfx.pop(), 650 + i * 200);
+    g.T(() => g.sfx.whoosh && g.sfx.whoosh(), 3400);
+    g.T(() => g.puff(392, 292, 8, ['#fff', '#DDF3FF', '#F0C36C'], 60, 30), 5000);
+    if (g.hasPet) {                                                                                                  /* the pet climbs and slides after her */
+      const pp = [[0, g.petStart], [500, g.pt(24, 298, .7)]];
+      const A2 = g.hopArc(lad0, [150, 126], 26, 8, (x, y) => g.pt(x, y, .7)); A2.forEach((tr, i) => pp.push([2300 + i * 190, tr]));                       /* hop up: 2300 → 3820 */
+      pp.push([4300, g.pt(190, 112, .86, 0)]);
+      for (let j = 1; j <= 14; j++) { const u = j / 14, p = c(easeIn(u)); pp.push([4300 + u * 1350, g.pt(p[0], p[1] + 8, .86, p[2])]); }                    /* 4300 → 5650 */
+      pp.push([5800, g.pt(352, 298, .7)]); pp.push([5950, g.pt(352, 284, .7)]); pp.push([6100, g.pt(352, 298, .7)]); pp.push([TOT, g.pt(352, 298, .7)]);
+      g.track(g.tp, pp, TOT); g.T(() => g.puff(370, 292, 6, ['#fff', '#DDF3FF'], 50, 26), 5700);
+    }
+    g.end = { av: [394, 298], pet: [352, 298] }; return TOT;
+  },
+
+  /* ---------------------------------- SANDBOX: hop in, dig, mound grows, sandcastle pops up ---------------------------------- */
+  sandbox(g) {
+    const A = .64, TOT = 7600, HX = 118, HY = 112, castle = g.decor.querySelector('.castle'), mound = g.decor.querySelector('.mound'), sh = g.fr.querySelector('.shovel'), chunk = sh.querySelector('.chunk');
+    const pts = [[0, g.start], [350, g.avF(96, 196, A)]];
+    g.hopArc([96, 196], [HX, HY + g.HIP * A], 70, 10, (x, y, u) => g.avF(x, y, A)).forEach((tr, i) => pts.push([350 + i * 60, tr]));                    /* hop into the box: 350 → 950 */
+    pts.push([1100, g.avS(HX, HY, A, 0)]);
+    const cyc = 900, N = 5, t0 = 1300;                                                                                                            /* 5 digs */
+    for (let k = 0; k < N; k++) { const b = t0 + k * cyc; pts.push([b, g.avS(HX, HY, A, 0)]); pts.push([b + 300, g.avS(HX, HY, A, -7)]); pts.push([b + 620, g.avS(HX + 2, HY - 2, A, 5)]); }
+    const tEnd = t0 + N * cyc;                                                                                                                    /* 5800 */
+    pts.push([tEnd, g.avS(HX, HY, A, 0)]); pts.push([tEnd + 250, g.avS(HX, HY - 14, A, 0)]); pts.push([tEnd + 500, g.avS(HX, HY, A, 0)]);    /* ta-da bounce */
+    pts.push([tEnd + 900, g.avS(HX, HY, A, 0)]);
+    pts.push([tEnd + 1000, g.avF(HX, HY + g.HIP * A, A)]);
+    g.hopArc([HX, HY + g.HIP * A], [92, 198], 60, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => pts.push([tEnd + 1000 + i * 60, tr]));           /* hop out: 6800 → 7300 */
+    pts.push([TOT, g.avF(92, 198, A)]);
+    g.track(g.av, pts, TOT);
+    g.cls(g.av, 'sit', true, 950); g.cls(g.av, 'sit', false, tEnd + 1000); g.cls(g.av, 'wee', true, tEnd + 100); g.cls(g.av, 'wee', false, tEnd + 950);
+    g.frOn(900); g.frOff(tEnd + 1010);
+    /* shovel: pivots in her right hand, scoops from the sand, swings up, dumps onto the mound */
+    const hx = HX + 26, hy = HY - 6, sp = [];
+    for (let k = 0; k < N; k++) { const b = t0 + k * cyc; sp.push([b, `translate(${hx}px,${hy}px) rotate(-10deg)`], [b + 300, `translate(${hx}px,${hy + 6}px) rotate(34deg)`], [b + 620, `translate(${hx}px,${hy - 10}px) rotate(-52deg)`], [b + 800, `translate(${hx}px,${hy - 4}px) rotate(-70deg)`]); }
+    sp.push([tEnd, `translate(${hx}px,${hy}px) rotate(-10deg)`]); sp.push([tEnd + 400, `translate(${hx}px,${hy - 10}px) rotate(-100deg)`]);
+    const shF = sp.map(([t, tr]) => ({ offset: t / TOT, transform: tr })); if (shF[0].offset > 0) shF.unshift({ offset: 0, transform: shF[0].transform }); shF.push({ offset: 1, transform: shF[shF.length - 1].transform }); g.anims.push(sh.animate(shF, { duration: TOT, fill: 'forwards' }));
+    g.T(() => { sh.style.opacity = 1; sh.style.transformOrigin = '0 0'; }, 1150); g.T(() => { sh.style.opacity = 0; }, tEnd + 500);
+    /* sand flies at each scoop, mound grows */
+    for (let k = 0; k < N; k++) { const b = t0 + k * cyc; g.T(() => { g.puff(HX + 10, 128, 7, undefined, 34, 30); g.sfx.pop(); chunk.style.opacity = 1; }, b + 310); g.T(() => { chunk.style.opacity = 0; g.puff(140, 112 - k * 3, 6, undefined, 30, 40); }, b + 760); }
+    g.anims.push(mound.animate([{ transform: 'scale(1)' }, { transform: 'scale(1)', offset: t0 / TOT }, ...Array.from({ length: N }, (_, k) => ({ transform: `scale(${1 + (k + 1) * .16})`, offset: (t0 + (k + 1) * cyc - 60) / TOT })), { transform: 'scale(1.9)', offset: (tEnd + 200) / TOT }, { transform: 'scale(1.9)' }], { duration: TOT, fill: 'forwards' }));
+    mound.style.transformOrigin = '138px 124px'; castle.style.transformOrigin = '140px 124px';
+    g.T(() => { castle.style.opacity = 1; mound.style.opacity = 0; castle.animate([{ transform: 'scale(.15)' }, { transform: 'scale(1.18)', offset: .55 }, { transform: 'scale(1)' }], { duration: 650, easing: 'cubic-bezier(.3,1.5,.5,1)' }); g.puff(142, 100, 14, ['#fff', '#F6D386', '#FF9DB0', '#FFE887'], 80, 70); g.sfx.yay(); g.say('A sandcastle!'); }, tEnd + 60);
+    g.T(() => g.say('Dig dig dig!'), 1300);
+    if (g.hasPet) {                                                                                                                             /* the pet digs too */
+      const P = .68, px = 236, py = 118, pp = [[0, g.petStart], [900, g.pt(258, 198, P)]];
+      g.hopArc([258, 198], [px, py + 10], 60, 8, (x, y) => g.pt(x, y, P)).forEach((tr, i) => pp.push([900 + i * 65, tr]));                                 /* 900 → 1420 */
+      for (let k = 0; k < 11; k++) { const b = 1600 + k * 400; pp.push([b, g.pt(px, py + 10, P, 0)], [b + 160, g.pt(px - 6, py + 12, P, -14)], [b + 320, g.pt(px, py + 4, P, 6)]); }
+      pp.push([6000, g.pt(px, py + 10, P, 0)], [6200, g.pt(px, py - 16, P, 0)], [6400, g.pt(px, py + 10, P, 0)], [6900, g.pt(px, py + 10, P, 0)]);
+      g.hopArc([px, py + 10], [270, 200], 50, 6, (x, y) => g.pt(x, y, P)).forEach((tr, i) => pp.push([6900 + i * 60, tr])); pp.push([TOT, g.pt(270, 200, P)]);
+      g.track(g.tp, pp, TOT); for (let k = 0; k < 8; k++) g.T(() => g.puff(px - 14, 128, 4, undefined, 26, 26), 1750 + k * 520);
+    }
+    g.end = { av: [92, 198], pet: [270, 200] }; return TOT;
+  },
+
+  /* ---------------------------------- SEESAW: hop on each end, plank tilts, they bob up and down ---------------------------------- */
+  seesaw(g) {
+    const PX = 170, PY = 138, TOT = 7000, plank = g.decor.querySelector('.plank'); plank.style.transformOrigin = `${PX}px ${PY}px`;
+    const ang = t => (t < 1000 ? 0 : t > 5800 ? 0 : 13 * Math.sin((t - 1000) / 1500 * Math.PI * 2)) * (t > 5200 ? Math.max(0, (5800 - t) / 600) : 1);
+    const pos = (rel, a) => [PX + rel[0] * Math.cos(rad(a)) - rel[1] * Math.sin(rad(a)), PY + rel[0] * Math.sin(rad(a)) + rel[1] * Math.cos(rad(a))];
+    const sampT = []; for (let t = 0; t <= TOT; t += 100) sampT.push(t);
+    const pl = sampT.map(t => ({ offset: t / TOT, transform: `rotate(${ang(t).toFixed(2)}deg)` })); g.anims.push(plank.animate(pl, { duration: TOT, fill: 'forwards' }));
+    const A = .66, L = [-116, -14], R = [116, -14], av = [[0, g.start], [400, g.avF(58, 200, A)]];
+    g.hopArc([58, 200], pos(L, 0), 70, 8, (x, y) => g.avF(x, y + g.HIP * A, A)).forEach((tr, i) => av.push([400 + i * 70, tr]));                             /* hop up: 400 → 960 */
+    for (const t of sampT) if (t >= 1000 && t <= 6000) { const a = ang(t), p = pos(L, a); av.push([t, g.avS(p[0], p[1] + 4, A, a * .35)]); }
+    const dP = pos(L, 0); av.push([6200, g.avS(dP[0], dP[1] + 4, A, 0)]); g.hopArc([dP[0], dP[1] + g.HIP * A + 4], [58, 202], 60, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([6200 + i * 70, tr])); av.push([TOT, g.avF(58, 202, A)]);
+    g.track(g.av, av, TOT); g.cls(g.av, 'sit', true, 960); g.cls(g.av, 'sit', false, 6180); g.cls(g.av, 'wee', true, 4000); g.cls(g.av, 'wee', false, 4600);
+    if (g.hasPet) {
+      const P = .68, pp = [[0, g.petStart], [700, g.pt(292, 202, P)]]; g.hopArc([292, 202], pos(R, 0), 80, 8, (x, y) => g.pt(x, y + 10, P)).forEach((tr, i) => pp.push([700 + i * 80, tr]));  /* 700 → 1340 */
+      for (const t of sampT) if (t >= 1400 && t <= 6000) { const a = ang(t), p = pos(R, a); pp.push([t, g.pt(p[0], p[1] + 12, P, a * .4)]); }
+      const dR = pos(R, 0); pp.push([6200, g.pt(dR[0], dR[1] + 12, P, 0)]); g.hopArc([dR[0], dR[1] + 12], [292, 204], 70, 8, (x, y) => g.pt(x, y, P)).forEach((tr, i) => pp.push([6200 + i * 70, tr])); pp.push([TOT, g.pt(292, 204, P)]);
+      g.track(g.tp, pp, TOT);
+    }
+    for (let i = 0; i < 4; i++) { g.T(() => g.sfx.pop(), 1400 + i * 1500); g.T(() => g.puff(58, 196, 4, ['#F6D386', '#fff'], 24, 16), 1000 + i * 1500); }
+    g.T(() => g.say('Up and down!'), 1300); g.T(() => g.sfx.yay(), 6300);
+    g.end = { av: [58, 202], pet: [292, 204] }; return TOT;
+  },
+
+  /* ---------------------------------- SWING: hop on, pump, swing high, hop off ---------------------------------- */
+  swing(g) {
+    const TOT = 7000, PX = [124, 176], seats = g.decor.querySelectorAll('.swseat'), CL = 148, A = .68, amp = t => t < 1100 || t > 6100 ? 0 : Math.min(1, (t - 1100) / 1500) * (t > 5400 ? Math.max(0, (6100 - t) / 700) : 1) * 30;
+    const th = (t, ph = 0) => amp(t) * Math.sin((t - 1100) / 1350 * Math.PI * 2 + ph);
+    const sampT = []; for (let t = 0; t <= TOT; t += 100) sampT.push(t);
+    seats.forEach((s, i) => { s.style.transformOrigin = `${PX[i]}px 34px`; g.anims.push(s.animate(sampT.map(t => ({ offset: t / TOT, transform: `rotate(${th(t, i ? .5 : 0).toFixed(2)}deg)` })), { duration: TOT, fill: 'forwards' })); });
+    const hipAt = (i, a) => [PX[i] - CL * Math.sin(rad(a)), 34 + CL * Math.cos(rad(a))];
+    const av = [[0, g.start], [400, g.avF(PX[0], 298, A)]]; g.hopArc([PX[0], 298], hipAt(0, 0), 60, 8, (x, y) => g.avF(x, y + g.HIP * A, A)).forEach((tr, i) => av.push([400 + i * 70, tr]));   /* hop up: 400 → 960 */
+    for (const t of sampT) if (t >= 1000 && t <= 6100) { const a = th(t, 0), p = hipAt(0, a); av.push([t, g.avS(p[0], p[1] - 2, A, a * .9)]); }
+    const h0 = hipAt(0, 0); av.push([6250, g.avS(h0[0], h0[1] - 2, A, 0)]); g.hopArc([h0[0], h0[1] + g.HIP * A - 2], [PX[0], 298], 50, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([6250 + i * 60, tr])); av.push([TOT, g.avF(PX[0], 298, A)]);
+    g.track(g.av, av, TOT); g.cls(g.av, 'sit', true, 960); g.cls(g.av, 'sit', false, 6230);
+    for (let k = 0; k < 4; k++) { g.cls(g.av, 'wee', true, 2700 + k * 1350); g.cls(g.av, 'wee', false, 3150 + k * 1350); }
+    if (g.hasPet) {
+      const P = .68, pp = [[0, g.petStart], [700, g.pt(PX[1] + 40, 300, P)]]; g.hopArc([PX[1] + 40, 300], hipAt(1, 0), 70, 8, (x, y) => g.pt(x, y + 50, P)).forEach((tr, i) => pp.push([700 + i * 80, tr]));
+      for (const t of sampT) if (t >= 1400 && t <= 6100) { const a = th(t, .5), p = hipAt(1, a); pp.push([t, g.pt(p[0], p[1] + 50, P, a * .8)]); }
+      const h1 = hipAt(1, 0); pp.push([6250, g.pt(h1[0], h1[1] + 50, P, 0)]); g.hopArc([h1[0], h1[1] + 50], [PX[1] + 40, 302], 60, 8, (x, y) => g.pt(x, y, P)).forEach((tr, i) => pp.push([6250 + i * 60, tr])); pp.push([TOT, g.pt(PX[1] + 40, 302, P)]);
+      g.track(g.tp, pp, TOT);
+    }
+    for (let k = 0; k < 5; k++) g.T(() => g.sfx.pop(), 1800 + k * 1000); g.T(() => g.say('Wheee!'), 2400); g.T(() => g.sfx.yay(), 6400);
+    g.end = { av: [PX[0], 298], pet: [PX[1] + 40, 302] }; return TOT;
+  },
+
+  /* ---------------------------------- MERRY-GO-ROUND: hop on, spin round (depth-scaled orbit), hop off ---------------------------------- */
+  merry(g) {
+    const CX = 130, CY = 168, RX = 66, RY = 17, TOT = 7200, ring = g.decor.querySelector('.mspin'), A = .66, spinT = t => t < 1000 ? 0 : t > 6000 ? 0 : 1, sampT = [];
+    for (let t = 0; t <= TOT; t += 80) sampT.push(t);
+    const kfn = e => e < 1000 ? e * e / 2000 : e < 4000 ? e - 500 : 3500 + (e - 4000) - (e - 4000) ** 2 / 2000; const ph = (t, base) => base + (2 * Math.PI / 2000) * kfn(Math.max(0, Math.min(t - 1000, 5000)));
+    const ringA = ring.animate([{ strokeDashoffset: 0 }, { strokeDashoffset: -480 }], { duration: 5000, delay: 1000, easing: 'ease-in-out', fill: 'both' }); g.anims.push(ringA);
+    const orb = (t, base) => { const a = ph(t, base); return [CX + RX * Math.cos(a), CY + 4 + RY * Math.sin(a), .62 + .08 * Math.sin(a)]; };
+    const av = [[0, g.start], [400, g.avF(34, 196, A)]]; { const p = orb(1000, Math.PI); g.hopArc([34, 196], [p[0], p[1]], 50, 8, (x, y) => g.avF(x, y, p[2])).forEach((tr, i) => av.push([400 + i * 70, tr])); }
+    for (const t of sampT) if (t >= 1000 && t <= 6000) { const p = orb(t, Math.PI); av.push([t, g.avS(p[0], p[1] - 4, p[2], 0)]); }
+    { const p = orb(6000, Math.PI); av.push([6100, g.avS(p[0], p[1] - 4, p[2], 0)]); g.hopArc([p[0], p[1] + g.HIP * p[2] - 4], [34, 198], 46, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([6100 + i * 70, tr])); av.push([TOT, g.avF(34, 198, A)]); }
+    g.track(g.av, av, TOT); g.cls(g.av, 'sit', true, 960); g.cls(g.av, 'sit', false, 6090); g.cls(g.av, 'wee', true, 2400); g.cls(g.av, 'wee', false, 4200);
+    if (g.hasPet) {
+      const P = .68, pp = [[0, g.petStart], [600, g.pt(226, 196, P)]]; { const p = orb(1200, 0); g.hopArc([226, 196], [p[0], p[1]], 50, 8, (x, y) => g.pt(x, y, .68)).forEach((tr, i) => pp.push([600 + i * 70, tr])); }
+      for (const t of sampT) if (t >= 1200 && t <= 6000) { const p = orb(t, 0); pp.push([t, g.pt(p[0], p[1] + 2, p[2] + .06, 0)]); }
+      { const p = orb(6000, 0); pp.push([6100, g.pt(p[0], p[1] + 2, p[2] + .06, 0)]); g.hopArc([p[0], p[1] + 2], [226, 198], 46, 8, (x, y) => g.pt(x, y, P)).forEach((tr, i) => pp.push([6100 + i * 70, tr])); pp.push([TOT, g.pt(226, 198, P)]); }
+      g.track(g.tp, pp, TOT);
+    }
+    for (let k = 0; k < 6; k++) g.T(() => g.sfx.pop(), 1200 + k * 800); g.T(() => g.say('Round and round!'), 1300); g.T(() => g.sfx.yay(), 6300);
+    g.end = { av: [34, 198], pet: [226, 198] }; return TOT;
+  },
+};
 /* ===== Drawing Studio (7 modes) ===== */
 const PAL = ['#FF5C5C', '#FFA24C', '#FFD84D', '#5CD68A', '#4DA3FF', '#9B7BFF', '#FF8FC7', '#9B6B4A'];
 const PAL_X = ['#22C7C7', '#FFB3D9', '#8A8AA8', '#FFFFFF'];
