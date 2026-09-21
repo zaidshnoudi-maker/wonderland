@@ -724,6 +724,7 @@ body[data-screen=petcare] #petbox{display:none!important}
 .avf.sit svg>ellipse:first-of-type,.avf.climb svg>ellipse:first-of-type{opacity:0}
 </style>
 <style>.dsign{position:absolute;pointer-events:none}.dsign svg{display:block;overflow:visible}</style>
+<style>.dzone{position:absolute;pointer-events:none}.dzone svg{display:block;overflow:visible}</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1354,7 +1355,7 @@ function avatarFull(a, shirt, acc) {
 }
 
 const TOWN = { x: 300, y: 620 };
-const WW = 3300, WH = 720;
+const WW = 3900, WH = 720, FGW = Math.round(WW * 1.2);
 const W_WOOD = '#C9975B', W_DARK = '#9A6B3A';
 const STRUCT = {
   studio: `<path d="M62 150 L86 40 M138 150 L114 40 M100 150 V70" stroke="${W_WOOD}" stroke-width="9" stroke-linecap="round"/><rect x="66" y="34" width="68" height="60" rx="6" fill="#fff" stroke="${W_DARK}" stroke-width="5"/><circle cx="88" cy="58" r="9" fill="#FF7A9A"/><circle cx="112" cy="52" r="8" fill="#5CB8FF"/><circle cx="104" cy="76" r="8" fill="#FFD84D"/><rect x="128" y="132" width="16" height="18" rx="4" fill="#5CD68A"/><rect x="150" y="136" width="14" height="14" rx="4" fill="#FF8A5C"/>`,
@@ -1380,7 +1381,7 @@ const DECOR = {
 };
 DECOR.sandbox = `<path d="M18 128 L40 100 H160 L182 128 V146 H18Z" fill="#C9975B"/><path d="M28 128 H172 L160 106 H40Z" fill="#F6D89A"/><g class="castle"><path d="M116 106 V82 h9 v-8 h8 v8 h9 v24Z" fill="#F0C36C"/></g><rect x="150" y="96" width="14" height="12" rx="3" fill="#FF7A9A"/>`;
 DECOR.merry = `<ellipse cx="100" cy="140" rx="86" ry="14" fill="#B79BFF"/><ellipse cx="100" cy="134" rx="82" ry="12" fill="#D8C8FF"/><rect x="94" y="30" width="12" height="104" rx="5" fill="#FFD84D"/><path d="M14 44 Q100 -20 186 44Q160 34 143 44Q120 30 100 44Q80 30 57 44Q40 34 14 44Z" fill="#FF7A9A"/><g class="h1"><path d="M52 60 V120" stroke="#fff" stroke-width="4"/><rect x="36" y="112" width="34" height="12" rx="6" fill="#5CB8FF"/></g><g class="h2"><path d="M148 60 V120" stroke="#fff" stroke-width="4"/><rect x="132" y="112" width="34" height="12" rx="6" fill="#FFB020"/></g>`;
-const DECOR_AT = [['swing', 1740, 622], ['slide', 2290, 622], ['merry', 3120, 622], ['sandbox', 2030, 696], ['seesaw', 2850, 696]];
+const DECOR_AT = [['swing', 2010, 622], ['sandbox', 2290, 696], ['slide', 2620, 622], ['seesaw', 3280, 696], ['merry', 3620, 622]];
 const tree = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="14" cy="4" rx="58" ry="12" fill="rgba(30,80,40,.28)"/><rect x="-9" y="-44" width="18" height="48" rx="7" fill="url(#bark)"/><circle cx="0" cy="-72" r="40" fill="url(#leaf)"/><circle cx="-26" cy="-50" r="27" fill="url(#leaf2)"/><circle cx="26" cy="-54" r="27" fill="url(#leaf)"/><circle cx="-12" cy="-86" r="10" fill="#fff" opacity=".18"/></g>`;
 const bush = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="6" cy="2" rx="40" ry="8" fill="rgba(30,80,40,.25)"/><circle cx="-16" cy="-12" r="18" fill="url(#leaf2)"/><circle cx="14" cy="-14" r="22" fill="url(#leaf)"/><circle cx="34" cy="-8" r="14" fill="url(#leaf2)"/></g>`;
 const tuft = (x, y) => `<path d="M${x} ${y} q-3 -9 -7 -12 M${x} ${y} q1 -12 0 -17 M${x} ${y} q4 -8 8 -11" stroke="#3FA556" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/>`;
@@ -1391,10 +1392,10 @@ const IRIS = { 't-pink': '#FFA9BE', 't-sky': '#8CC4FF', 't-butter': '#FFD670', '
 SCREENS.world = el => {
   const fresh = S.stickers.length >= 2 && unlockedCount(S.stickers.length) > (S.seenUnlock || 1);
   const flowers = Array.from({ length: 36 }, () => { const x = rnd(10, WW - 10), y = rnd(345, 705), c = pick(['#FFFFFF', '#FFE29A', '#FF9DB0', '#CDB8FF']); return `<circle cx="${x}" cy="${y}" r="${rnd(4, 7)}" fill="${c}" opacity=".9"/><circle cx="${x}" cy="${y}" r="2.2" fill="#FFD84D"/>`; }).join('');
-  const bushes = Array.from({ length: 9 }, (_, i) => bush(90 + i * 370 + rnd(-30, 30), 345 + rnd(0, 6), rnd(.8, 1.2))).join('');
+  const bushes = Array.from({ length: Math.round(WW / 370) }, (_, i) => bush(90 + i * 370 + rnd(-30, 30), 345 + rnd(0, 6), rnd(.8, 1.2))).join('');
   const pebbles = Array.from({ length: 10 }, () => `<ellipse cx="${rnd(-200, WW + 200)}" cy="${rnd(400, 700)}" rx="${rnd(3, 6)}" ry="${rnd(2, 4)}" fill="#D9C79B" opacity=".8"/>`).join('');
   const tufts1 = Array.from({ length: 16 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join(''), tufts2 = Array.from({ length: 16 }, () => tuft(rnd(-200, WW + 200), rnd(360, 710))).join('');
-  const trees = Array.from({ length: 11 }, (_, i) => tree(60 + i * 330 + rnd(-30, 30), 300, rnd(.8, 1.1))).join('');
+  const trees = Array.from({ length: Math.round(WW / 330) }, (_, i) => tree(60 + i * 330 + rnd(-30, 30), 300, rnd(.8, 1.1))).join('');
   el.innerHTML = `<div class="town" id="town" data-tod="${todNow()}"><svg width="0" height="0" style="position:absolute"><defs><filter id="puff" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur in="SourceAlpha" stdDeviation="2.6" result="b"/><feSpecularLighting in="b" surfaceScale="5" specularConstant=".8" specularExponent="16" lighting-color="#fff" result="sp"><feDistantLight azimuth="235" elevation="52"/></feSpecularLighting><feComposite in="sp" in2="SourceAlpha" operator="in" result="sp2"/><feComposite in="SourceGraphic" in2="sp2" operator="arithmetic" k1="0" k2="1" k3=".26" k4="0"/></filter></defs></svg>
   <div class="nightfx" aria-hidden="true">${Array.from({ length: 0 }, () => `<i class="star" style="left:${rnd(0, 100)}%;top:${rnd(0, 42)}%;--s:${rnd(2, 5)}px;animation-delay:${rnd(0, 3)}s"></i>`).join('')}<svg class="moon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="#FFF6D2"/><circle cx="40" cy="44" r="6" fill="#F0E4B0"/><circle cx="58" cy="62" r="8" fill="#F0E4B0"/><circle cx="30" cy="64" r="4" fill="#F0E4B0"/></svg>${Array.from({ length: 0 }, () => `<i class="ffly" style="left:${rnd(4, 96)}%;top:${rnd(48, 88)}%;--x:${rnd(-60, 60)}px;--y:${rnd(-40, 40)}px;animation-duration:${rnd(6, 11)}s;animation-delay:${rnd(0, 5)}s"></i>`).join('')}</div>
   <div class="sunglow" aria-hidden="true"></div>
@@ -1406,16 +1407,16 @@ SCREENS.world = el => {
       <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
       <pattern id="mow" width="260" height="10" patternUnits="userSpaceOnUse"><rect width="130" height="10" fill="#fff" opacity=".08"/></pattern></defs>
       <rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#gg)"/><rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#mow)"/><rect x="-400" y="300" width="${WW + 800}" height="70" fill="url(#haze)"/>${trees}${bushes}${fence}
-      <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
+      <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${PLAY_MAT()}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
     ${Array.from({ length: 0 }, (_, i) => `<button class="bfly" style="left:${rnd(150, WW - 150)}px;top:${rnd(380, 600)}px;z-index:1500;--a:${rnd(-160, 160)}px;--b:${rnd(-70, 40)}px;--c:${rnd(-200, 200)}px;--d:${rnd(-60, 60)}px;--t:${rnd(13, 22)}s;--h:${pick([330, 20, 50, 280, 190])}" aria-label="Butterfly"><svg viewBox="0 0 40 30"><g class="wl"><path d="M20 15 Q4 -2 6 12 Q6 24 20 17Z" fill="hsl(var(--h) 90% 70%)"/></g><g class="wr"><path d="M20 15 Q36 -2 34 12 Q34 24 20 17Z" fill="hsl(var(--h) 90% 76%)"/></g><rect x="19" y="8" width="2" height="14" rx="1" fill="#5b5478"/></svg></button>`).join('')}
-    ${PGRAD}<div class="dsign" style="left:1548px;top:556px;z-index:640" aria-hidden="true">${PLAY_SIGN}</div>${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
+    ${PGRAD}<div class="dzone" style="left:${ZONE_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate()}</svg></div>${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
     ${TOWN_SPOTS.map(([id, l, tone, s, x, y], i) => `<button class="spot" style="left:${x - 100}px;top:${y - 250}px;z-index:${y};--i:${i}" data-id="${id}" data-say="${esc(s)}" aria-label="${l}"><span class="plate ${tone}">${tileIcon(id)}</span><span class="sign">${l}</span><svg class="struct" viewBox="0 -10 200 160">${STRUCT[id]}</svg></button>`).join('')}
     <button class="ball" id="ball" style="left:1150px;top:620px" aria-label="Ball"><i></i></button>
     ${S.pet ? `<div class="tpet" id="tpet"><div class="flip">${petSVG(S.pet)}</div></div>` : ''}
     <div class="avf" id="tav"><div class="flip">${avatarFull(S.avatar, accent())}</div></div>
   </div>
   <div class="petals" aria-hidden="true">${Array.from({ length: 0 }, () => `<i style="left:${rnd(0, 100)}%;--d:${rnd(9, 18)}s;--dl:${rnd(-16, 0)}s;--w:${rnd(9, 16)}px;--c:${pick(['#FFC1D6', '#fff', '#FFE2A8', '#E3D4FF'])};--sw:${rnd(30, 120)}px"></i>`).join('')}</div>
-  <svg class="fgrass" id="fgr" viewBox="0 0 3600 90" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6BC66F"/><stop offset="1" stop-color="#3F9B54"/></linearGradient></defs>${Array.from({ length: 60 }, (_, i) => { const x = i * 60 + rnd(-10, 10), h = rnd(36, 78), l = rnd(-14, 14); return `<path d="M${x} 90 Q${x + l * .3} ${90 - h * .55} ${x + l} ${90 - h} Q${x + l * .6 + 5} ${90 - h * .5} ${x + 9} 90Z" fill="url(#bl)"/>`; }).join('')}</svg>
+  <svg class="fgrass" id="fgr" style="width:${FGW}px" viewBox="0 0 ${FGW} 90" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6BC66F"/><stop offset="1" stop-color="#3F9B54"/></linearGradient></defs>${Array.from({ length: Math.round(FGW / 60) }, (_, i) => { const x = i * 60 + rnd(-10, 10), h = rnd(36, 78), l = rnd(-14, 14); return `<path d="M${x} 90 Q${x + l * .3} ${90 - h * .55} ${x + l} ${90 - h} Q${x + l * .6 + 5} ${90 - h * .5} ${x + 9} 90Z" fill="url(#bl)"/>`; }).join('')}</svg>
   <div class="thud"><div class="greet"><span class="mini">${avatarSVG(S.avatar, accent())}</span><div>Hi ${esc(S.name)}!<small>${S.stickers.length} sticker${S.stickers.length === 1 ? '' : 's'}</small></div></div><span class="spacer"></span>
     <button class="shelf t-sky viewtoggle" id="vt" aria-label="All games">${VIEW_ICON.grid}</button>
     ${S.pet ? `<button class="shelf t-peach" data-go="petcare" data-say="Let's take care of ${esc(petName())}!" aria-label="Pet care">${tileIcon('petcare')}</button>` : ''}
@@ -1535,7 +1536,7 @@ SCREENS.world = el => {
     if (busy) return; const i = DECOR_AT[+d.dataset.i], P = PLAY[d.dataset.k];
     pending = () => ride(d); target = clampP(i[1] + P.walk[0], i[2] + P.walk[1]); mark(target);
   }));
-  const ball = $('#ball', el); let bp = { x: 1700, y: 692 }; ball.style.left = bp.x - 24 + 'px'; ball.style.top = bp.y - 48 + 'px'; ball.style.zIndex = bp.y;
+  const ball = $('#ball', el); let bp = { x: 1850, y: 692 }; ball.style.left = bp.x - 24 + 'px'; ball.style.top = bp.y - 48 + 'px'; ball.style.zIndex = bp.y;
   ball.addEventListener('click', () => {
     if (busy) return; const dir = pos.x <= bp.x ? 1 : -1; const bx = Math.max(80, Math.min(WW - 80, bp.x - dir * 46));
     pending = () => { face = dir; av.classList.remove('hop'); void av.offsetWidth; av.classList.add('hop'); sfx.pop();
@@ -1748,8 +1749,30 @@ function merryBack() {
 }
 function merrySeatArt(col) { return `<g>${rr(-16, -8, 32, 13, 6, col)}${rr(-16, -8, 32, 4, 2, '#fff', 'opacity=".5"')}${rr(-16, -32, 6, 26, 3, '#fff', 'opacity=".0"')}${ln(-13, -8, -13, -28, 4, 'url(#pgMetal)')}${ln(13, -8, 13, -28, 4, 'url(#pgMetal)')}${ln(-13, -28, 13, -28, 5, 'url(#pgMetal)')}</g>`; }
 
-/* signpost between the games (left) and the playground (right) */
-const PLAY_SIGN = `<svg width="140" height="150" viewBox="0 0 140 150">${shd(70, 146, 46, 6)}${rr(62, 40, 14, 108, 6, 'url(#pgWoodH)')}${rr(8, 6, 124, 70, 18, 'url(#pgWoodV)', 'stroke="#8E5C30" stroke-width="3"')}${rr(15, 13, 110, 56, 13, '#FFF6D2')}<path d="M32 41 H92" stroke="#FF7A9A" stroke-width="11" stroke-linecap="round"/><path d="M76 22 L104 41 L76 60Z" fill="#FF7A9A" stroke="#FF7A9A" stroke-width="8" stroke-linejoin="round"/><circle cx="32" cy="41" r="4" fill="#fff" opacity=".8"/></svg>`;
+
+/* ---------------- ZONE BORDER: play-mat floor, gate arch, rope posts (between the games on the left and the playground on the right) ---------------- */
+const ZONE_X = 1692;                                                  /* the border line */
+const PLAY_MAT = () => {
+  const x0 = ZONE_X, x1 = WW - 40, y0 = 548, y1 = 720, P = `M${x0 + 16} ${y0} H${x1 - 16} Q${x1 + 6} ${y0} ${x1 + 14} ${y1} H${x0 - 14} Q${x0 - 6} ${y0} ${x0 + 16} ${y0}Z`;
+  return `<g><defs><pattern id="pgTile" width="46" height="46" patternUnits="userSpaceOnUse"><rect width="46" height="46" fill="#B4E8D8"/><rect x="2" y="2" width="42" height="42" rx="10" fill="#C6F0E2"/></pattern></defs>
+  <path d="${P}" fill="none" stroke="#FF9DB8" stroke-width="34" stroke-linejoin="round"/><path d="${P}" fill="none" stroke="#fff" stroke-width="20" stroke-linejoin="round"/><path d="${P}" fill="url(#pgTile)"/>
+  <path d="M${x0 + 30} ${y0 + 14} H${x1 - 30}" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/></g>`;
+};
+function zoneGate() {   /* svg 220x340, arch centre at x=110, ground at y=330 */
+  const post = x => `${shd(x + 9, 332, 24, 6)}${rr(x, 60, 18, 272, 8, 'url(#pgWoodH)')}${rr(x - 4, 54, 26, 14, 7, 'url(#pgYel)')}<circle cx="${x + 9}" cy="44" r="12" fill="url(#pgRed)"/><circle cx="${x + 5}" cy="40" r="4" fill="#fff" opacity=".6"/>`;
+  return `<g>${post(28)}${post(174)}
+  ${rr(20, 66, 180, 26, 12, 'url(#pgPinkV)')}${rr(20, 66, 180, 8, 4, '#FFC0D2')}
+  ${ln(60, 92, 60, 112, 4, '#8E5C30')}${ln(160, 92, 160, 112, 4, '#8E5C30')}
+  ${rr(30, 108, 160, 82, 18, 'url(#pgWoodV)', 'stroke="#8E5C30" stroke-width="3"')}${rr(37, 115, 146, 68, 13, '#FFF6D2')}
+  <!-- swing -->${ln(48, 172, 62, 128, 5, '#FF7A9A')}${ln(76, 172, 62, 128, 5, '#FF7A9A')}${ln(57, 130, 57, 158, 2.5, '#8F86B4')}${ln(67, 130, 67, 158, 2.5, '#8F86B4')}${rr(52, 158, 20, 6, 3, '#FFD84D')}
+  <!-- slide -->${ln(112, 172, 118, 132, 5, '#C99555')}${ln(124, 132, 124, 172, 4, '#C99555')}${ln(112, 134, 128, 134, 5, '#FF7A9A')}<path d="M128 134 Q158 138 170 170" fill="none" stroke="#4FA6EC" stroke-width="7" stroke-linecap="round"/>
+  ${poly([[8, 74], [22, 58], [22, 74]], 'url(#pgYel)')}${poly([[212, 74], [198, 58], [198, 74]], 'url(#pgMint)')}</g>`;
+}
+function zoneRope() {   /* a hedge wall receding from the back fence to the gate: reads as "this is the edge" */
+  let o = ''; const ys = [[44, .8], [70, .88], [98, .96], [128, 1.04], [158, 1.12]];
+  ys.forEach(([y, s], i) => { o += bush(55, y, s * 1.15) + '<circle cx="' + (44 + (i % 3) * 10) + '" cy="' + (y - 26 * s) + '" r="' + (4 * s) + '" fill="' + ['#FF9DB8', '#FFE29A', '#fff', '#CDB8FF', '#FF9DB8'][i] + '"/><circle cx="' + (66 - (i % 2) * 12) + '" cy="' + (y - 20 * s) + '" r="' + (3.4 * s) + '" fill="' + ['#FFE29A', '#fff', '#FF9DB8', '#FFE29A', '#fff'][i] + '"/>'; });
+  return '<g>' + o + '</g>';
+}
 const PLAY = {
   slide:   { w: 420, h: 320, ax: 50,  ay: 300, bk: slideBack,   fr: slideFront,   walk: [12, 0] },
   sandbox: { w: 380, h: 200, ax: 170, ay: 190, bk: sandboxBack, fr: sandboxFront, walk: [-70, 6] },
