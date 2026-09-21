@@ -723,6 +723,7 @@ body[data-screen=petcare] #petbox{display:none!important}
 /* riders: hide the avatar's ground shadow while seated/climbing so nobody looks like they float */
 .avf.sit svg>ellipse:first-of-type,.avf.climb svg>ellipse:first-of-type{opacity:0}
 </style>
+<style>.dsign{position:absolute;pointer-events:none}.dsign svg{display:block;overflow:visible}</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1367,13 +1368,11 @@ const STRUCT = {
   puzzle: `<path d="M40 150 V60 M160 150 V60" stroke="${W_WOOD}" stroke-width="9" stroke-linecap="round"/><rect x="24" y="30" width="152" height="96" rx="10" fill="#fff" stroke="${W_DARK}" stroke-width="5"/><rect x="34" y="40" width="44" height="36" rx="6" fill="#FF8FA3"/><rect x="78" y="40" width="44" height="36" rx="6" fill="#FFD84D"/><rect x="122" y="40" width="44" height="36" rx="6" fill="#5CB8FF"/><rect x="34" y="76" width="44" height="40" rx="6" fill="#8EDCC0"/><rect x="78" y="76" width="44" height="40" rx="6" fill="#B79BFF"/><circle cx="78" cy="58" r="7" fill="#FFD84D" stroke="#fff" stroke-width="2"/>`,
   music: `<path d="M44 150 V64 M156 150 V64" stroke="${W_WOOD}" stroke-width="10" stroke-linecap="round"/><rect x="30" y="140" width="140" height="10" rx="4" fill="${W_DARK}"/><path d="M26 66 Q100 -6 174 66Q150 56 128 66Q100 52 72 66Q50 56 26 66Z" fill="#6FB6FF"/><g fill="#FF7A9A"><circle cx="78" cy="112" r="7"/><circle cx="108" cy="104" r="7"/></g><path d="M85 112 V84 M115 104 V76 M85 84 L115 76" stroke="#FF7A9A" stroke-width="4" fill="none"/>`,
 };
+/* LAYOUT: games live together on the LEFT (two staggered rows), the playground fills the RIGHT (back row + front row) */
 const TOWN_SPOTS = [
-  ['studio', 'Draw', 't-pink', "Let's draw!", 250, 430], ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!', 560, 500], ['animals', 'Animals', 't-butter', 'Animal friends!', 870, 430],
-  ['shapes', 'Shapes', 't-lilac', "Let's match shapes!", 1180, 500], ['spy', 'Find it!', 't-mint', 'Can you find it?', 1490, 430], ['count', 'Count', 't-peach', "Let's count!", 1800, 500],
-  ['memory', 'Memory', 't-lilac', 'Find the pairs!', 2110, 430], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!', 2400, 500], ['music', 'Music', 't-sky', "Let's make music!", 2400, 350],
+  ['studio', 'Draw', 't-pink', "Let's draw!", 250, 430], ['animals', 'Animals', 't-butter', 'Animal friends!', 520, 430], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!", 790, 430], ['count', 'Count', 't-peach', "Let's count!", 1060, 430], ['memory', 'Memory', 't-lilac', 'Find the pairs!', 1330, 430],
+  ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!', 385, 520], ['spy', 'Find it!', 't-mint', 'Can you find it?', 655, 520], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!', 925, 520], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!', 1195, 520], ['music', 'Music', 't-sky', "Let's make music!", 1465, 520],
 ];
-TOWN_SPOTS[8][4] = 1650; TOWN_SPOTS[8][5] = 350;
-TOWN_SPOTS.push(['puzzle', 'Puzzles', 't-mint', 'Puzzle time!', 2780, 430]);
 const DECOR = {
   swing: `<path d="M20 150 L60 10 L100 150 M100 150 L140 10 L180 150" stroke="#FF7A9A" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M52 10 H148" stroke="#FF7A9A" stroke-width="10" stroke-linecap="round"/><g class="sw1"><path d="M76 12 V104 M100 12 V104" stroke="#8a8aa8" stroke-width="3"/><rect x="70" y="104" width="36" height="9" rx="4" fill="#FFD84D"/></g><g class="sw2"><path d="M116 12 V96 M140 12 V96" stroke="#8a8aa8" stroke-width="3"/><rect x="110" y="96" width="36" height="9" rx="4" fill="#5CB8FF"/></g>`,
   seesaw: `<path d="M84 150 L100 108 L116 150Z" fill="#8EDCC0"/><g class="plank"><rect x="10" y="98" width="180" height="12" rx="6" fill="#FFB020"/><circle cx="20" cy="94" r="8" fill="#FF7A9A"/><circle cx="180" cy="94" r="8" fill="#FF7A9A"/></g>`,
@@ -1381,7 +1380,7 @@ const DECOR = {
 };
 DECOR.sandbox = `<path d="M18 128 L40 100 H160 L182 128 V146 H18Z" fill="#C9975B"/><path d="M28 128 H172 L160 106 H40Z" fill="#F6D89A"/><g class="castle"><path d="M116 106 V82 h9 v-8 h8 v8 h9 v24Z" fill="#F0C36C"/></g><rect x="150" y="96" width="14" height="12" rx="3" fill="#FF7A9A"/>`;
 DECOR.merry = `<ellipse cx="100" cy="140" rx="86" ry="14" fill="#B79BFF"/><ellipse cx="100" cy="134" rx="82" ry="12" fill="#D8C8FF"/><rect x="94" y="30" width="12" height="104" rx="5" fill="#FFD84D"/><path d="M14 44 Q100 -20 186 44Q160 34 143 44Q120 30 100 44Q80 30 57 44Q40 34 14 44Z" fill="#FF7A9A"/><g class="h1"><path d="M52 60 V120" stroke="#fff" stroke-width="4"/><rect x="36" y="112" width="34" height="12" rx="6" fill="#5CB8FF"/></g><g class="h2"><path d="M148 60 V120" stroke="#fff" stroke-width="4"/><rect x="132" y="112" width="34" height="12" rx="6" fill="#FFB020"/></g>`;
-const DECOR_AT = [['swing', 330, 695], ['slide', 560, 695], ['sandbox', 1130, 695], ['seesaw', 1540, 695], ['merry', 1860, 695], ['swing', 2160, 695], ['slide', 2400, 695], ['sandbox', 2960, 695]];
+const DECOR_AT = [['swing', 1740, 622], ['slide', 2290, 622], ['merry', 3120, 622], ['sandbox', 2030, 696], ['seesaw', 2850, 696]];
 const tree = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="14" cy="4" rx="58" ry="12" fill="rgba(30,80,40,.28)"/><rect x="-9" y="-44" width="18" height="48" rx="7" fill="url(#bark)"/><circle cx="0" cy="-72" r="40" fill="url(#leaf)"/><circle cx="-26" cy="-50" r="27" fill="url(#leaf2)"/><circle cx="26" cy="-54" r="27" fill="url(#leaf)"/><circle cx="-12" cy="-86" r="10" fill="#fff" opacity=".18"/></g>`;
 const bush = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="6" cy="2" rx="40" ry="8" fill="rgba(30,80,40,.25)"/><circle cx="-16" cy="-12" r="18" fill="url(#leaf2)"/><circle cx="14" cy="-14" r="22" fill="url(#leaf)"/><circle cx="34" cy="-8" r="14" fill="url(#leaf2)"/></g>`;
 const tuft = (x, y) => `<path d="M${x} ${y} q-3 -9 -7 -12 M${x} ${y} q1 -12 0 -17 M${x} ${y} q4 -8 8 -11" stroke="#3FA556" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/>`;
@@ -1409,7 +1408,7 @@ SCREENS.world = el => {
       <rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#gg)"/><rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#mow)"/><rect x="-400" y="300" width="${WW + 800}" height="70" fill="url(#haze)"/>${trees}${bushes}${fence}
       <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
     ${Array.from({ length: 0 }, (_, i) => `<button class="bfly" style="left:${rnd(150, WW - 150)}px;top:${rnd(380, 600)}px;z-index:1500;--a:${rnd(-160, 160)}px;--b:${rnd(-70, 40)}px;--c:${rnd(-200, 200)}px;--d:${rnd(-60, 60)}px;--t:${rnd(13, 22)}s;--h:${pick([330, 20, 50, 280, 190])}" aria-label="Butterfly"><svg viewBox="0 0 40 30"><g class="wl"><path d="M20 15 Q4 -2 6 12 Q6 24 20 17Z" fill="hsl(var(--h) 90% 70%)"/></g><g class="wr"><path d="M20 15 Q36 -2 34 12 Q34 24 20 17Z" fill="hsl(var(--h) 90% 76%)"/></g><rect x="19" y="8" width="2" height="14" rx="1" fill="#5b5478"/></svg></button>`).join('')}
-    ${PGRAD}${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
+    ${PGRAD}<div class="dsign" style="left:1548px;top:556px;z-index:640" aria-hidden="true">${PLAY_SIGN}</div>${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
     ${TOWN_SPOTS.map(([id, l, tone, s, x, y], i) => `<button class="spot" style="left:${x - 100}px;top:${y - 250}px;z-index:${y};--i:${i}" data-id="${id}" data-say="${esc(s)}" aria-label="${l}"><span class="plate ${tone}">${tileIcon(id)}</span><span class="sign">${l}</span><svg class="struct" viewBox="0 -10 200 160">${STRUCT[id]}</svg></button>`).join('')}
     <button class="ball" id="ball" style="left:1150px;top:620px" aria-label="Ball"><i></i></button>
     ${S.pet ? `<div class="tpet" id="tpet"><div class="flip">${petSVG(S.pet)}</div></div>` : ''}
@@ -1536,7 +1535,7 @@ SCREENS.world = el => {
     if (busy) return; const i = DECOR_AT[+d.dataset.i], P = PLAY[d.dataset.k];
     pending = () => ride(d); target = clampP(i[1] + P.walk[0], i[2] + P.walk[1]); mark(target);
   }));
-  const ball = $('#ball', el); let bp = { x: 1356, y: 688 }; ball.style.left = bp.x - 24 + 'px'; ball.style.top = bp.y - 48 + 'px'; ball.style.zIndex = bp.y;
+  const ball = $('#ball', el); let bp = { x: 1700, y: 692 }; ball.style.left = bp.x - 24 + 'px'; ball.style.top = bp.y - 48 + 'px'; ball.style.zIndex = bp.y;
   ball.addEventListener('click', () => {
     if (busy) return; const dir = pos.x <= bp.x ? 1 : -1; const bx = Math.max(80, Math.min(WW - 80, bp.x - dir * 46));
     pending = () => { face = dir; av.classList.remove('hop'); void av.offsetWidth; av.classList.add('hop'); sfx.pop();
@@ -1749,6 +1748,8 @@ function merryBack() {
 }
 function merrySeatArt(col) { return `<g>${rr(-16, -8, 32, 13, 6, col)}${rr(-16, -8, 32, 4, 2, '#fff', 'opacity=".5"')}${rr(-16, -32, 6, 26, 3, '#fff', 'opacity=".0"')}${ln(-13, -8, -13, -28, 4, 'url(#pgMetal)')}${ln(13, -8, 13, -28, 4, 'url(#pgMetal)')}${ln(-13, -28, 13, -28, 5, 'url(#pgMetal)')}</g>`; }
 
+/* signpost between the games (left) and the playground (right) */
+const PLAY_SIGN = `<svg width="140" height="150" viewBox="0 0 140 150">${shd(70, 146, 46, 6)}${rr(62, 40, 14, 108, 6, 'url(#pgWoodH)')}${rr(8, 6, 124, 70, 18, 'url(#pgWoodV)', 'stroke="#8E5C30" stroke-width="3"')}${rr(15, 13, 110, 56, 13, '#FFF6D2')}<path d="M32 41 H92" stroke="#FF7A9A" stroke-width="11" stroke-linecap="round"/><path d="M76 22 L104 41 L76 60Z" fill="#FF7A9A" stroke="#FF7A9A" stroke-width="8" stroke-linejoin="round"/><circle cx="32" cy="41" r="4" fill="#fff" opacity=".8"/></svg>`;
 const PLAY = {
   slide:   { w: 420, h: 320, ax: 50,  ay: 300, bk: slideBack,   fr: slideFront,   walk: [12, 0] },
   sandbox: { w: 380, h: 200, ax: 170, ay: 190, bk: sandboxBack, fr: sandboxFront, walk: [-70, 6] },
