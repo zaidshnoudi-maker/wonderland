@@ -1369,8 +1369,8 @@ function avatarFull(a, shirt, acc) {
   <g class="armL"><rect x="19" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="23.5" cy="138" r="6" fill="${skin}"/><circle cx="23.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="23.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="22" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="17" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g><g class="armR"><rect x="72" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="76.5" cy="138" r="6" fill="${skin}"/><circle cx="76.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="76.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="75" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="70" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g></g></svg>`;
 }
 
-const TOWN = { x: 300, y: 620 };
-const WW = 5500, WH = 720, FGW = Math.round(WW * 1.2);
+const TOWN = { x: 2200, y: 620 };
+const WW = 5250, WH = 720, FGW = Math.round(WW * 1.2);
 const W_WOOD = '#C9975B', W_DARK = '#9A6B3A';
 const STRUCT = {
   studio: `<path d="M62 150 L86 40 M138 150 L114 40 M100 150 V70" stroke="${W_WOOD}" stroke-width="9" stroke-linecap="round"/><rect x="66" y="34" width="68" height="60" rx="6" fill="#fff" stroke="${W_DARK}" stroke-width="5"/><circle cx="88" cy="58" r="9" fill="#FF7A9A"/><circle cx="112" cy="52" r="8" fill="#5CB8FF"/><circle cx="104" cy="76" r="8" fill="#FFD84D"/><rect x="128" y="132" width="16" height="18" rx="4" fill="#5CD68A"/><rect x="150" y="136" width="14" height="14" rx="4" fill="#FF8A5C"/>`,
@@ -1385,9 +1385,9 @@ const STRUCT = {
   music: `<path d="M44 150 V64 M156 150 V64" stroke="${W_WOOD}" stroke-width="10" stroke-linecap="round"/><rect x="30" y="140" width="140" height="10" rx="4" fill="${W_DARK}"/><path d="M26 66 Q100 -6 174 66Q150 56 128 66Q100 52 72 66Q50 56 26 66Z" fill="#6FB6FF"/><g fill="#FF7A9A"><circle cx="78" cy="112" r="7"/><circle cx="108" cy="104" r="7"/></g><path d="M85 112 V84 M115 104 V76 M85 84 L115 76" stroke="#FF7A9A" stroke-width="4" fill="none"/>`,
 };
 /* LAYOUT: games live together on the LEFT (two staggered rows), the playground fills the RIGHT (back row + front row) */
-const TOWN_SPOTS = [
-  ['studio', 'Draw', 't-pink', "Let's draw!", 250, 430], ['animals', 'Animals', 't-butter', 'Animal friends!', 520, 430], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!", 790, 430], ['count', 'Count', 't-peach', "Let's count!", 1060, 430], ['memory', 'Memory', 't-lilac', 'Find the pairs!', 1330, 430],
-  ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!', 385, 520], ['spy', 'Find it!', 't-mint', 'Can you find it?', 655, 520], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!', 925, 520], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!', 1195, 520], ['music', 'Music', 't-sky', "Let's make music!", 1465, 520],
+const TOWN_SPOTS = [   /* back line (y=436) and front line (y=652), staggered by half a step */
+  ['studio', 'Draw', 't-pink', "Let's draw!", 2170, 436], ['animals', 'Animals', 't-butter', 'Animal friends!', 2466, 436], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!", 2762, 436], ['count', 'Count', 't-peach', "Let's count!", 3058, 436], ['memory', 'Memory', 't-lilac', 'Find the pairs!', 3354, 436],
+  ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!', 2318, 652], ['spy', 'Find it!', 't-mint', 'Can you find it?', 2614, 652], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!', 2910, 652], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!', 3206, 652], ['music', 'Music', 't-sky', "Let's make music!", 3502, 652],
 ];
 const DECOR = {
   swing: `<path d="M20 150 L60 10 L100 150 M100 150 L140 10 L180 150" stroke="#FF7A9A" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M52 10 H148" stroke="#FF7A9A" stroke-width="10" stroke-linecap="round"/><g class="sw1"><path d="M76 12 V104 M100 12 V104" stroke="#8a8aa8" stroke-width="3"/><rect x="70" y="104" width="36" height="9" rx="4" fill="#FFD84D"/></g><g class="sw2"><path d="M116 12 V96 M140 12 V96" stroke="#8a8aa8" stroke-width="3"/><rect x="110" y="96" width="36" height="9" rx="4" fill="#5CB8FF"/></g>`,
@@ -1396,7 +1396,7 @@ const DECOR = {
 };
 DECOR.sandbox = `<path d="M18 128 L40 100 H160 L182 128 V146 H18Z" fill="#C9975B"/><path d="M28 128 H172 L160 106 H40Z" fill="#F6D89A"/><g class="castle"><path d="M116 106 V82 h9 v-8 h8 v8 h9 v24Z" fill="#F0C36C"/></g><rect x="150" y="96" width="14" height="12" rx="3" fill="#FF7A9A"/>`;
 DECOR.merry = `<ellipse cx="100" cy="140" rx="86" ry="14" fill="#B79BFF"/><ellipse cx="100" cy="134" rx="82" ry="12" fill="#D8C8FF"/><rect x="94" y="30" width="12" height="104" rx="5" fill="#FFD84D"/><path d="M14 44 Q100 -20 186 44Q160 34 143 44Q120 30 100 44Q80 30 57 44Q40 34 14 44Z" fill="#FF7A9A"/><g class="h1"><path d="M52 60 V120" stroke="#fff" stroke-width="4"/><rect x="36" y="112" width="34" height="12" rx="6" fill="#5CB8FF"/></g><g class="h2"><path d="M148 60 V120" stroke="#fff" stroke-width="4"/><rect x="132" y="112" width="34" height="12" rx="6" fill="#FFB020"/></g>`;
-const DECOR_AT = [['swing', 2010, 622], ['sandbox', 2290, 696], ['slide', 2620, 622], ['seesaw', 3280, 696], ['merry', 3620, 622], ['gym', 4230, 622], ['ballpit', 4560, 696], ['blocks', 4900, 622], ['tunnel', 5250, 696]];
+const DECOR_AT = [['swing', 320, 622], ['sandbox', 640, 696], ['slide', 900, 622], ['seesaw', 1470, 696], ['merry', 1770, 622], ['gym', 3950, 622], ['ballpit', 4280, 696], ['blocks', 4620, 622], ['tunnel', 4970, 696]];
 const tree = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="14" cy="4" rx="58" ry="12" fill="rgba(30,80,40,.28)"/><rect x="-9" y="-44" width="18" height="48" rx="7" fill="url(#bark)"/><circle cx="0" cy="-72" r="40" fill="url(#leaf)"/><circle cx="-26" cy="-50" r="27" fill="url(#leaf2)"/><circle cx="26" cy="-54" r="27" fill="url(#leaf)"/><circle cx="-12" cy="-86" r="10" fill="#fff" opacity=".18"/></g>`;
 const bush = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="6" cy="2" rx="40" ry="8" fill="rgba(30,80,40,.25)"/><circle cx="-16" cy="-12" r="18" fill="url(#leaf2)"/><circle cx="14" cy="-14" r="22" fill="url(#leaf)"/><circle cx="34" cy="-8" r="14" fill="url(#leaf2)"/></g>`;
 const tuft = (x, y) => `<path d="M${x} ${y} q-3 -9 -7 -12 M${x} ${y} q1 -12 0 -17 M${x} ${y} q4 -8 8 -11" stroke="#3FA556" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/>`;
@@ -1553,7 +1553,7 @@ SCREENS.world = el => {
   }));
   const nay = $('#naya', el); let nayPos = { x: SOFT_HOME[0], y: SOFT_HOME[1] }; nay.style.transform = nyF(nayPos.x, nayPos.y, NS * (.9 + .1 * ((nayPos.y - 380) / 315)));
   nay.addEventListener('click', e => { e.stopPropagation(); if (busy) return; target = clampP(nayPos.x - 90, nayPos.y + 4); pending = () => ride(null); mark(target); });
-  const ball = $('#ball', el); let bp = { x: 1850, y: 692 }; ball.style.left = bp.x - 24 + 'px'; ball.style.top = bp.y - 48 + 'px'; ball.style.zIndex = bp.y;
+  const ball = $('#ball', el); let bp = { x: 1080, y: 694 }; ball.style.left = bp.x - 24 + 'px'; ball.style.top = bp.y - 48 + 'px'; ball.style.zIndex = bp.y;
   ball.addEventListener('click', () => {
     if (busy) return; const dir = pos.x <= bp.x ? 1 : -1; const bx = Math.max(80, Math.min(WW - 80, bp.x - dir * 46));
     pending = () => { face = dir; av.classList.remove('hop'); void av.offsetWidth; av.classList.add('hop'); sfx.pop();
@@ -1768,9 +1768,9 @@ function merrySeatArt(col) { return `<g>${rr(-16, -8, 32, 13, 6, col)}${rr(-16, 
 
 
 /* ---------------- ZONE BORDER: play-mat floor, gate arch, rope posts (between the games on the left and the playground on the right) ---------------- */
-const ZONE_X = 1692;                                                  /* the border line */
+const ZONE_X = 1990;                                                  /* the border line */
 const PLAY_MAT = () => {
-  const x0 = ZONE_X, x1 = ZONE2_X - 40, y0 = 548, y1 = 720, P = `M${x0 + 16} ${y0} H${x1 - 16} Q${x1 + 6} ${y0} ${x1 + 14} ${y1} H${x0 - 14} Q${x0 - 6} ${y0} ${x0 + 16} ${y0}Z`;
+  const x0 = 40, x1 = ZONE_X - 40, y0 = 548, y1 = 720, P = `M${x0 + 16} ${y0} H${x1 - 16} Q${x1 + 6} ${y0} ${x1 + 14} ${y1} H${x0 - 14} Q${x0 - 6} ${y0} ${x0 + 16} ${y0}Z`;
   return `<g><defs><pattern id="pgTile" width="46" height="46" patternUnits="userSpaceOnUse"><rect width="46" height="46" fill="#B4E8D8"/><rect x="2" y="2" width="42" height="42" rx="10" fill="#C6F0E2"/></pattern></defs>
   <path d="${P}" fill="none" stroke="#FF9DB8" stroke-width="34" stroke-linejoin="round"/><path d="${P}" fill="none" stroke="#fff" stroke-width="20" stroke-linejoin="round"/><path d="${P}" fill="url(#pgTile)"/>
   <path d="M${x0 + 30} ${y0 + 14} H${x1 - 30}" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/></g>`;
@@ -1969,8 +1969,8 @@ const PLAY_RIDE = {
 };
 /* ===== SOFT PLAY ZONE: padded floor, four soft props (baby play gym, ball pit, foam blocks, crawl tunnel) and NAYA, a baby Liyana plays with.
    Same architecture as the playground (03e): each prop = bk layer + fr layer; rides are choreographed with the real avatar + Naya (+ pet). Static art only. ===== */
-const ZONE2_X = 3980;
-const SOFT_HOME = [4818, 692];                       /* where Naya sits when nobody is playing */
+const ZONE2_X = 3700;
+const SOFT_HOME = [4538, 692];                       /* where Naya sits when nobody is playing */
 const BALLC = ['#FF6B7A', '#FFC93D', '#4FB4F5', '#52CE86', '#FF9DB8', '#FF9A4D', '#B08CFF'];
 
 /* ---------------- BABY PLAY GYM ---------------- */
