@@ -740,6 +740,22 @@ body[data-screen=petcare] #petbox{display:none!important}
 .pball{width:22px;height:22px;box-shadow:inset -4px -4px 0 rgba(0,0,0,.12),inset 3px 3px 0 rgba(255,255,255,.4)}
 </style>
 <style>.thud .greet .mini{display:block}.thud .greet .mini svg{display:block;width:100%;height:100%;margin:0}</style>
+<style>
+/* shape fun */
+.findq{display:flex;align-items:center;justify-content:center;gap:16px;padding:6px 0 0}
+.findt{font:700 clamp(26px,4.6vw,44px) var(--display);color:var(--ink);background:rgba(255,255,255,.8);border-radius:28px;padding:8px 26px;box-shadow:0 5px 0 var(--shadow)}
+.finds{gap:clamp(14px,4vw,44px)}
+.sq{width:clamp(110px,19vw,180px);aspect-ratio:1;border:5px solid #fff;background:rgba(255,255,255,.7);border-radius:34px;box-shadow:0 7px 0 var(--shadow);display:grid;place-items:center;cursor:pointer;padding:0;transition:transform .35s cubic-bezier(.3,1.6,.5,1),opacity .4s;animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*70ms)}
+.sq svg{width:76%;height:76%}.sq:active{transform:scale(.94)}
+.sq.found{transform:scale(1.14);background:#fff;border-color:#5CD68A}.sq.fade{opacity:.25;transform:scale(.9)}
+.baskets{gap:clamp(20px,8vw,120px)}
+.bskt{width:clamp(150px,27vw,250px);height:clamp(110px,20vh,170px);border-radius:26px 26px 44px 44px;background:linear-gradient(#FFE7B3,#F2C46E);border:6px solid #fff;box-shadow:0 8px 0 var(--shadow);position:relative;display:grid;place-items:center;overflow:hidden}
+.bskt .bl{width:52%;aspect-ratio:1;display:grid;place-items:center;opacity:.5}.bskt .bl svg{width:100%;height:100%}
+.bskt i{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(160,100,40,.18) 22px 26px);pointer-events:none}
+.bskt.joy{animation:bounce .6s}
+.piece.small{width:clamp(78px,13vw,120px)}
+</style>
+<style>.shapes:has(.finds){justify-content:center;gap:clamp(30px,9vh,90px)}</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -822,8 +838,9 @@ function unlock() {
       master = ac.createGain(); master.gain.value = .9; const comp = ac.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 4; master.connect(comp); comp.connect(ac.destination);
       bus = ac.createGain(); bus.connect(master); mbus = ac.createGain(); mbus.gain.value = 1; mbus.connect(master);
       const dl = ac.createDelay(1); dl.delayTime.value = .23; const fb = ac.createGain(); fb.gain.value = .3; const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600; const wet = ac.createGain(); wet.gain.value = .26;
-      bus.connect(dl); mbus.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(master);
+      bus.connect(dl); dl.connect(lp); lp.connect(fb); fb.connect(dl); lp.connect(wet); wet.connect(master);
       noiseBuf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      buildMusicGraph();
     } catch (e) { }
   }
   if (ac && ac.state === 'suspended') ac.resume();
@@ -858,25 +875,97 @@ const sfx = {
   chime() { note(pick(PENTA), { dur: .6, vol: .07, kind: 'bell' }); },
   whoosh() { if (!ac || S.sfxOff || !noiseBuf) return; const t = ac.currentTime, s = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; bp.type = 'bandpass'; bp.Q.value = 1.2; bp.frequency.setValueAtTime(400, t); bp.frequency.exponentialRampToValueAtTime(2200, t + .3); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.07, t + .06); g.gain.exponentialRampToValueAtTime(.0001, t + .34); s.connect(bp); bp.connect(g); g.connect(master); s.start(t); s.stop(t + .4); },
 };
-/* calm background music: slow lullaby-style chords + music-box melody (generated, works offline) */
-const MUSIC_NO = ['music', 'setup1', 'setup2', 'setup3'];
-const CHORDS = [[130.81, 164.81, 196], [110, 130.81, 164.81], [87.31, 110, 130.81, 174.61], [98, 123.47, 146.83, 196]]; /* C, Am, F, G */
-const CH_TONES = [[523.25, 659.25, 783.99, 1046.5], [440, 523.25, 659.25, 880], [523.25, 698.46, 880, 1046.5], [587.33, 783.99, 987.77, 1174.66]];
-let musicIv = 0, mNext = 0, mStepI = 0, mChord = 0, mLast = 1, mDuckT = 0;
-const MOODS = { home: { bpm: 84, p: .7 }, play: { bpm: 76, p: .6 }, calm: { bpm: 62, p: .34 } };
-const musicMood = () => (screen === 'home' || screen === 'welcome') ? MOODS.home : (screen === 'petcare' || screen === 'draw' || screen === 'studio' || screen === 'gallery' || screen === 'wardrobe' || screen === 'stickers') ? MOODS.calm : MOODS.play;
+/* ===== background music v2: real songs (public-domain nursery tunes + two originals), music-box lead, warm pad, soft bass, reverb.
+   Everything is synthesised with Web Audio (works offline). Songs are lists of "midi:beats" so they are easy to add/change. ===== */
+const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+const CHD = { C: [48, 52, 55], F: [53, 57, 60], G: [55, 59, 62], Am: [57, 60, 64], Dm: [50, 53, 57], Em: [52, 55, 59], Bb: [46, 50, 53] };
+const CBASS = { C: 48, F: 53, G: 55, Am: 45, Dm: 50, Em: 52, Bb: 46 };
+const MP = s => s.trim().split(/\s+/).map(t => { const [a, b] = t.split(':'); return [a === 'r' ? null : +a, +b]; });
+const MC = s => s.trim().split(/\s+/).map(t => { const [a, b] = t.split(':'); return [a, +b]; });
+const SONGS = {
+  twinkle: { bpm: 84, meter: 4,   /* Twinkle, Twinkle, Little Star (traditional) */
+    mel: MP('60:1 60:1 67:1 67:1 69:1 69:1 67:2 65:1 65:1 64:1 64:1 62:1 62:1 60:2 67:1 67:1 65:1 65:1 64:1 64:1 62:2 67:1 67:1 65:1 65:1 64:1 64:1 62:2 60:1 60:1 67:1 67:1 69:1 69:1 67:2 65:1 65:1 64:1 64:1 62:1 62:1 60:2'),
+    ch: MC('C:4 F:2 C:2 F:2 C:2 G:2 C:2 C:2 F:2 C:2 G:2 C:2 F:2 C:2 G:2 C:4 F:2 C:2 F:2 C:2 G:2 C:2') },
+  mary: { bpm: 100, meter: 4,     /* Mary Had a Little Lamb (traditional) */
+    mel: MP('64:1 62:1 60:1 62:1 64:1 64:1 64:2 62:1 62:1 62:2 64:1 67:1 67:2 64:1 62:1 60:1 62:1 64:1 64:1 64:1 64:1 62:1 62:1 64:1 62:1 60:4'),
+    ch: MC('C:4 C:4 G:4 C:4 C:4 C:4 G:4 C:4') },
+  ode: { bpm: 104, meter: 4,      /* Ode to Joy (Beethoven) */
+    mel: MP('64:1 64:1 65:1 67:1 67:1 65:1 64:1 62:1 60:1 60:1 62:1 64:1 64:1.5 62:.5 62:2 64:1 64:1 65:1 67:1 67:1 65:1 64:1 62:1 60:1 60:1 62:1 64:1 62:1.5 60:.5 60:2 62:1 62:1 64:1 60:1 62:1 64:.5 65:.5 64:1 60:1 62:1 64:.5 65:.5 64:1 62:1 60:1 62:1 55:2 64:1 64:1 65:1 67:1 67:1 65:1 64:1 62:1 60:1 60:1 62:1 64:1 62:1.5 60:.5 60:2'),
+    ch: MC('C:4 G:2 C:2 C:4 G:4 C:4 G:2 C:2 C:4 G:2 C:2 G:4 C:4 C:2 G:2 C:2 G:2 C:4 G:2 C:2 C:4 G:2 C:2') },
+  frere: { bpm: 96, meter: 4,     /* Frere Jacques (traditional) */
+    mel: MP('60:1 62:1 64:1 60:1 60:1 62:1 64:1 60:1 64:1 65:1 67:2 64:1 65:1 67:2 67:.5 69:.5 67:.5 65:.5 64:1 60:1 67:.5 69:.5 67:.5 65:.5 64:1 60:1 60:1 55:1 60:2 60:1 55:1 60:2'),
+    ch: MC('C:8 C:8 G:2 C:2 G:2 C:2 C:8') },
+  sunny: { bpm: 104, meter: 4,    /* "Sunny Steps" (original) */
+    mel: MP('67:.5 69:.5 72:1 69:.5 67:.5 64:1 60:.5 62:.5 64:1 67:2 65:.5 67:.5 69:1 67:.5 65:.5 62:1 64:.5 62:.5 60:1 62:2 67:.5 69:.5 72:1 76:1 72:1 69:.5 72:.5 76:1 72:1 69:1 65:1 67:1 69:1 65:1 67:2 60:2'),
+    ch: MC('C:4 C:4 F:4 G:4 C:4 Am:4 F:4 G:2 C:2') },
+  moon: { bpm: 56, meter: 3,      /* "Sleepy Moon" lullaby (original) */
+    mel: MP('65:1 69:1 72:1 74:2 72:1 70:2 69:1 67:3 65:1 69:1 72:1 74:2 76:1 77:2 74:1 72:3 74:2 72:1 70:2 69:1 69:2 67:1 67:3 65:1 69:1 72:1 74:2 72:1 70:1 69:1 67:1 65:3'),
+    ch: MC('F:3 F:3 Dm:3 C:3 F:3 F:3 Bb:3 C:3 Dm:3 Bb:3 F:3 C:3 F:3 Dm:3 C:3 F:3') },
+};
+const MOOD_SONGS = { home: ['twinkle', 'frere', 'sunny', 'mary'], play: ['sunny', 'mary', 'ode', 'frere'], calm: ['moon', 'twinkle'] };
+let mLead, mPadF, mBassF;
+function buildMusicGraph() {   /* called once from buildAudio(): instrument filters + a real (convolution) reverb */
+  mLead = ac.createBiquadFilter(); mLead.type = 'lowpass'; mLead.frequency.value = 5200; mLead.Q.value = .4; mLead.connect(mbus);
+  mPadF = ac.createBiquadFilter(); mPadF.type = 'lowpass'; mPadF.frequency.value = 950; mPadF.Q.value = .3; mPadF.connect(mbus);
+  mBassF = ac.createBiquadFilter(); mBassF.type = 'lowpass'; mBassF.frequency.value = 520; mBassF.connect(mbus);
+  const rev = ac.createConvolver(), len = Math.floor(ac.sampleRate * 2.4), ir = ac.createBuffer(2, len, ac.sampleRate);
+  for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); let y = 0; for (let i = 0; i < len; i++) { const x = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.7); y += .4 * (x - y); d[i] = y; } }
+  rev.buffer = ir; const rg = ac.createGain(); rg.gain.value = .34; mbus.connect(rev); rev.connect(rg); rg.connect(master);
+}
 const musicLevel = () => ({ soft: 1, med: 1.8 }[S.mlevel] || 1);
-function musicVoice(f, dur, vol, kind, when) { note(f, { dur, vol: vol * musicLevel(), kind, when, out: mbus, force: true }); }
-function pad(f, t, dur, vol) { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f; const v = vol * musicLevel(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + dur * .32); g.gain.linearRampToValueAtTime(0, t + dur); o.connect(g); g.connect(mbus); o.start(t); o.stop(t + dur + .05); }
+function mbox(f, t, dur, vol) {                     /* music-box / celesta */
+  const v = vol * musicLevel();
+  [[1, 1, 0], [1, .5, 5], [2, .3, 0], [4.01, .09, 0]].forEach(([m, g, cents]) => {
+    const o = ac.createOscillator(), gn = ac.createGain(); o.type = 'sine'; o.frequency.value = f * m; if (cents) o.detune.value = cents;
+    const d = dur / (m > 2 ? 3.2 : m > 1 ? 1.6 : 1); gn.gain.setValueAtTime(0, t); gn.gain.linearRampToValueAtTime(v * g, t + .005); gn.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(gn); gn.connect(mLead); o.start(t); o.stop(t + d + .05);
+  });
+}
+function padChord(n, t, dur, vol) {                 /* warm pad: detuned triangle pairs, slow swell */
+  const v = vol * musicLevel();
+  CHD[n].forEach(m => [-5, 5].forEach(c => { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'triangle'; o.frequency.value = mtof(m); o.detune.value = c;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + Math.min(.45, dur * .3)); g.gain.setValueAtTime(v, t + dur * .72); g.gain.linearRampToValueAtTime(0, t + dur + .3); o.connect(g); g.connect(mPadF); o.start(t); o.stop(t + dur + .35); }));
+}
+function bassNote(m, t, dur, vol) {                 /* soft plucked bass */
+  const v = vol * musicLevel(); [['sine', 1, 1], ['triangle', 1, .35]].forEach(([ty, mul, gn]) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = ty; o.frequency.value = mtof(m) * mul; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * gn, t + .012); g.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(g); g.connect(mBassF); o.start(t); o.stop(t + dur + .05); });
+}
+function shaker(t, vol) {
+  if (!noiseBuf) return; const s = ac.createBufferSource(), hp = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; hp.type = 'highpass'; hp.frequency.value = 6500; const v = vol * musicLevel();
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .006); g.gain.exponentialRampToValueAtTime(.0001, t + .06); s.connect(hp); hp.connect(g); g.connect(mLead); s.start(t, Math.random() * .5); s.stop(t + .08);
+}
+function expandSong(sg, mood) {                     /* melody + chords -> a flat, time-ordered list of events (times in beats) */
+  const ev = [], calm = mood === 'calm'; let b = 0; sg.mel.forEach(([m, d]) => { if (m != null) ev.push({ b, k: 'm', f: mtof(m), d }); b += d; }); const total = b; let cb = 0;
+  sg.ch.forEach(([n, d]) => {
+    if (cb >= total) return; const dd = Math.min(d, total - cb); ev.push({ b: cb, k: 'p', n, d: dd });
+    for (let x = 0; x < dd; x++) {
+      const bb = cb + x, bar = bb % sg.meter;
+      if (bar === 0) ev.push({ b: bb, k: 'b', m: CBASS[n] }); else if (sg.meter === 4 && bar === 2 && !calm) ev.push({ b: bb, k: 'b', m: CBASS[n] + 7 });
+      if ((sg.meter === 3 && bar > 0) || (sg.meter === 4 && (calm || bar % 2 === 1))) ev.push({ b: bb, k: 'a', f: mtof(CHD[n][(bb + 1) % 3] + 12) });
+      if (!calm && sg.meter === 4) ev.push({ b: bb + .5, k: 's' });
+    }
+    cb += dd;
+  });
+  return { ev: ev.sort((a, c) => a.b - c.b), total };
+}
+let musicIv = 0, mNext = 1, mStepI = 0, mDuckT = 0, ms = null;
+const MUSIC_NO = ['music', 'setup1', 'setup2', 'setup3'];
+const musicMood = () => (screen === 'home' || screen === 'welcome') ? 'home' : (screen === 'petcare' || screen === 'draw' || screen === 'studio' || screen === 'gallery' || screen === 'wardrobe' || screen === 'stickers') ? 'calm' : 'play';
+function startSong(mood, at) {
+  const name = pick(MOOD_SONGS[mood].filter(n => !ms || n !== ms.name)), sg = SONGS[name], spb = 60 / (sg.bpm * (mood === 'calm' && sg.meter === 4 ? .8 : 1)), x = expandSong(sg, mood);
+  ms = { name, mood, spb, t0: at, ev: x.ev, i: 0, end: at + (x.total + 3) * spb };
+}
+function playMusicEv(e, t, spb, mood) {
+  if (e.k === 'm') { mStepI++; mbox(e.f, t, Math.min(e.d * spb * 1.3 + .6, 2.8), .14); }
+  else if (e.k === 'p') padChord(e.n, t, e.d * spb, mood === 'calm' ? .05 : .042);
+  else if (e.k === 'b') bassNote(e.m, t, spb * 1.6, .11);
+  else if (e.k === 'a') mbox(e.f, t, spb * 1.5, mood === 'calm' ? .05 : .034);
+  else shaker(t, .014);
+}
 function musicTick() {
-  if (!ac || ac.state !== 'running' || document.hidden || MUSIC_NO.includes(screen) || S.music === false) { if (ac) mNext = Math.max(mNext, ac.currentTime); return; }
-  const m = musicMood(), eighth = 30 / m.bpm; if (mNext < ac.currentTime) mNext = ac.currentTime + .05;
-  while (mNext < ac.currentTime + .7) {
-    const i = mStepI % 8, t = mNext - ac.currentTime;
-    if (i === 0) { const ch = CHORDS[mChord % 4]; ch.forEach(f => pad(f, mNext, eighth * 8.5, .06)); musicVoice(ch[0] / 2, eighth * 4, .15, 'soft', t); }
-    if (i % 2 === 0 || (i % 2 && Math.random() < .18)) if (Math.random() < m.p) { const tones = CH_TONES[mChord % 4]; mLast = Math.max(0, Math.min(tones.length - 1, mLast + pick([-1, -1, 0, 1, 1, 2, -2]))); musicVoice(tones[mLast], eighth * 5, .11, 'box', t); }
-    mNext += eighth; mStepI++; if (mStepI % 8 === 0) mChord++;
-  }
+  if (!ac || ac.state !== 'running' || document.hidden || MUSIC_NO.includes(screen) || S.music === false) { ms = null; return; }
+  const now = ac.currentTime, mood = musicMood(); if (mNext === 0) { ms = null; mNext = 1; }
+  if (!ms || ms.mood !== mood || now > ms.end) startSong(mood, now + .12);
+  while (ms.i < ms.ev.length) { const e = ms.ev[ms.i], t = ms.t0 + e.b * ms.spb; if (t > now + .7) break; if (t >= now - .05) playMusicEv(e, Math.max(t, now), ms.spb, ms.mood); ms.i++; }
 }
 function startMusic() { if (musicIv || !ac) return; musicIv = setInterval(musicTick, 220); musicTick(); }
 function stopMusic() { /* the loop keeps running but stays silent on excluded screens */ }
@@ -1051,6 +1140,7 @@ const onLeave = fn => cleanups.push(fn);
 let screen = 'home', screenArg = null;
 function go(name, arg) {
   cleanups.forEach(f => { try { f(); } catch (e) { } }); cleanups = []; navId++;
+  if (window.__lwUpdate && (name === 'home' || name === 'welcome')) { location.reload(); return; }
   screen = name; screenArg = arg; try { trackPlay(name, arg); } catch (e) { } document.body.dataset.screen = name; startMusic();
   const fn = SCREENS[name]; const el = document.createElement('div'); el.className = 'screen';
   app.replaceChildren(el); fn(el, arg); renderPet();
@@ -2423,18 +2513,43 @@ const PUZ = [
   `<rect width="300" height="300" fill="#FFF1D6"/><rect x="141" y="150" width="18" height="150" rx="8" fill="#5CBB6A"/><ellipse cx="100" cy="230" rx="46" ry="18" fill="#7BD98A" transform="rotate(-24 100 230)"/><ellipse cx="200" cy="215" rx="46" ry="18" fill="#7BD98A" transform="rotate(24 200 215)"/>${[0, 60, 120, 180, 240, 300].map(a => `<ellipse cx="150" cy="62" rx="32" ry="46" fill="#FF8FC7" transform="rotate(${a} 150 110)"/>`).join('')}<circle cx="150" cy="110" r="36" fill="#FFD84D"/><circle cx="138" cy="104" r="5" fill="#3D3358"/><circle cx="162" cy="104" r="5" fill="#3D3358"/><path d="M138 122 Q150 134 162 122" stroke="#3D3358" stroke-width="4" fill="none" stroke-linecap="round"/>`,
   `<rect width="300" height="300" fill="#2F2A5A"/>${[[30, 40], [80, 210], [250, 90], [270, 240], [40, 130], [210, 30], [120, 60]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4" fill="#FFE29A"/>`).join('')}<circle cx="238" cy="70" r="30" fill="#FFF3C4"/><circle cx="228" cy="62" r="6" fill="#F0DB93"/><path d="M150 30 C190 70 196 140 184 220 H116 C104 140 110 70 150 30Z" fill="#fff"/><path d="M150 30 C170 50 180 70 184 92 H116 C120 70 130 50 150 30Z" fill="#FF6B81"/><circle cx="150" cy="130" r="22" fill="#8FD3F0" stroke="#B7B0E8" stroke-width="6"/><path d="M116 190 L84 240 L116 226Z M184 190 L216 240 L184 226Z" fill="#FF6B81"/><path d="M126 224 Q150 290 174 224Z" fill="#FFA24C"/>`,
 ];
+/* ---- puzzle pool: the 4 hand-made scenes + every coloring friend, painted and set in a little scene ---- */
+const PUZ_BASE = { cat: '#FFB86B', puppy: '#D9A066', bunny: '#F3E9FF', bear: '#B98860', elephant: '#9FB4D9', lion: '#FFC24D', pig: '#FF9DB8', duck: '#FFE066', owl: '#B08CFF', frog: '#6FD88A', dino: '#7FD1A0', fish: '#FF9A4D', octopus: '#FF8FB0', whale: '#6FB6FF', turtle: '#7BD98A', butterfly: '#FF8FD0', ladybug: '#FF6B6B', sun: '#FFD84D', flower: '#FF8FB0', apple: '#FF6B6B', icecream: '#FFB3D1', cupcake: '#FF9DC6', car: '#FF6B7A', rocket: '#FF7A9A', cow: '#F1F1F8', sheep: '#EDE7FF', horse: '#C99555', chicken: '#FFD84D', penguin: '#5B6FA8', panda: '#E4E4EE', monkey: '#C99555', giraffe: '#FFD24D', tiger: '#FF9A3D', hippo: '#B3A6E6', crab: '#FF6B6B', dolphin: '#6FB6FF', snail: '#FFB86B', strawberry: '#FF5F7A', banana: '#FFE066', pizza: '#FFC24D', cookie: '#D9A066', bus: '#FFD24D', train: '#FF6B6B', plane: '#6FB6FF', balloons: '#FF8FB0', rainbow: '#FF8FB0', moon: '#FFE29A', house: '#FFB3C8' };
+const PUZ_BG = [['#BFE6FF', '#EAF7FF', '#7ED87F'], ['#FFE3F0', '#FFF6EA', '#9BE38C'], ['#D9F5E4', '#F4FFF8', '#7BD1A0'], ['#E7DFFF', '#F8F4FF', '#A7E08F'], ['#FFF1C4', '#FFFAE8', '#8EDB7C'], ['#D5F0F5', '#EEFBFD', '#7FD6A0']];
+const PUZ_ACC = ['#FF8FB0', '#6FBDF7', '#FFD24D', '#7BD98A', '#B79BFF', '#FFA24D'];
+const puzMix = (a, b, t) => { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)), x = p(a), y = p(b); return '#' + x.map((v, i) => Math.round(v + (y[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
+function puzColorize(art, base, seed, key) {
+  const pal = key === 'rainbow' ? ['#FF6B6B', '#FFA24D', '#FFDB4D', '#5CD68A', '#5CB8FF', '#FFFFFF', '#FFFFFF'] : [base, puzMix(base, '#ffffff', .5), '#FFFFFF', puzMix(base, '#3D3358', .18), PUZ_ACC[seed % 6]];
+  const PAT = key === 'rainbow' ? [0, 1, 2, 3, 4, 5, 6] : [0, 1, 0, 2, 3, 0, 1, 0, 0, 2, 1, 4]; let i = 0;
+  return art.replace(/class="r"/g, () => 'fill="' + pal[PAT[i++ % PAT.length]] + '" stroke="#3D3358" stroke-width="5" stroke-linejoin="round"');
+}
+function puzScene(art, key, seed) {
+  const [c1, c2, g] = PUZ_BG[seed % 6], sun = seed % 2 === 0, base = PUZ_BASE[key] || '#FFB86B';
+  return '<defs><linearGradient id="pzb' + seed + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></linearGradient></defs><rect width="300" height="300" fill="url(#pzb' + seed + ')"/>' +
+    (sun ? '<circle cx="252" cy="44" r="26" fill="#FFE066"/><g stroke="#FFE066" stroke-width="6" stroke-linecap="round"><path d="M252 6v10M252 72v10M214 44h10M280 44h10M225 17l7 7M279 71l7 7M279 17l-7 7M225 71l-7 7"/></g>' : '<path d="M24 48q0-16 18-16 6-14 24-8 16-4 22 12 16 0 16 14H24z" fill="#fff" opacity=".92"/><path d="M206 66q0-12 14-12 4-10 18-6 12-3 16 9 12 0 12 10h-60z" fill="#fff" opacity=".92"/>') +
+    '<path d="M0 268 Q75 250 150 266 T300 262 V300 H0Z" fill="' + g + '"/>' + [[30, 286, '#FF8FB0'], [92, 280, '#FFE066'], [170, 289, '#fff'], [238, 282, '#FF8FB0'], [280, 291, '#FFE066']].map(([x, y, c]) => '<circle cx="' + x + '" cy="' + y + '" r="4.5" fill="' + c + '"/>').join('') +
+    '<g transform="translate(15 34) scale(.74)">' + puzColorize(art, base, seed, key) + '</g>';
+}
+let _puzPool = null;
+function puzPool() {
+  if (_puzPool) return _puzPool; const out = PUZ.slice(); let n = 0;
+  [FRIENDS, FRIENDS2].forEach(F => Object.keys(F).forEach(k => { try { out.push(puzScene(F[k](), k, ++n)); } catch (e) { } }));
+  return (_puzPool = out);
+}
+const PUZ_LV = [[2, 2], [3, 2], [3, 3], [4, 3]];      /* grows with age and with how many she has finished */
+const puzLevel = () => { const base = { 2: 0, 3: 1, 4: 2 }[S.age], cap = { 2: 1, 3: 2, 4: 3 }[S.age]; return Math.min(cap === undefined ? 2 : cap, (base === undefined ? 1 : base) + Math.floor((S.puzN || 0) / 4)); };
 SCREENS.puzzle = el => {
-  let idx = Math.floor(Math.random() * PUZ.length);
+  const pool = puzPool(), order = shuffle(pool.map((_, i) => i)); let ptr = 0, idx = order[0];
   el.innerHTML = bar('Puzzle time!') + `<div class="play" id="pl"><div class="puz" id="pz"></div></div>`;
   const pl = $('#pl', el), pz = $('#pz', el); const m = meter(2, () => {}); mountMeter(el, m);
-  const dims = () => ({ 2: [2, 2], 3: [3, 2], 4: [3, 3] }[S.age] || [3, 2]);
+  const dims = () => PUZ_LV[puzLevel()];
   const svg = (pic, x, y, w, h, extra = '') => `<svg viewBox="${x} ${y} ${w} ${h}" ${extra} aria-hidden="true">${pic}</svg>`;
   function build() {
     const [cols, rows] = dims(); const r = pl.getBoundingClientRect();
     const cell = Math.max(70, Math.min(Math.floor((r.height - 40) / Math.max(rows, 2) * (rows > 2 ? 1 : .8)), Math.floor(r.width * .5 / cols), 170));
     const cw = 300 / cols, ch = 300 / rows, ar = cw / ch; const cellW = Math.round(cell * ar > cell * 1.2 ? cell : cell * ar), cellH = cell;
     const cWpx = Math.round(cell * (cw / ch));
-    const pic = PUZ[idx], tot = cols * rows; let placed = 0;
+    const pic = pool[idx], tot = cols * rows; let placed = 0;
     pz.style.setProperty('--cw', cWpx + 'px'); pz.style.setProperty('--ch', cell + 'px');
     const cells = Array.from({ length: tot }, (_, i) => [i % cols, Math.floor(i / cols), i]);
     pz.innerHTML = `<div class="pboard" style="grid-template-columns:repeat(${cols},${cWpx}px);grid-template-rows:repeat(${rows},${cell}px)">${cells.map(([cx, cy, i]) => `<div class="pslot" data-i="${i}">${svg(pic, cx * cw, cy * ch, cw, ch, 'class="ghost"')}</div>`).join('')}</div>
@@ -2450,7 +2565,7 @@ SCREENS.puzzle = el => {
           const sr = slot.getBoundingClientRect(); p.classList.add('back'); p.style.transform = `translate(${sr.left + sr.width / 2 - c0.x}px,${sr.top + sr.height / 2 - c0.y}px)`;
           p.classList.add('placed'); sfx.pop();
           later(() => { slot.classList.add('done'); slot.innerHTML = p.innerHTML; p.style.visibility = 'hidden'; sparkle(sr.left + sr.width / 2, sr.top + sr.height / 2, 6); placed++; petHappy();
-            if (placed === tot) { sparkle(sr.left, sr.top, 12); later(() => reward(`${pick(PRAISE)} You finished the puzzle!`), 400); later(() => { idx = (idx + 1) % PUZ.length; build(); }, 3400); } }, 380);
+            if (placed === tot) { S.puzN = (S.puzN || 0) + 1; save(); sparkle(sr.left, sr.top, 12); later(() => reward(`${pick(PRAISE)} You finished the puzzle!`), 400); later(() => { idx = order[++ptr % order.length]; build(); }, 3400); } }, 380);
         };
         const move = ev => { const dx = ev.clientX - sx, dy = ev.clientY - sy; if (Math.hypot(dx, dy) > 8) moved = true; p.style.transform = `translate(${dx}px,${dy}px) scale(1.06)`; };
         const up = () => {
@@ -3046,36 +3161,96 @@ const SHAPES = {
   heart: ['#FF8FA3', c => `<path d="M50 88 C10 58 6 28 26 18 C38 12 48 20 50 30 C52 20 62 12 74 18 C94 28 90 58 50 88Z" fill="${c}" stroke="${c}" stroke-width="5" stroke-linejoin="round"/>`, 4],
 };
 const shapeSVG = (id, tint, face) => `<svg viewBox="0 0 100 100" aria-hidden="true">${SHAPES[id][1](tint || SHAPES[id][0])}${face ? `<g transform="translate(0 ${SHAPES[id][2]})"><circle cx="40" cy="48" r="4" fill="#3D3358"/><circle cx="60" cy="48" r="4" fill="#3D3358"/><circle cx="41.4" cy="46.6" r="1.4" fill="#fff"/><circle cx="61.4" cy="46.6" r="1.4" fill="#fff"/><path d="M42 58 Q50 66 58 58" stroke="#3D3358" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="32" cy="58" r="4.5" fill="#fff" opacity=".45"/><circle cx="68" cy="58" r="4.5" fill="#fff" opacity=".45"/></g>` : ''}</svg>`;
+/* ---- more shapes ---- */
+Object.assign(SHAPES, {
+  oval: ['#FF9F6B', c => `<ellipse cx="50" cy="50" rx="44" ry="30" fill="${c}"/>`, 0],
+  diamond: ['#4FC3F7', c => `<path d="M50 8 L92 50 L50 92 L8 50Z" fill="${c}" stroke="${c}" stroke-width="8" stroke-linejoin="round"/>`, 0],
+  rectangle: ['#F06AA8', c => `<rect x="6" y="24" width="88" height="52" rx="10" fill="${c}"/>`, 0],
+  hexagon: ['#52CE86', c => `<path d="M28 14 H72 L92 50 L72 86 H28 L8 50Z" fill="${c}" stroke="${c}" stroke-width="6" stroke-linejoin="round"/>`, 0],
+  pentagon: ['#9F7FF0', c => `<path d="M50 9 L91 39 L75 87 H25 L9 39Z" fill="${c}" stroke="${c}" stroke-width="6" stroke-linejoin="round"/>`, 4],
+  plus: ['#FFB020', c => `<path d="M36 10 H64 V36 H90 V64 H64 V90 H36 V64 H10 V36 H36Z" fill="${c}" stroke="${c}" stroke-width="6" stroke-linejoin="round"/>`, 0],
+});
+const SHAPE_NAME = id => id.charAt(0).toUpperCase() + id.slice(1);
+const SHAPE_TINTS = ['#FF6B7A', '#FFB020', '#52CE86', '#4FB4F5', '#9F7FF0', '#FF8FB0'];
+
 SCREENS.shapes = el => {
-  let round = 0;
-  el.innerHTML = bar('Match the shapes!') + `<div class="play"><div class="shapes" id="sh"></div></div>`;
-  const sh = $('#sh', el); const m = meter(3, () => reward(`${pick(PRAISE)} All the shapes!`)); mountMeter(el, m);
+  /* rounds rotate: match -> find -> odd one out -> sort -> ...   (harder shapes appear as she plays) */
+  const MODES = ['match', 'find', 'odd', 'sort']; let round = 0, gen = 0;
+  el.innerHTML = bar('Shape fun!') + `<div class="play"><div class="shapes" id="sh"></div></div>`;
+  const sh = $('#sh', el); const m = meter(3, () => reward(`${pick(PRAISE)} You know your shapes!`)); mountMeter(el, m);
+  const pool = () => { const all = Object.keys(SHAPES), easy = all.slice(0, 5), k = Math.min(all.length, 4 + AGE().shapes + Math.floor(round / 2)); return shuffle(all.slice(0, Math.max(5, k)).length >= 5 ? all.slice(0, Math.max(5, k)) : easy); };
+  const cnt = () => Math.min(5, AGE().shapes + (round >= 3 ? 1 : 0));
+  const done = () => { round++; sfx.yay(); cheer(); m.add(); later(next, 2700); };
+
+  /* one reusable drag: drop on a target (or tap) -> onDrop(pieceEl, targetEl|null) decides */
+  function drag(p, targets, onDrop, tapTarget) {
+    p.addEventListener('pointerdown', e => {
+      if (p.classList.contains('placed')) return; try { p.setPointerCapture(e.pointerId); } catch (_) { }
+      const sx = e.clientX, sy = e.clientY; let moved = false; p.classList.add('drag'); p.classList.remove('back');
+      const move = ev => { const dx = ev.clientX - sx, dy = ev.clientY - sy; if (Math.hypot(dx, dy) > 8) moved = true; p.style.transform = `translate(${dx}px,${dy}px) scale(1.08)`; };
+      const up = () => {
+        p.removeEventListener('pointermove', move); p.removeEventListener('pointerup', up); p.removeEventListener('pointercancel', up); p.classList.remove('drag');
+        if (!moved) { say(SHAPE_NAME(p.dataset.id)); setTimeout(() => onDrop(p, tapTarget(p)), 450); return; }
+        const pr = p.getBoundingClientRect(), cx = pr.left + pr.width / 2, cy = pr.top + pr.height / 2; let best = null, bd = 1e9;
+        targets().forEach(t => { const r = t.getBoundingClientRect(), d = Math.hypot(cx - (r.left + r.width / 2), cy - (r.top + r.height / 2)); if (d < bd && d < r.width * .7) { bd = d; best = t; } });
+        onDrop(p, best);
+      };
+      p.addEventListener('pointermove', move); p.addEventListener('pointerup', up); p.addEventListener('pointercancel', up);
+    });
+  }
+  const fly = (p, t) => { const c0 = p.getBoundingClientRect(), r = t.getBoundingClientRect(); p.classList.add('back', 'placed'); const cur = /translate\(([-\d.]+)px,([-\d.]+)px\)/.exec(p.style.transform); const bx = cur ? +cur[1] : 0, by = cur ? +cur[2] : 0; p.style.transform = `translate(${bx + r.left + r.width / 2 - (c0.left + c0.width / 2)}px,${by + r.top + r.height / 2 - (c0.top + c0.height / 2)}px)`; sfx.pop(); return r; };
+  const back = (p, msg) => { p.classList.add('back'); p.style.transform = ''; sfx.oops(); say(msg || 'Almost! Try again.'); };
+
   function next() {
-    const n = Math.min(5, AGE().shapes + (round >= 2 ? 1 : 0)), ids = shuffle(Object.keys(SHAPES)).slice(0, n); let placed = 0;
+    const id = ++gen, mode = MODES[round % 4]; sh.innerHTML = ''; ({ match, find, odd, sort })[mode](id);
+  }
+
+  /* 1. MATCH: drag each shape to its dark outline */
+  function match() {
+    const ids = pool().slice(0, cnt()); let placed = 0;
     sh.innerHTML = `<div class="row" id="slots">${shuffle(ids).map(id => `<div class="slot" data-id="${id}">${shapeSVG(id, '#3D3358')}</div>`).join('')}</div><div class="row" id="pieces">${shuffle(ids).map(id => `<div class="piece" data-id="${id}">${shapeSVG(id, null, true)}</div>`).join('')}</div>`;
     later(() => say('Match the shapes!'), 150);
-    $$('.piece', sh).forEach(p => {
-      const id = p.dataset.id; const slot = $(`.slot[data-id="${id}"]`, sh);
-      p.addEventListener('pointerdown', e => {
-        if (p.classList.contains('placed')) return; try { p.setPointerCapture(e.pointerId); } catch (_) { }
-        const r0 = p.getBoundingClientRect(), c0 = { x: r0.left + r0.width / 2, y: r0.top + r0.height / 2 }, sx = e.clientX, sy = e.clientY; let moved = false;
-        p.classList.add('drag'); p.classList.remove('back');
-        const place = () => {
-          const sr = slot.getBoundingClientRect(); p.classList.add('back'); p.style.transform = `translate(${sr.left + sr.width / 2 - c0.x}px,${sr.top + sr.height / 2 - c0.y}px)`;
-          p.classList.add('placed'); sfx.pop();
-          later(() => { slot.classList.add('done', 'joy'); slot.innerHTML = shapeSVG(id, null, true); p.style.visibility = 'hidden'; sparkle(sr.left + sr.width / 2, sr.top + sr.height / 2, 8); say(id.charAt(0).toUpperCase() + id.slice(1) + '!'); placed++; if (placed === ids.length) { round++; sfx.yay(); cheer(); m.add(); later(next, 2600); } }, 360);
-        };
-        const move = ev => { const dx = ev.clientX - sx, dy = ev.clientY - sy; if (Math.hypot(dx, dy) > 8) moved = true; p.style.transform = `translate(${dx}px,${dy}px) scale(1.08)`; };
-        const up = () => {
-          p.removeEventListener('pointermove', move); p.removeEventListener('pointerup', up); p.removeEventListener('pointercancel', up); p.classList.remove('drag');
-          const pr = p.getBoundingClientRect(), sr = slot.getBoundingClientRect(); const d = Math.hypot(pr.left + pr.width / 2 - (sr.left + sr.width / 2), pr.top + pr.height / 2 - (sr.top + sr.height / 2));
-          if (!moved) { say(id); setTimeout(place, 500); }
-          else if (d < sr.width * .62) place();
-          else { p.classList.add('back'); p.style.transform = ''; sfx.oops(); say('Almost! Try again.'); }
-        };
-        p.addEventListener('pointermove', move); p.addEventListener('pointerup', up); p.addEventListener('pointercancel', up);
-      });
-    });
+    $$('.piece', sh).forEach(p => { const slot = $(`.slot[data-id="${p.dataset.id}"]`, sh);
+      drag(p, () => $$('.slot:not(.done)', sh), (pc, t) => {
+        if (t !== slot) return back(pc);
+        const sr = fly(pc, slot);
+        later(() => { slot.classList.add('done', 'joy'); slot.innerHTML = shapeSVG(pc.dataset.id, null, true); pc.style.visibility = 'hidden'; sparkle(sr.left + sr.width / 2, sr.top + sr.height / 2, 8); say(SHAPE_NAME(pc.dataset.id) + '!'); if (++placed === ids.length) done(); }, 360);
+      }, () => slot); });
+  }
+
+  /* 2. FIND: "Find the circle!" - tap the right one */
+  function find(gid) {
+    const n = Math.min(5, cnt() + 1), ids = pool().slice(0, n), target = pick(ids); let locked = false;
+    sh.innerHTML = `<div class="findq"><button class="btn round" id="rep" aria-label="Say it again">${speakerIcon}</button><span class="findt">Find the ${SHAPE_NAME(target)}!</span></div><div class="row finds">${ids.map((id, i) => `<button class="sq" data-id="${id}" style="--i:${i}" aria-label="${id}">${shapeSVG(id, pick(SHAPE_TINTS), true)}</button>`).join('')}</div>`;
+    later(() => say(`Find the ${target}!`), 200); $('#rep', sh).onclick = () => say(`Find the ${target}!`);
+    $$('.sq', sh).forEach(b => b.addEventListener('click', () => {
+      if (locked) return;
+      if (b.dataset.id === target) { locked = true; b.classList.add('found'); const r = b.getBoundingClientRect(); sparkle(r.left + r.width / 2, r.top + r.height / 2, 14); sfx.pop(); say(`Yes! ${SHAPE_NAME(target)}!`); $$('.sq', sh).forEach(x => { if (x !== b) x.classList.add('fade'); }); later(done, 900); }
+      else { b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle'); sfx.oops(); say(`That's a ${b.dataset.id}. Find the ${target}!`); }
+    }));
+  }
+
+  /* 3. ODD ONE OUT: which one is different? */
+  function odd() {
+    const [a, b2] = pool(), n = Math.min(5, cnt() + 2), tint = pick(SHAPE_TINTS), items = shuffle([...Array(n - 1).fill(a), b2]); let locked = false;
+    sh.innerHTML = `<div class="findq"><span class="findt">Which one is different?</span></div><div class="row finds">${items.map((id, i) => `<button class="sq" data-id="${id}" data-odd="${id === b2 ? 1 : 0}" style="--i:${i}" aria-label="${id}">${shapeSVG(id, tint, true)}</button>`).join('')}</div>`;
+    later(() => say('Which one is different?'), 200);
+    $$('.sq', sh).forEach(b => b.addEventListener('click', () => {
+      if (locked) return;
+      if (b.dataset.odd === '1') { locked = true; b.classList.add('found'); const r = b.getBoundingClientRect(); sparkle(r.left + r.width / 2, r.top + r.height / 2, 14); sfx.pop(); say(`Yes! That one is a ${b.dataset.id}!`); $$('.sq', sh).forEach(x => { if (x !== b) x.classList.add('fade'); }); later(done, 1000); }
+      else { b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle'); sfx.oops(); say('Look again! Which one is different?'); }
+    }));
+  }
+
+  /* 4. SORT: put each shape in its basket */
+  function sort() {
+    const [a, b2] = pool(), per = Math.min(3, Math.max(2, AGE().shapes - 1 + (round >= 4 ? 1 : 0))), items = shuffle([...Array(per).fill(a), ...Array(per).fill(b2)]); let left = items.length;
+    sh.innerHTML = `<div class="row baskets">${[a, b2].map(id => `<div class="bskt" data-id="${id}"><div class="bl">${shapeSVG(id, '#3D3358')}</div><i></i></div>`).join('')}</div><div class="row" id="pieces">${items.map((id, i) => `<div class="piece small" data-id="${id}" data-n="${i}">${shapeSVG(id, null, true)}</div>`).join('')}</div>`;
+    later(() => say('Sort the shapes into the baskets!'), 200);
+    $$('.piece', sh).forEach(p => drag(p, () => $$('.bskt', sh), (pc, t) => {
+      if (!t) return back(pc); if (t.dataset.id !== pc.dataset.id) { t.classList.remove('wiggle'); void t.offsetWidth; t.classList.add('wiggle'); return back(pc, `Not that basket! That's a ${pc.dataset.id}.`); }
+      const r = fly(pc, t); later(() => { pc.style.visibility = 'hidden'; t.classList.add('joy'); setTimeout(() => t.classList.remove('joy'), 600); sparkle(r.left + r.width / 2, r.top + r.height / 2, 7); if (--left === 0) done(); }, 340);
+    }, pc => $(`.bskt[data-id="${pc.dataset.id}"]`, sh)));
   }
   next();
 };
@@ -3229,5 +3404,5 @@ setInterval(() => { const t = $$('.tiles .tile'); if (!t.length || document.hidd
 renderWorld(); renderPet();
 go('welcome');
 </script>
-<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(function(){});</script>
+<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http')){var had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener('controllerchange',function(){if(had)window.__lwUpdate=1});navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
 </body></html>
