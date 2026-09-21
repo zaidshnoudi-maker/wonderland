@@ -725,6 +725,21 @@ body[data-screen=petcare] #petbox{display:none!important}
 </style>
 <style>.dsign{position:absolute;pointer-events:none}.dsign svg{display:block;overflow:visible}</style>
 <style>.dzone{position:absolute;pointer-events:none}.dzone svg{display:block;overflow:visible}</style>
+<style>
+/* ===== soft play: Naya ===== */
+.naya{position:absolute;left:0;top:0;width:140px;height:140px;transform-origin:50% 100%;cursor:pointer}
+.naya .nsv{width:100%;height:100%;overflow:visible;display:block}
+.naya.fl .nsv{transform:scaleX(-1);transform-origin:50% 50%}
+.naya .np{display:none}
+.naya.p-sit .np-sit,.naya.p-crawl .np-crawl,.naya.p-lie .np-lie{display:inline}
+.naya .na{transform-box:fill-box;transform-origin:50% 8%}
+.naya.p-sit.clap .na-l{transform:rotate(145deg)}.naya.p-sit.clap .na-r{transform:rotate(-145deg)}
+.naya.p-lie.clap .na-l{transform:rotate(-40deg)}
+.naya.kick .nk-l{animation:nkick .45s ease-in-out infinite alternate}.naya.kick .nk-r{animation:nkick .45s ease-in-out infinite alternate-reverse}
+@keyframes nkick{from{transform:rotate(-16deg)}to{transform:rotate(18deg)}}
+.pball{width:22px;height:22px;box-shadow:inset -4px -4px 0 rgba(0,0,0,.12),inset 3px 3px 0 rgba(255,255,255,.4)}
+</style>
+<style>.thud .greet .mini{display:block}.thud .greet .mini svg{display:block;width:100%;height:100%;margin:0}</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1355,7 +1370,7 @@ function avatarFull(a, shirt, acc) {
 }
 
 const TOWN = { x: 300, y: 620 };
-const WW = 3900, WH = 720, FGW = Math.round(WW * 1.2);
+const WW = 5500, WH = 720, FGW = Math.round(WW * 1.2);
 const W_WOOD = '#C9975B', W_DARK = '#9A6B3A';
 const STRUCT = {
   studio: `<path d="M62 150 L86 40 M138 150 L114 40 M100 150 V70" stroke="${W_WOOD}" stroke-width="9" stroke-linecap="round"/><rect x="66" y="34" width="68" height="60" rx="6" fill="#fff" stroke="${W_DARK}" stroke-width="5"/><circle cx="88" cy="58" r="9" fill="#FF7A9A"/><circle cx="112" cy="52" r="8" fill="#5CB8FF"/><circle cx="104" cy="76" r="8" fill="#FFD84D"/><rect x="128" y="132" width="16" height="18" rx="4" fill="#5CD68A"/><rect x="150" y="136" width="14" height="14" rx="4" fill="#FF8A5C"/>`,
@@ -1381,7 +1396,7 @@ const DECOR = {
 };
 DECOR.sandbox = `<path d="M18 128 L40 100 H160 L182 128 V146 H18Z" fill="#C9975B"/><path d="M28 128 H172 L160 106 H40Z" fill="#F6D89A"/><g class="castle"><path d="M116 106 V82 h9 v-8 h8 v8 h9 v24Z" fill="#F0C36C"/></g><rect x="150" y="96" width="14" height="12" rx="3" fill="#FF7A9A"/>`;
 DECOR.merry = `<ellipse cx="100" cy="140" rx="86" ry="14" fill="#B79BFF"/><ellipse cx="100" cy="134" rx="82" ry="12" fill="#D8C8FF"/><rect x="94" y="30" width="12" height="104" rx="5" fill="#FFD84D"/><path d="M14 44 Q100 -20 186 44Q160 34 143 44Q120 30 100 44Q80 30 57 44Q40 34 14 44Z" fill="#FF7A9A"/><g class="h1"><path d="M52 60 V120" stroke="#fff" stroke-width="4"/><rect x="36" y="112" width="34" height="12" rx="6" fill="#5CB8FF"/></g><g class="h2"><path d="M148 60 V120" stroke="#fff" stroke-width="4"/><rect x="132" y="112" width="34" height="12" rx="6" fill="#FFB020"/></g>`;
-const DECOR_AT = [['swing', 2010, 622], ['sandbox', 2290, 696], ['slide', 2620, 622], ['seesaw', 3280, 696], ['merry', 3620, 622]];
+const DECOR_AT = [['swing', 2010, 622], ['sandbox', 2290, 696], ['slide', 2620, 622], ['seesaw', 3280, 696], ['merry', 3620, 622], ['gym', 4230, 622], ['ballpit', 4560, 696], ['blocks', 4900, 622], ['tunnel', 5250, 696]];
 const tree = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="14" cy="4" rx="58" ry="12" fill="rgba(30,80,40,.28)"/><rect x="-9" y="-44" width="18" height="48" rx="7" fill="url(#bark)"/><circle cx="0" cy="-72" r="40" fill="url(#leaf)"/><circle cx="-26" cy="-50" r="27" fill="url(#leaf2)"/><circle cx="26" cy="-54" r="27" fill="url(#leaf)"/><circle cx="-12" cy="-86" r="10" fill="#fff" opacity=".18"/></g>`;
 const bush = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="6" cy="2" rx="40" ry="8" fill="rgba(30,80,40,.25)"/><circle cx="-16" cy="-12" r="18" fill="url(#leaf2)"/><circle cx="14" cy="-14" r="22" fill="url(#leaf)"/><circle cx="34" cy="-8" r="14" fill="url(#leaf2)"/></g>`;
 const tuft = (x, y) => `<path d="M${x} ${y} q-3 -9 -7 -12 M${x} ${y} q1 -12 0 -17 M${x} ${y} q4 -8 8 -11" stroke="#3FA556" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/>`;
@@ -1407,9 +1422,9 @@ SCREENS.world = el => {
       <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
       <pattern id="mow" width="260" height="10" patternUnits="userSpaceOnUse"><rect width="130" height="10" fill="#fff" opacity=".08"/></pattern></defs>
       <rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#gg)"/><rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#mow)"/><rect x="-400" y="300" width="${WW + 800}" height="70" fill="url(#haze)"/>${trees}${bushes}${fence}
-      <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${PLAY_MAT()}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
+      <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${PLAY_MAT()}${softMat()}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
     ${Array.from({ length: 0 }, (_, i) => `<button class="bfly" style="left:${rnd(150, WW - 150)}px;top:${rnd(380, 600)}px;z-index:1500;--a:${rnd(-160, 160)}px;--b:${rnd(-70, 40)}px;--c:${rnd(-200, 200)}px;--d:${rnd(-60, 60)}px;--t:${rnd(13, 22)}s;--h:${pick([330, 20, 50, 280, 190])}" aria-label="Butterfly"><svg viewBox="0 0 40 30"><g class="wl"><path d="M20 15 Q4 -2 6 12 Q6 24 20 17Z" fill="hsl(var(--h) 90% 70%)"/></g><g class="wr"><path d="M20 15 Q36 -2 34 12 Q34 24 20 17Z" fill="hsl(var(--h) 90% 76%)"/></g><rect x="19" y="8" width="2" height="14" rx="1" fill="#5b5478"/></svg></button>`).join('')}
-    ${PGRAD}<div class="dzone" style="left:${ZONE_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate()}</svg></div>${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
+    ${PGRAD}<div class="dzone" style="left:${ZONE_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate()}</svg></div><div class="dzone" style="left:${ZONE2_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE2_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(`<g transform="translate(37 116)">${ICON_SOFT}</g>`)}</svg></div><div class="naya p-sit" id="naya" style="z-index:${SOFT_HOME[1]}" aria-label="Naya">${nayaSVG()}</div>${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
     ${TOWN_SPOTS.map(([id, l, tone, s, x, y], i) => `<button class="spot" style="left:${x - 100}px;top:${y - 250}px;z-index:${y};--i:${i}" data-id="${id}" data-say="${esc(s)}" aria-label="${l}"><span class="plate ${tone}">${tileIcon(id)}</span><span class="sign">${l}</span><svg class="struct" viewBox="0 -10 200 160">${STRUCT[id]}</svg></button>`).join('')}
     <button class="ball" id="ball" style="left:1150px;top:620px" aria-label="Ball"><i></i></button>
     ${S.pet ? `<div class="tpet" id="tpet"><div class="flip">${petSVG(S.pet)}</div></div>` : ''}
@@ -1417,7 +1432,7 @@ SCREENS.world = el => {
   </div>
   <div class="petals" aria-hidden="true">${Array.from({ length: 0 }, () => `<i style="left:${rnd(0, 100)}%;--d:${rnd(9, 18)}s;--dl:${rnd(-16, 0)}s;--w:${rnd(9, 16)}px;--c:${pick(['#FFC1D6', '#fff', '#FFE2A8', '#E3D4FF'])};--sw:${rnd(30, 120)}px"></i>`).join('')}</div>
   <svg class="fgrass" id="fgr" style="width:${FGW}px" viewBox="0 0 ${FGW} 90" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6BC66F"/><stop offset="1" stop-color="#3F9B54"/></linearGradient></defs>${Array.from({ length: Math.round(FGW / 60) }, (_, i) => { const x = i * 60 + rnd(-10, 10), h = rnd(36, 78), l = rnd(-14, 14); return `<path d="M${x} 90 Q${x + l * .3} ${90 - h * .55} ${x + l} ${90 - h} Q${x + l * .6 + 5} ${90 - h * .5} ${x + 9} 90Z" fill="url(#bl)"/>`; }).join('')}</svg>
-  <div class="thud"><div class="greet"><span class="mini">${avatarSVG(S.avatar, accent())}</span><div>Hi ${esc(S.name)}!<small>${S.stickers.length} sticker${S.stickers.length === 1 ? '' : 's'}</small></div></div><span class="spacer"></span>
+  <div class="thud"><div class="greet"><span class="mini">${avatarSVG(S.avatar, accent()).replace('viewBox="0 -14 100 126"', 'viewBox="4 4 92 92"')}</span><div>Hi ${esc(S.name)}!<small>${S.stickers.length} sticker${S.stickers.length === 1 ? '' : 's'}</small></div></div><span class="spacer"></span>
     <button class="shelf t-sky viewtoggle" id="vt" aria-label="All games">${VIEW_ICON.grid}</button>
     ${S.pet ? `<button class="shelf t-peach" data-go="petcare" data-say="Let's take care of ${esc(petName())}!" aria-label="Pet care">${tileIcon('petcare')}</button>` : ''}
     <button class="shelf t-peach" data-go="stickers" data-say="My stickers!" aria-label="Stickers">${tileIcon('stickers')}<b>${S.stickers.length}</b></button>
@@ -1475,7 +1490,7 @@ SCREENS.world = el => {
   let down = false;
   const mark = p => { const m = document.createElement('i'); m.className = 'tmark'; m.style.left = p.x + 'px'; m.style.top = p.y + 'px'; ts.appendChild(m); setTimeout(() => m.remove(), 750); };
   town.addEventListener('pointerdown', e => {
-    if (busy || e.target.closest('.spot,.avf,.tpet,.decor,.thud,.bfly')) return; down = true; pending = null; const l = toLogical(e), p = clampP(l.x, l.y); target = p; mark(p);
+    if (busy || e.target.closest('.spot,.avf,.tpet,.decor,.thud,.bfly,.naya')) return; down = true; pending = null; const l = toLogical(e), p = clampP(l.x, l.y); target = p; mark(p);
   });
   town.addEventListener('pointermove', e => { if (!down || busy) return; const l = toLogical(e); target = clampP(l.x, l.y); });
   const upd = () => { down = false; }; document.addEventListener('pointerup', upd); onLeave(() => document.removeEventListener('pointerup', upd));
@@ -1518,17 +1533,17 @@ SCREENS.world = el => {
     for (let i = 0; i < 6; i++) T(() => sfx.pop(), 300 + i * 600);
   }
   function ride(d) {
-    busy = true; riding = true; av.classList.remove('walk'); tp && tp.classList.remove('walk'); d.classList.remove('wig');
-    const k = d.dataset.k, i = +d.dataset.i, [, x, y] = DECOR_AT[i], P = PLAY[k], fr = $('.dfr[data-i="' + i + '"]', el);
-    const g = playRig({ av, tp, ts, fr, decor: d, ox: x - P.ax, oy: y - P.ay, T, say, sfx, hasPet: !!tp });
-    g.start = av.style.transform; g.petStart = tp ? tp.style.transform : '';
+    busy = true; riding = true; av.classList.remove('walk'); tp && tp.classList.remove('walk'); if (d) d.classList.remove('wig');
+    const k = d ? d.dataset.k : 'hug', i = d ? +d.dataset.i : -1, [, x, y] = d ? DECOR_AT[i] : [0, 0, 0], P = d ? PLAY[k] : { ax: 0, ay: 0 }, fr = d ? $('.dfr[data-i="' + i + '"]', el) : document.createElement('div');
+    const g = playRig({ av, tp, ts, fr, decor: d || fr, ox: d ? x - P.ax : 0, oy: d ? y - P.ay : 0, T, say, sfx, hasPet: !!tp });
+    g.start = av.style.transform; g.petStart = tp ? tp.style.transform : ''; g.nay = nay; g.nayPos = nayPos; g.nayStart = nay.style.transform; nay.style.zIndex = 698; nay.style.transformOrigin = '50% 100%';
     av.style.zIndex = 699; av.style.transformOrigin = '50% 100%'; if (tp) { tp.style.zIndex = 698; tp.style.transformOrigin = '50% 100%'; }
-    let ms; try { ms = PLAY_RIDE[k](g); } catch (err) { g.anims.forEach(a => { try { a.cancel(); } catch (_) { } }); fr.style.display = 'none'; riding = false; busy = false; av.classList.remove('sit', 'wee', 'climb'); return; } d.classList.add('ride'); sfx.boop();
+    let ms; try { ms = PLAY_RIDE[k](g); } catch (err) { g.anims.forEach(a => { try { a.cancel(); } catch (_) { } }); fr.style.display = 'none'; riding = false; busy = false; av.classList.remove('sit', 'wee', 'climb'); nay.className = 'naya p-sit'; nay.style.zIndex = Math.round(nayPos.y); return; } if (d) d.classList.add('ride'); sfx.boop();
     const t = setTimeout(() => {
-      if (!alive) return; g.anims.forEach(a => { try { a.cancel(); } catch (_) { } }); fr.style.display = 'none'; d.classList.remove('ride'); ['climb', 'sit', 'wee'].forEach(c => av.classList.remove(c));
-      $$('.castle,.mound,.shovel', d).forEach(n => { n.style.opacity = ''; n.style.transform = ''; }); const ch = $('.chunk', fr); if (ch) ch.style.opacity = 0; const shv = $('.shovel', fr); if (shv) { shv.style.opacity = 0; shv.style.transform = ''; }
-      const e = g.end; if (e) { const p = clampP(g.ox + e.av[0], g.oy + e.av[1]); setPos(p); if (tp) { const q = clampP(g.ox + e.pet[0], g.oy + e.pet[1]); pp.x = q.x; pp.y = q.y; } }
-      riding = false; place(); busy = false; petHappy(); snapCam = false;
+      if (!alive) return; g.anims.forEach(a => { try { a.cancel(); } catch (_) { } }); fr.style.display = 'none'; if (d) d.classList.remove('ride'); ['climb', 'sit', 'wee'].forEach(c => av.classList.remove(c)); nay.className = 'naya p-sit';
+      if (d) $$('.castle,.mound,.shovel', d).forEach(n => { n.style.opacity = ''; n.style.transform = ''; }); const ch = $('.chunk', fr); if (ch) ch.style.opacity = 0; const shv = $('.shovel', fr); if (shv) { shv.style.opacity = 0; shv.style.transform = ''; }
+      const e = g.end; if (e && e.nay) { nayPos = { x: g.ox + e.nay[0], y: g.oy + e.nay[1] }; } nay.style.transform = nyF(nayPos.x, nayPos.y, NS * (.9 + .1 * ((nayPos.y - 380) / 315))); nay.style.zIndex = Math.round(nayPos.y); if (e) { const p = clampP(g.ox + e.av[0], g.oy + e.av[1]); setPos(p); if (tp && e.pet) { const q = clampP(g.ox + e.pet[0], g.oy + e.pet[1]); pp.x = q.x; pp.y = q.y; } }
+      riding = false; busy = false; try { place(); petHappy(); } catch (_) { } snapCam = false;
       S.rides = (S.rides || 0) + 1; save(); if (S.rides % 3 === 0) reward('You love the playground!');
     }, ms + 80); onLeave(() => clearTimeout(t));
   }
@@ -1536,6 +1551,8 @@ SCREENS.world = el => {
     if (busy) return; const i = DECOR_AT[+d.dataset.i], P = PLAY[d.dataset.k];
     pending = () => ride(d); target = clampP(i[1] + P.walk[0], i[2] + P.walk[1]); mark(target);
   }));
+  const nay = $('#naya', el); let nayPos = { x: SOFT_HOME[0], y: SOFT_HOME[1] }; nay.style.transform = nyF(nayPos.x, nayPos.y, NS * (.9 + .1 * ((nayPos.y - 380) / 315)));
+  nay.addEventListener('click', e => { e.stopPropagation(); if (busy) return; target = clampP(nayPos.x - 90, nayPos.y + 4); pending = () => ride(null); mark(target); });
   const ball = $('#ball', el); let bp = { x: 1850, y: 692 }; ball.style.left = bp.x - 24 + 'px'; ball.style.top = bp.y - 48 + 'px'; ball.style.zIndex = bp.y;
   ball.addEventListener('click', () => {
     if (busy) return; const dir = pos.x <= bp.x ? 1 : -1; const bx = Math.max(80, Math.min(WW - 80, bp.x - dir * 46));
@@ -1753,19 +1770,21 @@ function merrySeatArt(col) { return `<g>${rr(-16, -8, 32, 13, 6, col)}${rr(-16, 
 /* ---------------- ZONE BORDER: play-mat floor, gate arch, rope posts (between the games on the left and the playground on the right) ---------------- */
 const ZONE_X = 1692;                                                  /* the border line */
 const PLAY_MAT = () => {
-  const x0 = ZONE_X, x1 = WW - 40, y0 = 548, y1 = 720, P = `M${x0 + 16} ${y0} H${x1 - 16} Q${x1 + 6} ${y0} ${x1 + 14} ${y1} H${x0 - 14} Q${x0 - 6} ${y0} ${x0 + 16} ${y0}Z`;
+  const x0 = ZONE_X, x1 = ZONE2_X - 40, y0 = 548, y1 = 720, P = `M${x0 + 16} ${y0} H${x1 - 16} Q${x1 + 6} ${y0} ${x1 + 14} ${y1} H${x0 - 14} Q${x0 - 6} ${y0} ${x0 + 16} ${y0}Z`;
   return `<g><defs><pattern id="pgTile" width="46" height="46" patternUnits="userSpaceOnUse"><rect width="46" height="46" fill="#B4E8D8"/><rect x="2" y="2" width="42" height="42" rx="10" fill="#C6F0E2"/></pattern></defs>
   <path d="${P}" fill="none" stroke="#FF9DB8" stroke-width="34" stroke-linejoin="round"/><path d="${P}" fill="none" stroke="#fff" stroke-width="20" stroke-linejoin="round"/><path d="${P}" fill="url(#pgTile)"/>
   <path d="M${x0 + 30} ${y0 + 14} H${x1 - 30}" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/></g>`;
 };
-function zoneGate() {   /* svg 220x340, arch centre at x=110, ground at y=330 */
+const ICON_PLAY = `<!-- swing -->${ln(48, 172, 62, 128, 5, '#FF7A9A')}${ln(76, 172, 62, 128, 5, '#FF7A9A')}${ln(57, 130, 57, 158, 2.5, '#8F86B4')}${ln(67, 130, 67, 158, 2.5, '#8F86B4')}${rr(52, 158, 20, 6, 3, '#FFD84D')}
+  <!-- slide -->${ln(112, 172, 118, 132, 5, '#C99555')}${ln(124, 132, 124, 172, 4, '#C99555')}${ln(112, 134, 128, 134, 5, '#FF7A9A')}<path d="M128 134 Q158 138 170 170" fill="none" stroke="#4FA6EC" stroke-width="7" stroke-linecap="round"/>
+  `;
+function zoneGate(icons) {   /* svg 220x340, arch centre at x=110, ground at y=330 */
   const post = x => `${shd(x + 9, 332, 24, 6)}${rr(x, 60, 18, 272, 8, 'url(#pgWoodH)')}${rr(x - 4, 54, 26, 14, 7, 'url(#pgYel)')}<circle cx="${x + 9}" cy="44" r="12" fill="url(#pgRed)"/><circle cx="${x + 5}" cy="40" r="4" fill="#fff" opacity=".6"/>`;
   return `<g>${post(28)}${post(174)}
   ${rr(20, 66, 180, 26, 12, 'url(#pgPinkV)')}${rr(20, 66, 180, 8, 4, '#FFC0D2')}
   ${ln(60, 92, 60, 112, 4, '#8E5C30')}${ln(160, 92, 160, 112, 4, '#8E5C30')}
   ${rr(30, 108, 160, 82, 18, 'url(#pgWoodV)', 'stroke="#8E5C30" stroke-width="3"')}${rr(37, 115, 146, 68, 13, '#FFF6D2')}
-  <!-- swing -->${ln(48, 172, 62, 128, 5, '#FF7A9A')}${ln(76, 172, 62, 128, 5, '#FF7A9A')}${ln(57, 130, 57, 158, 2.5, '#8F86B4')}${ln(67, 130, 67, 158, 2.5, '#8F86B4')}${rr(52, 158, 20, 6, 3, '#FFD84D')}
-  <!-- slide -->${ln(112, 172, 118, 132, 5, '#C99555')}${ln(124, 132, 124, 172, 4, '#C99555')}${ln(112, 134, 128, 134, 5, '#FF7A9A')}<path d="M128 134 Q158 138 170 170" fill="none" stroke="#4FA6EC" stroke-width="7" stroke-linecap="round"/>
+  ${icons || ICON_PLAY}
   ${poly([[8, 74], [22, 58], [22, 74]], 'url(#pgYel)')}${poly([[212, 74], [198, 58], [198, 74]], 'url(#pgMint)')}</g>`;
 }
 function zoneRope() {   /* a hedge wall receding from the back fence to the gate: reads as "this is the edge" */
@@ -1948,6 +1967,202 @@ const PLAY_RIDE = {
     g.end = { av: [34, 198], pet: [226, 198] }; return TOT;
   },
 };
+/* ===== SOFT PLAY ZONE: padded floor, four soft props (baby play gym, ball pit, foam blocks, crawl tunnel) and NAYA, a baby Liyana plays with.
+   Same architecture as the playground (03e): each prop = bk layer + fr layer; rides are choreographed with the real avatar + Naya (+ pet). Static art only. ===== */
+const ZONE2_X = 3980;
+const SOFT_HOME = [4818, 692];                       /* where Naya sits when nobody is playing */
+const BALLC = ['#FF6B7A', '#FFC93D', '#4FB4F5', '#52CE86', '#FF9DB8', '#FF9A4D', '#B08CFF'];
+
+/* ---------------- BABY PLAY GYM ---------------- */
+function gymBack() {
+  const B = t => { const u = 1 - t; return [u * u * 36 + 2 * u * t * 160 + t * t * 284, u * u * 206 + 2 * u * t * -30 + t * t * 206]; };
+  const toy = (t, kind, col) => { const [x, y] = B(t); const body = kind === 'star' ? poly(Array.from({ length: 10 }, (_, i) => { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 9 : 19; return [Math.cos(a) * r, 26 + Math.sin(a) * r]; }), col, `stroke="#D9A020" stroke-width="2.5" stroke-linejoin="round"`) : kind === 'moon' ? `<path d="M6 12 a17 17 0 1 0 6 32 a13 13 0 1 1 -6 -32z" fill="${col}" stroke="#D9A020" stroke-width="2.5" stroke-linejoin="round"/>` : `<circle cx="0" cy="30" r="15" fill="${col}" stroke="#3B86C8" stroke-width="2.5"/><ellipse cx="-16" cy="24" rx="8" ry="10" fill="${col}" stroke="#3B86C8" stroke-width="2.5"/><ellipse cx="16" cy="24" rx="8" ry="10" fill="${col}" stroke="#3B86C8" stroke-width="2.5"/><circle cx="-5" cy="27" r="2.2" fill="#3D3358"/><circle cx="5" cy="27" r="2.2" fill="#3D3358"/><path d="M-4 35 Q0 38 4 35" stroke="#3D3358" stroke-width="2" fill="none" stroke-linecap="round"/>`; return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><g class="toy toy-${kind}" style="transform-origin:0px 0px">${ln(0, 0, 0, 12, 2.5, '#8F86B4')}${body}</g></g>`; };
+  return `<g>${shd(160, 214, 170, 14)}
+  <ellipse cx="160" cy="210" rx="150" ry="24" fill="#F6C761"/><ellipse cx="160" cy="205" rx="150" ry="24" fill="url(#pgYel)"/><ellipse cx="160" cy="205" rx="122" ry="17" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="10 12" opacity=".8"/>
+  <path d="M36 206 Q160 -30 284 206" fill="none" stroke="#3B86C8" stroke-width="14" stroke-linecap="round"/><path d="M36 206 Q160 -30 284 206" fill="none" stroke="#7CC4FF" stroke-width="9" stroke-linecap="round"/><path d="M40 196 Q160 -20 270 190" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  <path d="M90 214 Q160 20 230 214" fill="none" stroke="#FF7A9A" stroke-width="12" stroke-linecap="round" opacity=".92"/><path d="M96 208 Q160 30 224 208" fill="none" stroke="#FFB3C8" stroke-width="6" stroke-linecap="round"/>
+  ${toy(.3, 'star', 'url(#pgYel)')}${toy(.5, 'elephant', '#A9D8FF')}${toy(.7, 'moon', 'url(#pgYel)')}${shd(160, 214, 60, 6, .5)}</g>`;
+}
+
+/* ---------------- BALL PIT ---------------- */
+function ballPitBack() {
+  let balls = ''; const rows = [[112, 15, 17, 46, 22], [128, 16, 13, 36, 24], [142, 17, 15, 44, 25]];
+  rows.forEach(([y, r, n, x0, dx], ri) => { for (let i = 0; i < n; i++) { const x = x0 + i * 20 + (ri % 2) * 10, c = BALLC[(i * 3 + ri * 2) % 7]; balls += `<circle cx="${x}" cy="${y + ((i * 7) % 5)}" r="${r}" fill="${c}"/><circle cx="${x - 4}" cy="${y - 5 + ((i * 7) % 5)}" r="4" fill="#fff" opacity=".55"/>`; } });
+  return `<g>${shd(190, 214, 200, 14)}
+  ${rr(22, 76, 336, 84, 30, 'url(#pgLil)', `stroke="#7B5CD6" stroke-width="3"`)}${rr(30, 84, 320, 24, 14, '#6D50C8')}
+  ${balls}
+  ${rr(12, 126, 356, 86, 30, 'url(#pgPinkV)', `stroke="#C94870" stroke-width="3"`)}${rr(12, 126, 356, 20, 10, '#FFC0D2', 'opacity=".55"')}
+  ${ln(102, 134, 102, 204, 3, '#C94870', 'opacity=".4"')}${ln(190, 134, 190, 204, 3, '#C94870', 'opacity=".4"')}${ln(278, 134, 278, 204, 3, '#C94870', 'opacity=".4"')}
+  <circle cx="102" cy="170" r="4" fill="#fff" opacity=".7"/><circle cx="190" cy="170" r="4" fill="#fff" opacity=".7"/><circle cx="278" cy="170" r="4" fill="#fff" opacity=".7"/></g>`;
+}
+function ballPitFront() {
+  let balls = ''; for (let i = 0; i < 9; i++) { const x = 40 + i * 37 + (i % 2) * 8, c = BALLC[(i * 2 + 1) % 7]; balls += `<circle cx="${x}" cy="${124 + (i % 3) * 3}" r="15" fill="${c}"/><circle cx="${x - 4}" cy="${119 + (i % 3) * 3}" r="4" fill="#fff" opacity=".55"/>`; }
+  return `<g>${balls}${rr(12, 134, 356, 78, 30, 'url(#pgPinkV)', `stroke="#C94870" stroke-width="3"`)}${rr(12, 134, 356, 18, 9, '#FFC0D2', 'opacity=".55"')}${ln(102, 140, 102, 204, 3, '#C94870', 'opacity=".4"')}${ln(190, 140, 190, 204, 3, '#C94870', 'opacity=".4"')}${ln(278, 140, 278, 204, 3, '#C94870', 'opacity=".4"')}<circle cx="102" cy="172" r="4" fill="#fff" opacity=".7"/><circle cx="190" cy="172" r="4" fill="#fff" opacity=".7"/><circle cx="278" cy="172" r="4" fill="#fff" opacity=".7"/></g>`;
+}
+
+/* ---------------- FOAM BLOCKS ---------------- */
+const blockArt = (col, dark, light, emblem) => `<g><rect x="-30" y="-58" width="60" height="58" rx="14" fill="${col}" stroke="${dark}" stroke-width="3"/><rect x="-30" y="-58" width="60" height="16" rx="10" fill="${light}" opacity=".75"/><rect x="-26" y="-12" width="52" height="10" rx="5" fill="${dark}" opacity=".28"/>${emblem}</g>`;
+const BLK = [
+  blockArt('#FF8FB0', '#D14D78', '#FFC7D8', '<circle cx="0" cy="-28" r="10" fill="#fff"/>'),
+  blockArt('#6FBDF7', '#2F7FCB', '#BFE4FF', '<path d="M0 -40 L11 -18 H-11Z" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>'),
+  blockArt('#FFD24D', '#D99A1E', '#FFF0A8', '<path d="M0 -40 l4 9 10 1 -7 7 2 10 -9 -5 -9 5 2 -10 -7 -7 10 -1z" fill="#fff"/>'),
+];
+const BLK_HOME = [[38, 208], [102, 208], [166, 208]];   /* resting spots (bottom-centre) */
+const BLK_STACK = [[232, 208], [232, 150], [232, 92]];
+function blocksBack() {
+  return `<g>${shd(150, 214, 150, 12)}<ellipse cx="150" cy="208" rx="128" ry="18" fill="#B4E8D8"/><ellipse cx="150" cy="205" rx="128" ry="18" fill="#C9F1E4"/>
+  ${BLK.map((b, i) => `<g class="blk blk${i}" style="transform:translate(${BLK_HOME[i][0]}px,${BLK_HOME[i][1]}px)">${b}</g>`).join('')}</g>`;
+}
+
+/* ---------------- CRAWL TUNNEL ---------------- */
+function tunnelBody() {
+  const cols = ['url(#pgPinkV)', 'url(#pgYel)', 'url(#pgMint)', 'url(#pgBlueS)', 'url(#pgLil)', 'url(#pgPinkV)', 'url(#pgYel)'];
+  let seg = ''; for (let i = 0; i < 7; i++) { const x = 66 + i * 32; seg += `<path d="M${x} 62 Q${x + 16} 52 ${x + 32} 62 V166 Q${x + 16} 176 ${x} 166Z" fill="${cols[i]}" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M${x + 4} 74 Q${x + 16} 68 ${x + 28} 74" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".5"/>`; }
+  return seg + `<ellipse cx="290" cy="114" rx="26" ry="54" fill="none" stroke="#FF9DB8" stroke-width="10"/><ellipse cx="290" cy="114" rx="26" ry="54" fill="none" stroke="#fff" stroke-width="3" opacity=".6"/>`;
+}
+function tunnelBack() { return `<g>${shd(170, 184, 176, 12)}<ellipse cx="66" cy="114" rx="26" ry="54" fill="#3A2E6E"/><ellipse cx="66" cy="120" rx="16" ry="38" fill="#1F1745"/>${tunnelBody()}<ellipse cx="66" cy="114" rx="26" ry="54" fill="none" stroke="#FF9DB8" stroke-width="10"/><ellipse cx="66" cy="114" rx="26" ry="54" fill="none" stroke="#fff" stroke-width="3" opacity=".6"/></g>`; }
+function tunnelFront() { return `<g>${tunnelBody()}</g>`; }
+
+/* ---------------- ZONE 2 sign + mat ---------------- */
+const ICON_SOFT = `<circle cx="60" cy="150" r="0"/><g transform="translate(20 6)"><circle cx="36" cy="44" r="18" fill="#FFD9BC" stroke="#8E5C30" stroke-width="3"/><circle cx="36" cy="22" r="6" fill="#4A3426"/><path d="M28 16 l8 -4 8 4z" fill="#FF7A9A"/><circle cx="30" cy="44" r="2.6" fill="#3D3358"/><circle cx="42" cy="44" r="2.6" fill="#3D3358"/><path d="M31 51 Q36 56 41 51" stroke="#C0506A" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="26" cy="49" r="3" fill="#FF9DB8" opacity=".7"/><circle cx="46" cy="49" r="3" fill="#FF9DB8" opacity=".7"/></g><g transform="translate(86 6)"><rect x="0" y="40" width="22" height="22" rx="5" fill="#FF8FB0" stroke="#D14D78" stroke-width="2.5"/><rect x="26" y="40" width="22" height="22" rx="5" fill="#6FBDF7" stroke="#2F7FCB" stroke-width="2.5"/><rect x="13" y="16" width="22" height="22" rx="5" fill="#FFD24D" stroke="#D99A1E" stroke-width="2.5"/></g>`;
+function softMat() {
+  const x0 = ZONE2_X, x1 = WW - 40, y0 = 548, y1 = 720, P = `M${x0 + 16} ${y0} H${x1 - 16} Q${x1 + 6} ${y0} ${x1 + 14} ${y1} H${x0 - 14} Q${x0 - 6} ${y0} ${x0 + 16} ${y0}Z`;
+  return `<g><defs><pattern id="pgSoft" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="60" height="60" fill="#FFE3A3"/><rect x="2" y="2" width="56" height="56" rx="14" fill="#FFEFC2"/><circle cx="30" cy="30" r="8" fill="#FFD3E0" opacity=".9"/></pattern></defs>
+  <path d="${P}" fill="none" stroke="#9F7FF0" stroke-width="34" stroke-linejoin="round"/><path d="${P}" fill="none" stroke="#fff" stroke-width="20" stroke-linejoin="round"/><path d="${P}" fill="url(#pgSoft)"/>
+  <path d="M${x0 + 30} ${y0 + 14} H${x1 - 30}" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/></g>`;
+}
+
+/* ---------------- NAYA (baby): original design. Poses toggled by class on the wrapper: p-sit | p-crawl | p-lie ---------------- */
+function nayaSVG() {
+  const skin = SKIN[S.avatar.skin] || SKIN[1], HAIR = '#4A3426', DK = '#3D3358';
+  const head = (x, y, rot = 0) => `<g transform="translate(${x} ${y}) rotate(${rot})"><ellipse cx="-27" cy="4" rx="6" ry="7" fill="${skin}"/><ellipse cx="27" cy="4" rx="6" ry="7" fill="${skin}"/><circle r="28" fill="${skin}"/>
+    <path d="M-25 -9 Q-22 -33 0 -31 Q22 -33 25 -9 Q11 -22 0 -19 Q-11 -22 -25 -9Z" fill="${HAIR}"/><circle cx="0" cy="-33" r="8" fill="${HAIR}"/><path d="M-9 -38 l9 4 9 -4 -3 9 -6 -3 -6 3z" fill="#FF7A9A" stroke="#D14D78" stroke-width="1.5" stroke-linejoin="round"/>
+    <ellipse cx="-11" cy="2" rx="5" ry="5.6" fill="${DK}"/><ellipse cx="11" cy="2" rx="5" ry="5.6" fill="${DK}"/><circle cx="-9.4" cy="0" r="1.9" fill="#fff"/><circle cx="12.6" cy="0" r="1.9" fill="#fff"/>
+    <circle cx="-18" cy="13" r="6" fill="#FF8FAE" opacity=".5"/><circle cx="18" cy="13" r="6" fill="#FF8FAE" opacity=".5"/><path d="M-6 13 Q0 22 6 13Z" fill="#C0506A" stroke="#C0506A" stroke-width="2" stroke-linejoin="round"/><path d="M-3 16 Q0 19 3 16" stroke="#FF9DB8" stroke-width="2" fill="none"/></g>`;
+  const ON = '#8FE0C4', ONd = '#4DB894';
+  const sit = `<g class="np np-sit"><ellipse cx="70" cy="136" rx="30" ry="4.5" fill="rgba(61,51,88,.18)"/>
+    <ellipse cx="48" cy="126" rx="14" ry="9" fill="${skin}"/><ellipse cx="92" cy="126" rx="14" ry="9" fill="${skin}"/><ellipse cx="46" cy="130" rx="9" ry="5.5" fill="#FF9DB8"/><ellipse cx="94" cy="130" rx="9" ry="5.5" fill="#FF9DB8"/>
+    <ellipse cx="70" cy="112" rx="27" ry="17" fill="#fff"/><ellipse cx="70" cy="96" rx="24" ry="24" fill="${ON}"/><path d="M52 84 Q70 76 88 84" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".6"/>
+    <path d="M70 88 l3 6 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#FFE887"/>
+    <g class="na na-l"><rect x="38" y="84" width="12" height="26" rx="6" fill="${skin}"/><circle cx="43" cy="112" r="7" fill="${skin}"/></g><g class="na na-r"><rect x="90" y="84" width="12" height="26" rx="6" fill="${skin}"/><circle cx="97" cy="112" r="7" fill="${skin}"/></g>
+    ${head(70, 56)}</g>`;
+  const crawl = `<g class="np np-crawl"><ellipse cx="66" cy="138" rx="46" ry="4.5" fill="rgba(61,51,88,.18)"/>
+    <ellipse cx="26" cy="128" rx="12" ry="8" fill="${skin}"/><ellipse cx="22" cy="133" rx="9" ry="5" fill="#FF9DB8"/><ellipse cx="46" cy="130" rx="13" ry="9" fill="${skin}"/><ellipse cx="44" cy="135" rx="9" ry="5" fill="#FF9DB8"/>
+    <ellipse cx="66" cy="104" rx="36" ry="21" fill="${ON}"/><ellipse cx="36" cy="106" rx="18" ry="17" fill="#fff"/><path d="M62 92 l3 5 6 1 -4 4 1 6 -6 -3 -6 3 1 -6 -4 -4 6 -1z" fill="#FFE887"/>
+    <g class="na na-l"><rect x="72" y="106" width="11" height="26" rx="5.5" fill="${skin}"/><circle cx="78" cy="133" r="7" fill="${skin}"/></g><g class="na na-r"><rect x="90" y="106" width="11" height="26" rx="5.5" fill="${skin}"/><circle cx="96" cy="133" r="7" fill="${skin}"/></g>
+    ${head(106, 84, 8)}</g>`;
+  const lie = `<g class="np np-lie"><ellipse cx="78" cy="138" rx="52" ry="4.5" fill="rgba(61,51,88,.18)"/>
+    <ellipse cx="78" cy="124" rx="38" ry="15" fill="${ON}"/><ellipse cx="110" cy="122" rx="15" ry="14" fill="#fff"/>
+    <g class="nk nk-l" style="transform-origin:112px 116px"><rect x="106" y="70" width="13" height="46" rx="6.5" fill="${skin}"/><ellipse cx="112" cy="70" rx="9" ry="7" fill="#FF9DB8"/></g><g class="nk nk-r" style="transform-origin:124px 118px"><rect x="120" y="76" width="13" height="42" rx="6.5" fill="${skin}"/><ellipse cx="126" cy="76" rx="9" ry="7" fill="#FF9DB8"/></g>
+    <g class="na na-l"><rect x="52" y="82" width="11" height="36" rx="5.5" fill="${skin}"/><circle cx="57" cy="82" r="7" fill="${skin}"/></g>
+    ${head(38, 112, -90)}</g>`;
+  return `<svg viewBox="0 0 140 140" class="nsv" aria-hidden="true">${sit}${crawl}${lie}</svg>`;
+}
+
+/* ---------------- register the soft props with the same machinery as the playground ---------------- */
+PLAY.gym     = { w: 320, h: 240, ax: 160, ay: 214, bk: gymBack,     fr: () => '',      walk: [-112, 4] };
+PLAY.ballpit = { w: 380, h: 230, ax: 190, ay: 212, bk: ballPitBack, fr: ballPitFront,  walk: [-150, 6] };
+PLAY.blocks  = { w: 300, h: 240, ax: 150, ay: 214, bk: blocksBack,  fr: () => '',      walk: [-110, 4] };
+PLAY.tunnel  = { w: 340, h: 200, ax: 170, ay: 184, bk: tunnelBack,  fr: tunnelFront,   walk: [168, 6] };
+sfx.giggle = () => { for (let i = 0; i < 6; i++) glide(760 + Math.random() * 140, 1010 + Math.random() * 190, .085, .055, i * .105); };
+
+/* Naya helpers: feet-based transform (bottom-centre of her 140x140 box) */
+const NS = .85;
+const nyF = (x, y, s = NS, r = 0) => `translate(${(x - 70).toFixed(1)}px,${(y - 140).toFixed(1)}px) rotate(${r.toFixed(1)}deg) scale(${s})`;
+function softRig(g) {                                 /* adds Naya helpers to a playRig */
+  g.ny = (sx, sy, s = NS, r = 0) => nyF(g.ox + sx, g.oy + sy, s, r);
+  g.nayS = [g.nayPos.x - g.ox, g.nayPos.y - g.oy];
+  g.ncls = (c, on, ms) => g.T(() => g.nay.classList.toggle(c, on), ms);
+  g.npose = (p, ms) => g.T(() => { g.nay.classList.remove('p-sit', 'p-crawl', 'p-lie'); g.nay.classList.add(p); }, ms);
+  g.crawl = (a, b, t0, t1, s = NS) => { const n = Math.max(2, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / 38)), out = []; for (let i = 0; i <= n; i++) { const u = i / n; out.push([lerp(t0, t1, u), g.ny(lerp(a[0], b[0], u), lerp(a[1], b[1], u) - (i % 2 ? 5 : 0), s)]); } return out; };
+  g.flipTo = (fromX, toX, ms) => g.ncls('fl', toX < fromX, ms);
+  g.ball = (sx, sy, dx, dy, col) => {
+    const [x, y] = g.W(sx, sy), p = document.createElement('i'); p.className = 'prt pball'; p.style.cssText = `left:${x - 11}px;top:${y - 11}px;background:${col}`; g.ts.appendChild(p);
+    const a = p.animate([{ transform: 'translate(0,0)', opacity: 1 }, { transform: `translate(${dx * .5}px,${-96}px)`, opacity: 1, offset: .42 }, { transform: `translate(${dx}px,${dy}px)`, opacity: 1, offset: .88 }, { transform: `translate(${dx}px,${dy}px)`, opacity: 0 }], { duration: 1150, easing: 'cubic-bezier(.3,.6,.5,1)' }); a.onfinish = () => p.remove();
+  };
+  return g;
+}
+
+Object.assign(PLAY_RIDE, {
+  /* ---------------------------------- BABY PLAY GYM: Naya lies under the arch kicking the toys; Liyana tickles her; both clap ---------------------------------- */
+  gym(g) {
+    softRig(g); const TOT = 8400, A = .66, LY = [148, 208];
+    const av = [[0, g.start], [500, g.avF(52, 220, A)]]; g.hopArc([52, 220], [248, 190 + g.HIP * A], 62, 9, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([500 + i * 80, tr]));
+    av.push([1300, g.avS(248, 190, A)], [6900, g.avS(248, 190, A)], [7000, g.avF(248, 218, A)], [TOT, g.avF(248, 218, A)]); g.track(g.av, av, TOT);
+    g.cls(g.av, 'sit', true, 1250); g.cls(g.av, 'sit', false, 6950);
+    [[2300, 3200], [4300, 5200], [6200, 6900]].forEach(([a, b]) => { g.cls(g.av, 'wee', true, a); g.cls(g.av, 'wee', false, b); });
+    const S = g.nayS, ny = g.crawl(S, LY, 0, 1700); g.flipTo(S[0], LY[0], 0); g.ncls('p-crawl', true, 0); g.npose('p-crawl', 0);
+    ny.push([1750, g.ny(LY[0], LY[1])], [1900, g.ny(LY[0], LY[1], NS, -9)], [2050, g.ny(LY[0], LY[1])], [6200, g.ny(LY[0], LY[1])], [6300, g.ny(LY[0], LY[1] - 12)], [6450, g.ny(LY[0], LY[1])], [TOT, g.ny(LY[0], LY[1])]);
+    g.track(g.nay, ny, TOT); g.ncls('fl', false, 1700); g.npose('p-lie', 1750); g.ncls('kick', true, 2100); g.ncls('kick', false, 6100); g.npose('p-sit', 6250); g.ncls('clap', true, 6400); g.ncls('clap', false, 7700);
+    const toys = g.decor.querySelectorAll('.toy');                                                     /* toys swing when she kicks them */
+    toys.forEach((el, i) => { const fr = []; for (let t = 0; t <= TOT; t += 100) { const k = t < 2100 || t > 6100 ? 0 : Math.sin((t - 2100) / 520 * Math.PI * 2 + i * 1.3) * 16; fr.push({ offset: t / TOT, transform: `rotate(${k.toFixed(1)}deg)` }); } g.anims.push(el.animate(fr, { duration: TOT, fill: 'forwards' })); });
+    for (let k = 0; k < 8; k++) g.T(() => g.sfx.chime(), 2300 + k * 520); [2600, 3700, 4800, 5600].forEach(t => g.T(() => g.sfx.giggle(), t));
+    g.T(() => g.puff(160, 150, 8, ['#FFB3C8', '#FF7A9A', '#fff'], 70, 60), 3400); g.T(() => g.puff(170, 120, 12, ['#FFB3C8', '#FFD84D', '#fff', '#8FE0C4'], 90, 70), 6500); g.T(() => g.sfx.yay(), 6500);
+    g.T(() => g.say('Kick kick! Naya is laughing!'), 2200);
+    g.end = { av: [248, 218], nay: [160, 214] }; return TOT;
+  },
+
+  /* ---------------------------------- BALL PIT: both hop in, Liyana tosses balls, Naya claps and giggles ---------------------------------- */
+  ballpit(g) {
+    softRig(g); const TOT = 8600, A = .66, S = g.nayS, WAIT = [412, 214], IN = [300, 156], LI = [122, 142];
+    const av = [[0, g.start], [500, g.avF(50, 216, A)]]; g.hopArc([50, 216], [LI[0], LI[1] + g.HIP * A], 70, 9, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([500 + i * 80, tr]));
+    av.push([1300, g.avS(LI[0], LI[1], A)]); for (let k = 0; k < 6; k++) { const t = 2800 + k * 620; av.push([t, g.avS(LI[0], LI[1], A)], [t + 160, g.avS(LI[0], LI[1] + 8, A, -5)], [t + 380, g.avS(LI[0], LI[1] - 6, A, 4)]); }
+    av.push([6700, g.avS(LI[0], LI[1], A)], [6800, g.avF(LI[0], LI[1] + g.HIP * A, A)]); g.hopArc([LI[0], LI[1] + g.HIP * A], [50, 218], 60, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([6800 + i * 80, tr])); av.push([TOT, g.avF(50, 218, A)]);
+    g.track(g.av, av, TOT); g.cls(g.av, 'sit', true, 1250); g.cls(g.av, 'sit', false, 6780); g.frOn(1300); g.frOff(6790);
+    for (let k = 0; k < 6; k++) { g.cls(g.av, 'wee', true, 2960 + k * 620); g.cls(g.av, 'wee', false, 3300 + k * 620); }
+    const ny = g.crawl(S, WAIT, 0, 1500); g.flipTo(S[0], WAIT[0], 0); g.npose('p-crawl', 0); ny.push([1600, g.ny(WAIT[0], WAIT[1])]);
+    g.hopArc(WAIT, IN, 70, 9, (x, y) => g.ny(x, y)).forEach((tr, i) => ny.push([2000 + i * 70, tr])); g.npose('p-sit', 2000); g.ncls('fl', false, 2000);
+    ny.push([2700, g.ny(IN[0], IN[1])]); for (let k = 0; k < 14; k++) ny.push([2800 + k * 340, g.ny(IN[0], IN[1] - (k % 2 ? 8 : 0))]);
+    ny.push([7500, g.ny(IN[0], IN[1])]); g.hopArc(IN, [378, 214], 60, 8, (x, y) => g.ny(x, y)).forEach((tr, i) => ny.push([7000 + i * 70, tr])); ny.push([TOT, g.ny(378, 214)]);
+    g.track(g.nay, ny.sort((a, b) => a[0] - b[0]), TOT); g.ncls('clap', true, 2900); g.ncls('clap', false, 6900);
+    for (let k = 0; k < 6; k++) { const t = 3000 + k * 620, cx = 60 + (k % 3) * 110, col = BALLC[k]; g.T(() => { g.ball(LI[0] + 10, LI[1] - 44, cx + 120 - LI[0] - 40 + (k % 2 ? 40 : -20), 120 + (k % 3) * 8, col); g.sfx.pop(); }, t); }
+    [3200, 4300, 5400].forEach(t => g.T(() => g.sfx.giggle(), t)); g.T(() => g.sfx.yay(), 6800); g.T(() => g.puff(300, 100, 10, ['#FF6B7A', '#FFC93D', '#4FB4F5', '#52CE86'], 80, 70), 6900);
+    g.T(() => g.say('Splash! Balls everywhere!'), 2600);
+    g.end = { av: [50, 218], nay: [378, 214] }; return TOT;
+  },
+
+  /* ---------------------------------- FOAM BLOCKS: Liyana stacks a tower, Naya crawls over and knocks it down laughing ---------------------------------- */
+  blocks(g) {
+    softRig(g); const TOT = 8200, A = .66, S = g.nayS, ST = [140, 222], blk = [0, 1, 2].map(i => g.decor.querySelector('.blk' + i));
+    const av = [[0, g.start], [500, g.avF(90, 224, A)]]; g.hopArc([90, 224], ST, 50, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([500 + i * 70, tr]));
+    for (let k = 0; k < 3; k++) { const t = 1300 + k * 1000; av.push([t, g.avF(ST[0], ST[1], A)], [t + 200, g.avF(ST[0], ST[1] - 12, A)], [t + 420, g.avF(ST[0], ST[1], A)]); }
+    av.push([4700, g.avF(ST[0], ST[1], A)], [4950, g.avF(ST[0], ST[1] - 20, A)], [5150, g.avF(ST[0], ST[1], A)], [5900, g.avF(ST[0], ST[1], A)], [6100, g.avF(ST[0], ST[1] - 16, A)], [6300, g.avF(ST[0], ST[1], A)], [TOT, g.avF(ST[0], ST[1], A)]); g.track(g.av, av, TOT);
+    [[1300, 1700], [2300, 2700], [3300, 3700], [4800, 5500], [5900, 6600]].forEach(([a, b]) => { g.cls(g.av, 'wee', true, a); g.cls(g.av, 'wee', false, b); });
+    blk.forEach((el, i) => { const H = BLK_HOME[i], T = BLK_STACK[i], t0 = 1300 + i * 1000, fr = [{ offset: 0, transform: `translate(${H[0]}px,${H[1]}px)` }, { offset: t0 / TOT, transform: `translate(${H[0]}px,${H[1]}px)` }, { offset: (t0 + 250) / TOT, transform: `translate(${lerp(H[0], T[0], .3)}px,${lerp(H[1], T[1], .3) - 80}px) rotate(-12deg)` }, { offset: (t0 + 700) / TOT, transform: `translate(${lerp(H[0], T[0], .75)}px,${lerp(H[1], T[1], .75) - 60}px) rotate(8deg)` }, { offset: (t0 + 900) / TOT, transform: `translate(${T[0]}px,${T[1]}px)` }, { offset: 5000 / TOT, transform: `translate(${T[0]}px,${T[1]}px)` }];
+      const fall = [[286, 208, 170], [258, 208, -100], [206, 208, 14]][2 - i]; fr.push({ offset: 5350 / TOT, transform: `translate(${lerp(T[0], fall[0], .6)}px,${T[1] - 44}px) rotate(${fall[2] * .5}deg)` }, { offset: 5700 / TOT, transform: `translate(${fall[0]}px,${fall[1]}px) rotate(${fall[2]}deg)` }, { offset: 1, transform: `translate(${fall[0]}px,${fall[1]}px) rotate(${fall[2]}deg)` }); g.anims.push(el.animate(fr, { duration: TOT, fill: 'forwards' })); });
+    const HIT = [272, 222], ny = g.crawl(S, [330, 222], 300, 3000); g.flipTo(S[0], 330, 0); g.npose('p-crawl', 0); ny.push(...g.crawl([330, 222], HIT, 3300, 4300), [4900, g.ny(HIT[0], HIT[1])], [5000, g.ny(HIT[0] - 8, HIT[1], NS, -6)], [5200, g.ny(HIT[0], HIT[1])]);
+    g.ncls('fl', true, 3300); g.T(() => { g.nay.classList.remove('fl'); }, 0); g.ncls('fl', true, 3300); g.npose('p-sit', 5200); g.ncls('fl', false, 5200); g.ncls('clap', true, 5450); g.ncls('clap', false, 7400);
+    for (let t = 5300; t <= 7300; t += 200) ny.push([t, g.ny(HIT[0], HIT[1] - ((t / 200) % 2 ? 9 : 0))]); ny.push([TOT, g.ny(HIT[0], HIT[1])]); g.track(g.nay, ny.sort((a, b) => a[0] - b[0]), TOT);
+    for (let k = 0; k < 3; k++) g.T(() => { g.sfx.pop(); g.puff(BLK_STACK[k][0], BLK_STACK[k][1] - 30, 5, ['#fff', '#FFE887', '#FFB3C8'], 40, 40); }, 2000 + k * 1000);
+    g.T(() => { g.sfx.oops(); g.puff(200, 180, 16, ['#FF8FB0', '#6FBDF7', '#FFD24D', '#fff'], 100, 60); }, 5350); [5500, 6300].forEach(t => g.T(() => g.sfx.giggle(), t)); g.T(() => g.sfx.yay(), 6000);
+    g.T(() => g.say('One, two, three! A tall tower!'), 1300); g.T(() => g.say('Oh no! Naya knocked it down!'), 5400);
+    g.end = { av: [ST[0], 222], nay: [HIT[0], 220] }; return TOT;
+  },
+
+  /* ---------------------------------- CRAWL TUNNEL: Naya crawls through, Liyana waits at the other end — "peek-a-boo!" ---------------------------------- */
+  tunnel(g) {
+    softRig(g); const TOT = 8200, A = .66, S = g.nayS, LEFT = [30, 178], RIGHT = [312, 178], AVP = [352, 184];
+    const av = [[0, g.start], [500, g.avF(338, 190, A)]]; g.hopArc([338, 190], [AVP[0], AVP[1] - 22 + g.HIP * A], 44, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([500 + i * 70, tr]));
+    av.push([1200, g.avS(AVP[0], AVP[1] - 22, A)], [5000, g.avS(AVP[0], AVP[1] - 22, A)], [5100, g.avF(AVP[0], AVP[1], A)], [5300, g.avF(AVP[0], AVP[1] - 16, A)], [5500, g.avF(AVP[0], AVP[1], A)], [TOT, g.avF(AVP[0], AVP[1], A)]); g.track(g.av, av, TOT);
+    g.cls(g.av, 'sit', true, 1150); g.cls(g.av, 'sit', false, 5050); g.cls(g.av, 'wee', true, 3000); g.cls(g.av, 'wee', false, 3600); g.cls(g.av, 'wee', true, 4700); g.cls(g.av, 'wee', false, 6800);
+    const ny = g.crawl(S, LEFT, 0, 2000); g.flipTo(S[0], LEFT[0], 0); g.npose('p-crawl', 0); g.ncls('fl', false, 2000);
+    ny.push(...g.crawl(LEFT, RIGHT, 2100, 4900, .72).slice(0)); ny.push([5000, g.ny(RIGHT[0], RIGHT[1], .72)], [5300, g.ny(RIGHT[0], RIGHT[1], NS)]);
+    ny.push(...g.crawl(RIGHT, [330, 186], 5400, 6000)); ny.push([6100, g.ny(330, 186)]); g.npose('p-sit', 6100); g.ncls('clap', true, 6300); g.ncls('clap', false, 7600); for (let t = 6200; t <= 7600; t += 200) ny.push([t, g.ny(330, 186 - ((t / 200) % 2 ? 8 : 0))]); ny.push([TOT, g.ny(330, 186)]);
+    g.track(g.nay, ny.sort((a, b) => a[0] - b[0]), TOT); g.frOn(2450); g.frOff(4750);
+    [2600, 3300, 4000].forEach(t => g.T(() => g.sfx.boop(), t)); g.T(() => g.say("Where is Naya?"), 2800);
+    g.T(() => { g.say('Peek-a-boo!'); g.sfx.yay(); g.puff(310, 130, 14, ['#FFB3C8', '#FFD84D', '#fff', '#8FE0C4'], 90, 70); }, 4900); [5600, 6500].forEach(t => g.T(() => g.sfx.giggle(), t));
+    g.end = { av: [AVP[0], AVP[1]], nay: [330, 186] }; return TOT;
+  },
+
+  /* ---------------------------------- HUG: tap Naya — Liyana comes over, big hug, giggles and hearts ---------------------------------- */
+  hug(g) {
+    softRig(g); const TOT = 2400, [x, y] = [g.nayPos.x, g.nayPos.y];
+    g.ncls('clap', true, 100); g.ncls('clap', false, 2000); g.cls(g.av, 'wee', true, 100); g.cls(g.av, 'wee', false, 1900);
+    const ny = [[0, g.nayStart]]; for (let t = 100; t <= 2000; t += 200) ny.push([t, nyF(x, y - ((t / 200) % 2 ? 12 : 0), NS * 1.03, ((t / 200) % 2 ? 4 : -4))]); ny.push([TOT, nyF(x, y)]); g.track(g.nay, ny, TOT);
+    g.T(() => { g.sfx.giggle(); g.puff(x - 20, y - 70, 10, ['#FF9DB8', '#FF7A9A', '#FFC1D2', '#fff'], 80, 80); }, 200); g.T(() => g.puff(x, y - 90, 8, ['#FF9DB8', '#FFC1D2'], 70, 70), 1100); g.T(() => g.sfx.yay(), 1300); g.T(() => g.say('A big hug for Naya!'), 100);
+    g.end = null; return TOT;
+  },
+});
 /* ===== Drawing Studio (7 modes) ===== */
 const PAL = ['#FF5C5C', '#FFA24C', '#FFD84D', '#5CD68A', '#4DA3FF', '#9B7BFF', '#FF8FC7', '#9B6B4A'];
 const PAL_X = ['#22C7C7', '#FFB3D9', '#8A8AA8', '#FFFFFF'];
