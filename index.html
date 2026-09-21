@@ -844,6 +844,15 @@ body[data-screen=petcare] #petbox{display:none!important}
 .tuft{width:clamp(28px,5vh,46px)}
 </style>
 <style>.muds{left:30%;right:30%;top:4%;height:48%}</style>
+<style>
+/* home = games page: 12 tiles (10 games + play area + my pet) */
+.tiles.g10{grid-template-columns:repeat(6,1fr)}
+@media (max-width:1000px){.tiles.g10{grid-template-columns:repeat(3,1fr)}}
+.tile.t-peach[data-go=playarea]{box-shadow:0 0 0 5px #fff,0 8px 0 var(--shadow)}
+/* view-toggle buttons carry a word so it is obvious what they do */
+.viewtoggle{position:relative}
+.viewtoggle::after{content:attr(data-l);position:absolute;left:50%;bottom:-13px;translate:-50% 0;white-space:nowrap;font:700 13px var(--display);color:var(--ink);background:#fff;border-radius:11px;padding:1px 9px;box-shadow:0 2px 0 var(--shadow)}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1333,6 +1342,7 @@ const sc = (id, s, x, y) => `<g transform="translate(${x} ${y}) scale(${s})">${A
 
 /* ---------- illustrated tile icons ---------- */
 const TILE = {
+  playarea: `<circle cx="78" cy="20" r="11" fill="#FFE066" stroke="#fff" stroke-width="3"/><path d="M14 88 L30 22 L46 88 M46 88 L62 22 L78 88" stroke="#FF7A9A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M22 22 H70" stroke="#FF7A9A" stroke-width="8" stroke-linecap="round"/><path d="M35 24 V64 M55 24 V58" stroke="#8F86B4" stroke-width="2.5"/><rect x="28" y="64" width="14" height="6" rx="3" fill="#FFD84D"/><rect x="48" y="58" width="14" height="6" rx="3" fill="#5CD68A"/><path d="M4 92 H96" stroke="#7DD87F" stroke-width="6" stroke-linecap="round"/>`,
   petcare: `<path d="M50 90 C12 62 6 30 28 20 C42 13 50 24 50 32 C50 24 58 13 72 20 C94 30 88 62 50 90Z" fill="#FF7A9A" stroke="#3D3358" stroke-width="5" stroke-linejoin="round"/><ellipse cx="50" cy="58" rx="12" ry="10" fill="#fff"/><circle cx="33" cy="46" r="5" fill="#fff"/><circle cx="44" cy="37" r="5" fill="#fff"/><circle cx="56" cy="37" r="5" fill="#fff"/><circle cx="67" cy="46" r="5" fill="#fff"/>`,
   studio: `<path d="M50 12 C22 12 8 32 10 52 C12 72 30 90 52 88 C62 87 62 78 56 74 C50 70 54 62 62 62 H74 C88 62 94 52 92 42 C88 22 70 12 50 12Z" fill="#FFF0D6" stroke="#F0B56E" stroke-width="3.5"/><circle cx="30" cy="36" r="7" fill="#FF6B81"/><circle cx="48" cy="26" r="7" fill="#FFD84D"/><circle cx="68" cy="30" r="7" fill="#5CD68A"/><circle cx="26" cy="58" r="7" fill="#4DA3FF"/><rect x="62" y="44" width="34" height="9" rx="4.5" fill="#9B6B4A" transform="rotate(-38 79 48)"/>`,
   bubbles: `<circle cx="38" cy="58" r="28" fill="#DFF3FF" stroke="#fff" stroke-width="4"/><circle cx="72" cy="34" r="19" fill="#DFF3FF" stroke="#fff" stroke-width="4"/><circle cx="76" cy="76" r="12" fill="#DFF3FF" stroke="#fff" stroke-width="3.5"/><path d="M24 50 Q28 40 38 38" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 28 Q69 23 75 22" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>`,
@@ -1547,8 +1557,8 @@ function avatarFull(a, shirt, acc) {
   <g class="armL"><rect x="19" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="23.5" cy="138" r="6" fill="${skin}"/><circle cx="23.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="23.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="22" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="17" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g><g class="armR"><rect x="72" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="76.5" cy="138" r="6" fill="${skin}"/><circle cx="76.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="76.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="75" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="70" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g></g></svg>`;
 }
 
-const TOWN = { x: 2200, y: 620 };
-const WW = 5250, WH = 720, FGW = Math.round(WW * 1.2);
+const TOWN = { x: 2150, y: 640 };
+const WW = 3900, WH = 720, FGW = Math.round(WW * 1.2);
 const W_WOOD = '#C9975B', W_DARK = '#9A6B3A';
 const STRUCT = {
   studio: `<path d="M62 150 L86 40 M138 150 L114 40 M100 150 V70" stroke="${W_WOOD}" stroke-width="9" stroke-linecap="round"/><rect x="66" y="34" width="68" height="60" rx="6" fill="#fff" stroke="${W_DARK}" stroke-width="5"/><circle cx="88" cy="58" r="9" fill="#FF7A9A"/><circle cx="112" cy="52" r="8" fill="#5CB8FF"/><circle cx="104" cy="76" r="8" fill="#FFD84D"/><rect x="128" y="132" width="16" height="18" rx="4" fill="#5CD68A"/><rect x="150" y="136" width="14" height="14" rx="4" fill="#FF8A5C"/>`,
@@ -1563,10 +1573,7 @@ const STRUCT = {
   music: `<path d="M44 150 V64 M156 150 V64" stroke="${W_WOOD}" stroke-width="10" stroke-linecap="round"/><rect x="30" y="140" width="140" height="10" rx="4" fill="${W_DARK}"/><path d="M26 66 Q100 -6 174 66Q150 56 128 66Q100 52 72 66Q50 56 26 66Z" fill="#6FB6FF"/><g fill="#FF7A9A"><circle cx="78" cy="112" r="7"/><circle cx="108" cy="104" r="7"/></g><path d="M85 112 V84 M115 104 V76 M85 84 L115 76" stroke="#FF7A9A" stroke-width="4" fill="none"/>`,
 };
 /* LAYOUT: games live together on the LEFT (two staggered rows), the playground fills the RIGHT (back row + front row) */
-const TOWN_SPOTS = [   /* back line (y=436) and front line (y=652), staggered by half a step */
-  ['studio', 'Draw', 't-pink', "Let's draw!", 2170, 436], ['animals', 'Animals', 't-butter', 'Animal friends!', 2466, 436], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!", 2762, 436], ['count', 'Count', 't-peach', "Let's count!", 3058, 436], ['memory', 'Memory', 't-lilac', 'Find the pairs!', 3354, 436],
-  ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!', 2318, 652], ['spy', 'Find it!', 't-mint', 'Can you find it?', 2614, 652], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!', 2910, 652], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!', 3206, 652], ['music', 'Music', 't-sky', "Let's make music!", 3502, 652],
-];
+const TOWN_SPOTS = [];   /* games now live on the home page (grid); the world is only the play area */
 const DECOR = {
   swing: `<path d="M20 150 L60 10 L100 150 M100 150 L140 10 L180 150" stroke="#FF7A9A" stroke-width="8" stroke-linecap="round" fill="none"/><path d="M52 10 H148" stroke="#FF7A9A" stroke-width="10" stroke-linecap="round"/><g class="sw1"><path d="M76 12 V104 M100 12 V104" stroke="#8a8aa8" stroke-width="3"/><rect x="70" y="104" width="36" height="9" rx="4" fill="#FFD84D"/></g><g class="sw2"><path d="M116 12 V96 M140 12 V96" stroke="#8a8aa8" stroke-width="3"/><rect x="110" y="96" width="36" height="9" rx="4" fill="#5CB8FF"/></g>`,
   seesaw: `<path d="M84 150 L100 108 L116 150Z" fill="#8EDCC0"/><g class="plank"><rect x="10" y="98" width="180" height="12" rx="6" fill="#FFB020"/><circle cx="20" cy="94" r="8" fill="#FF7A9A"/><circle cx="180" cy="94" r="8" fill="#FF7A9A"/></g>`,
@@ -1574,7 +1581,7 @@ const DECOR = {
 };
 DECOR.sandbox = `<path d="M18 128 L40 100 H160 L182 128 V146 H18Z" fill="#C9975B"/><path d="M28 128 H172 L160 106 H40Z" fill="#F6D89A"/><g class="castle"><path d="M116 106 V82 h9 v-8 h8 v8 h9 v24Z" fill="#F0C36C"/></g><rect x="150" y="96" width="14" height="12" rx="3" fill="#FF7A9A"/>`;
 DECOR.merry = `<ellipse cx="100" cy="140" rx="86" ry="14" fill="#B79BFF"/><ellipse cx="100" cy="134" rx="82" ry="12" fill="#D8C8FF"/><rect x="94" y="30" width="12" height="104" rx="5" fill="#FFD84D"/><path d="M14 44 Q100 -20 186 44Q160 34 143 44Q120 30 100 44Q80 30 57 44Q40 34 14 44Z" fill="#FF7A9A"/><g class="h1"><path d="M52 60 V120" stroke="#fff" stroke-width="4"/><rect x="36" y="112" width="34" height="12" rx="6" fill="#5CB8FF"/></g><g class="h2"><path d="M148 60 V120" stroke="#fff" stroke-width="4"/><rect x="132" y="112" width="34" height="12" rx="6" fill="#FFB020"/></g>`;
-const DECOR_AT = [['swing', 320, 622], ['sandbox', 640, 696], ['slide', 900, 622], ['seesaw', 1470, 696], ['merry', 1770, 622], ['gym', 3950, 622], ['ballpit', 4280, 696], ['blocks', 4620, 622], ['tunnel', 4970, 696]];
+const DECOR_AT = [['swing', 320, 622], ['sandbox', 640, 696], ['slide', 900, 622], ['seesaw', 1470, 696], ['merry', 1770, 622], ['gym', 2550, 622], ['ballpit', 2880, 696], ['blocks', 3220, 622], ['tunnel', 3570, 696]];
 const tree = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="14" cy="4" rx="58" ry="12" fill="rgba(30,80,40,.28)"/><rect x="-9" y="-44" width="18" height="48" rx="7" fill="url(#bark)"/><circle cx="0" cy="-72" r="40" fill="url(#leaf)"/><circle cx="-26" cy="-50" r="27" fill="url(#leaf2)"/><circle cx="26" cy="-54" r="27" fill="url(#leaf)"/><circle cx="-12" cy="-86" r="10" fill="#fff" opacity=".18"/></g>`;
 const bush = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="6" cy="2" rx="40" ry="8" fill="rgba(30,80,40,.25)"/><circle cx="-16" cy="-12" r="18" fill="url(#leaf2)"/><circle cx="14" cy="-14" r="22" fill="url(#leaf)"/><circle cx="34" cy="-8" r="14" fill="url(#leaf2)"/></g>`;
 const tuft = (x, y) => `<path d="M${x} ${y} q-3 -9 -7 -12 M${x} ${y} q1 -12 0 -17 M${x} ${y} q4 -8 8 -11" stroke="#3FA556" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/>`;
@@ -1611,12 +1618,12 @@ SCREENS.world = el => {
   <div class="petals" aria-hidden="true">${Array.from({ length: 0 }, () => `<i style="left:${rnd(0, 100)}%;--d:${rnd(9, 18)}s;--dl:${rnd(-16, 0)}s;--w:${rnd(9, 16)}px;--c:${pick(['#FFC1D6', '#fff', '#FFE2A8', '#E3D4FF'])};--sw:${rnd(30, 120)}px"></i>`).join('')}</div>
   <svg class="fgrass" id="fgr" style="width:${FGW}px" viewBox="0 0 ${FGW} 90" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6BC66F"/><stop offset="1" stop-color="#3F9B54"/></linearGradient></defs>${Array.from({ length: Math.round(FGW / 60) }, (_, i) => { const x = i * 60 + rnd(-10, 10), h = rnd(36, 78), l = rnd(-14, 14); return `<path d="M${x} 90 Q${x + l * .3} ${90 - h * .55} ${x + l} ${90 - h} Q${x + l * .6 + 5} ${90 - h * .5} ${x + 9} 90Z" fill="url(#bl)"/>`; }).join('')}</svg>
   <div class="thud"><div class="greet"><span class="mini">${avatarSVG(S.avatar, accent()).replace('viewBox="0 -14 100 126"', 'viewBox="4 4 92 92"')}</span><div>Hi ${esc(S.name)}!<small>${S.stickers.length} sticker${S.stickers.length === 1 ? '' : 's'}</small></div></div><span class="spacer"></span>
-    <button class="shelf t-sky viewtoggle" id="vt" aria-label="All games">${VIEW_ICON.grid}</button>
+    <button class="shelf t-sky viewtoggle" id="vt" data-l="Games" aria-label="Games">${VIEW_ICON.grid}</button>
     ${S.pet ? `<button class="shelf t-peach" data-go="petcare" data-say="Let's take care of ${esc(petName())}!" aria-label="Pet care">${tileIcon('petcare')}</button>` : ''}
     <button class="shelf t-peach" data-go="stickers" data-say="My stickers!" aria-label="Stickers">${tileIcon('stickers')}<b>${S.stickers.length}</b></button>
     <button class="shelf t-lilac ${fresh ? 'fresh' : ''}" data-go="wardrobe" data-say="Let's get dressed up!" aria-label="Dress up">${tileIcon('wardrobe')}</button></div></div>`;
   $$('.shelf', el).forEach(t => t.addEventListener('click', () => say(t.dataset.say)));
-  $('#vt', el).addEventListener('click', () => { S.view = 'grid'; save(); sfx.boop(); say('All the games!'); go('home'); });
+  $('#vt', el).addEventListener('click', () => { S.view = 'grid'; save(); sfx.boop(); say('Time for games!'); go('home'); });
   $$('.bfly', el).forEach(b => b.addEventListener('click', e => { e.stopPropagation(); sfx.pop(); b.classList.remove('scare'); void b.offsetWidth; b.classList.add('scare'); const r = b.getBoundingClientRect(); sparkBurst(r.left + r.width / 2, r.top + r.height / 2); say('Butterfly!'); }));
   const town = $('#town', el), ts = $('#ts', el), av = $('#tav', el), tp = $('#tpet', el), far = $('#tfar', el), mid = $('#tmid', el), fg = $('#fgr', el);
   let sc = 1, vw = 1000, camX = 0, snapCam = true;
@@ -1743,7 +1750,7 @@ SCREENS.world = el => {
   });
   av.addEventListener('click', () => { if (busy) return; sfx.boop(); av.classList.remove('hop'); void av.offsetWidth; av.classList.add('hop'); say(`Hi ${S.name}!`); });
   if (tp) tp.addEventListener('click', () => { sfx.boop(); petHappy(); say(`I'm ${petName()}! ${petInfo().say}`); });
-  setTimeout(() => { if (alive && !S.seenTown) { say('Tap anywhere to walk! Tap a game to play!'); S.seenTown = 1; save(); } }, 500);
+  setTimeout(() => { if (alive && !S.seenTown) { say('Tap anywhere to walk! Tap a swing or a slide to play!'); S.seenTown = 1; save(); } }, 500);
 };
 
 /* ===== Two home views: playground world + all-games grid ===== */
@@ -1755,20 +1762,22 @@ const HOME_GAMES = [
   ['studio', 'Draw', 't-pink', "Let's draw!"], ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!'], ['animals', 'Animals', 't-butter', 'Animal friends!'], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!"],
   ['spy', 'Find it!', 't-mint', 'Can you find it?'], ['count', 'Count', 't-peach', "Let's count!"], ['memory', 'Memory', 't-lilac', 'Find the pairs!'], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!'],
   ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'],
+  ['playarea', 'Play area', 't-peach', "Let's go to the play area!"], ['petcare', 'My pet', 't-pink', "Let's play with my pet!"],
 ];
+SCREENS.playarea = () => { S.view = 'world'; save(); go('home'); };
 SCREENS.games = el => {
   const fresh = S.stickers.length >= 2 && unlockedCount(S.stickers.length) > (S.seenUnlock || 1);
   el.innerHTML = `<div class="hello"><button class="me" aria-label="Me">${avatarSVG(S.avatar, accent())}</button><div class="hi"><h1>Hi ${esc(S.name)}!</h1><p class="lead">${S.stickers.length} sticker${S.stickers.length === 1 ? '' : 's'}</p></div><span class="spacer"></span>
-    <button class="shelf t-sky viewtoggle" id="vt" aria-label="Playground">${VIEW_ICON.park}</button>
+    <button class="shelf t-sky viewtoggle" id="vt" data-l="Play area" aria-label="Play area">${VIEW_ICON.park}</button>
     ${S.pet ? `<button class="shelf t-peach" data-go="petcare" data-say="Let's take care of ${esc(petName())}!" aria-label="Pet care">${tileIcon('petcare')}</button>` : ''}
     <button class="shelf t-peach" data-go="stickers" data-say="My stickers!" aria-label="Stickers">${tileIcon('stickers')}<b>${S.stickers.length}</b></button>
     <button class="shelf t-lilac ${fresh ? 'fresh' : ''}" data-go="wardrobe" data-say="Let's get dressed up!" aria-label="Dress up">${tileIcon('wardrobe')}</button></div>
   <div class="tiles g10">${HOME_GAMES.map(([id, l, tone, say], i) => tileHTML(id, l, tone, say, i, id)).join('')}</div>`;
   $('.me', el).addEventListener('click', e => { e.stopPropagation(); sfx.boop(); const sv = $('.me svg', el); sv.classList.remove('wave'); void sv.getBoundingClientRect(); sv.classList.add('wave'); say(`Hi ${S.name}!`); });
   $$('.tile,.shelf[data-say]', el).forEach(t => t.addEventListener('click', () => say(t.dataset.say)));
-  $('#vt', el).addEventListener('click', () => { S.view = 'world'; save(); sfx.boop(); say("Let's go to the playground!"); go('home'); });
+  $('#vt', el).addEventListener('click', () => { S.view = 'world'; save(); sfx.boop(); say("Let's go to the play area!"); go('home'); });
 };
-SCREENS.home = (el, arg) => { const v = S.view === 'grid' ? 'grid' : 'world'; document.body.dataset.view = v; (v === 'grid' ? SCREENS.games : SCREENS.world)(el, arg); };
+SCREENS.home = (el, arg) => { if (!S.homeV2) { S.view = 'grid'; S.homeV2 = 1; save(); } const v = S.view === 'world' ? 'world' : 'grid'; document.body.dataset.view = v; (v === 'grid' ? SCREENS.games : SCREENS.world)(el, arg); };
 /* ===== welcome screen ===== */
 /* ---- logo: sticker-style rainbow crest + bouncy colorful lettering. Static SVG (zero animation cost). ---- */
 function logoSVG(nm) {
@@ -2147,8 +2156,8 @@ const PLAY_RIDE = {
 };
 /* ===== SOFT PLAY ZONE: padded floor, four soft props (baby play gym, ball pit, foam blocks, crawl tunnel) and NAYA, a baby Liyana plays with.
    Same architecture as the playground (03e): each prop = bk layer + fr layer; rides are choreographed with the real avatar + Naya (+ pet). Static art only. ===== */
-const ZONE2_X = 3700;
-const SOFT_HOME = [4538, 692];                       /* where Naya sits when nobody is playing */
+const ZONE2_X = 2300;
+const SOFT_HOME = [3138, 692];                       /* where Naya sits when nobody is playing */
 const BALLC = ['#FF6B7A', '#FFC93D', '#4FB4F5', '#52CE86', '#FF9DB8', '#FF9A4D', '#B08CFF'];
 
 /* ---------------- BABY PLAY GYM ---------------- */
