@@ -749,6 +749,12 @@ body[data-screen=petcare] #petbox{display:none!important}
 .sama .sa{transform-box:fill-box;transform-origin:50% 8%}
 .sama.p-stand.clap .sa-l{transform:rotate(145deg)}.sama.p-stand.clap .sa-r{transform:rotate(-145deg)}
 .sama.p-sit.clap .sa-l{transform:rotate(140deg)}.sama.p-sit.clap .sa-r{transform:rotate(-140deg)}
+.sama .sa,.naya .na{transition:transform .28s cubic-bezier(.3,1.5,.5,1)}
+/* name badges under the two friends */
+.ntag{position:absolute;left:50%;transform:translateX(-50%);font:700 15px var(--display);color:#3D3358;background:rgba(255,255,255,.94);border:2.5px solid #fff;border-radius:999px;padding:1px 11px 2px;box-shadow:0 3px 0 rgba(61,51,88,.18);pointer-events:none;white-space:nowrap;letter-spacing:.2px}
+.naya .ntag{bottom:-6px}.sama .ntag{bottom:2px}
+/* a ring in flight (ring toss) */
+.pring{width:46px;height:46px;border-radius:50%;border:8px solid #4FB4F5;background:transparent;box-sizing:border-box}
 </style>
 <style>.thud .greet .mini{display:block}.thud .greet .mini svg{display:block;width:100%;height:100%;margin:0}</style>
 <style>
@@ -1082,17 +1088,17 @@ function duck(ms) { if (!ac || !mbus) return; const t = ac.currentTime; mbus.gai
 try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) { }
 document.addEventListener('visibilitychange', () => { if (!ac) return; if (document.hidden) ac.suspend(); else ac.resume(); });
 let voice = null;
-const VOICE_PREF = ['Samantha', 'Ava', 'Allison', 'Nicky', 'Susan', 'Tessa', 'Karen', 'Moira', 'Serena', 'Fiona', 'Zoe', 'Kate', 'Google US English', 'Google UK English Female'];
-const VOICE_BAD = /Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Deranged|Good News|Hysterical|Jester|Organ|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Ralph|Kathy|Princess|Grandma|Grandpa|Eddy|Flo|Reed|Rocko|Sandy|Shelley|Superstar|Compact/i;
-const VOICE_STYLES = { sweet: { label: 'Sweet', rate: .9, pitch: 1.12 }, gentle: { label: 'Gentle', rate: .8, pitch: 1.04 }, bouncy: { label: 'Bouncy', rate: .97, pitch: 1.2 } };
-const voiceScore = v => { let sc = 0; const i = VOICE_PREF.findIndex(n => v.name.indexOf(n) === 0 || v.name.indexOf(n) > -1); if (i >= 0) sc += 40 - i; if (/Premium|Enhanced|Siri|Natural/i.test(v.name)) sc += 25; if (/^en[-_]US/i.test(v.lang)) sc += 6; else if (/^en[-_](GB|AU|IE|ZA)/i.test(v.lang)) sc += 2; if (v.localService) sc += 1; return sc; };
+const VOICE_PREF = ['Ava', 'Samantha', 'Allison', 'Nicky', 'Susan', 'Zoe', 'Serena', 'Kate', 'Tessa', 'Karen', 'Moira', 'Fiona', 'Google US English', 'Google UK English Female'];
+const VOICE_BAD = /Compact|Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Deranged|Good News|Hysterical|Jester|Organ|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Ralph|Kathy|Princess|Grandma|Grandpa|Eddy|Flo|Reed|Rocko|Sandy|Shelley|Superstar|Compact/i;
+const VOICE_STYLES = { sweet: { label: 'Soft', rate: .84, pitch: 1.06 }, gentle: { label: 'Calm', rate: .76, pitch: 1 }, bouncy: { label: 'Playful', rate: .92, pitch: 1.14 } };
+const voiceScore = v => { let sc = 0; const i = VOICE_PREF.findIndex(n => v.name.indexOf(n) === 0 || v.name.indexOf(n) > -1); if (i >= 0) sc += 40 - i; if (/Siri/i.test(v.name)) sc += 60; if (/Premium|Enhanced|Neural|Natural/i.test(v.name)) sc += 45; if (/Compact/i.test(v.name)) sc -= 60; if (/^en[-_]US/i.test(v.lang)) sc += 6; else if (/^en[-_](GB|AU|IE|ZA)/i.test(v.lang)) sc += 2; if (v.localService) sc += 1; return sc; };
 function voiceChoices() { if (!('speechSynthesis' in window)) return []; const seen = new Set(); return speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang) && !VOICE_BAD.test(v.name)).sort((a, b) => voiceScore(b) - voiceScore(a)).filter(v => { const k = v.name.replace(/\s*\(.*\)/, ''); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 5); }
 function pickVoice() {
   if (!('speechSynthesis' in window)) return; const vs = speechSynthesis.getVoices(); if (!vs.length) return;
   voice = (S.voiceName && vs.find(v => v.name === S.voiceName)) || voiceChoices()[0] || vs.find(v => /^en/i.test(v.lang)) || null;
 }
 if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
-const VOICE_FEATURE = false; // speech turned off for now; set true to bring it back (also restore the Voice rows in the parent panel)
+const VOICE_FEATURE = true;   // Zaid asked for the voice back (v1.43), soft and natural rather than robotic
 function say(t, force) {
   if (!VOICE_FEATURE) return;
   if ((!S.voice && !force) || !('speechSynthesis' in window)) return;
@@ -1103,9 +1109,10 @@ function say(t, force) {
     parts.forEach((p, i) => {
       p = p.trim(); if (!p) return; const u = new SpeechSynthesisUtterance(p); if (voice) u.voice = voice; u.lang = (voice && voice.lang) || 'en-US';
       const j = () => 1 + (Math.random() - .5) * .06;
-      u.rate = Math.max(.6, st.rate * (single ? .9 : 1) * j());
-      u.pitch = Math.min(1.6, st.pitch * j() + (/!$/.test(p) ? .07 : /\?$/.test(p) ? .05 : 0) + (single ? .04 : 0));
-      u.volume = 1; speechSynthesis.speak(u);
+      u.rate = Math.max(.6, st.rate * (single ? .92 : 1) * j());
+      u.pitch = Math.min(1.4, st.pitch * j() + (/!$/.test(p) ? .07 : /\?$/.test(p) ? .05 : 0) + (single ? .04 : 0));
+      u.volume = .88; speechSynthesis.speak(u);
+      if (i < parts.length - 1) { const br = new SpeechSynthesisUtterance(' '); br.volume = 0; br.rate = .55; speechSynthesis.speak(br); }   /* a breath between sentences */
     });
   } catch (e) { }
 }
@@ -1511,6 +1518,9 @@ function openParent() {
   <div class="opt-row"><label>Age (sets how hard the games are)</label>${[2, 3, 4].map(a => `<button class="chip" data-age="${a}" aria-pressed="${S.age === a}">${a} years</button>`).join('')}</div>
   <div class="opt-row"><button class="chip" id="pa">Edit avatar</button><button class="chip" id="pf">Change favorites</button><button class="chip" id="pp">Change pet</button></div>
   <div class="opt-row"><label>Home screen</label><button class="chip" data-hv="world" aria-pressed="${S.view !== 'grid'}">Playground</button><button class="chip" data-hv="grid" aria-pressed="${S.view === 'grid'}">All games</button></div>
+  <div class="opt-row"><label>Talking voice</label><button class="chip" data-v="1" aria-pressed="${S.voice !== false}">On</button><button class="chip" data-v="0" aria-pressed="${S.voice === false}">Off</button></div>
+  <div class="opt-row"><label>Voice style</label>${Object.entries(VOICE_STYLES).map(([k, v]) => `<button class="chip" data-vs="${k}" aria-pressed="${(S.vstyle || 'sweet') === k}">${v.label}</button>`).join('')}</div>
+  ${voiceChoices().length > 1 ? `<div class="opt-row"><label>Which voice</label>${voiceChoices().map(v => `<button class="chip" data-vn="${esc(v.name)}" aria-pressed="${(S.voiceName || (voiceChoices()[0] || {}).name) === v.name}">${esc(v.name.replace(/s*(.*)/, ''))}</button>`).join('')}</div>` : ''}
   <div class="opt-row"><label>Sound effects</label><button class="chip" data-sf="1" aria-pressed="${!S.sfxOff}">On</button><button class="chip" data-sf="0" aria-pressed="${!!S.sfxOff}">Off</button></div>
   <div class="opt-row"><label>Background music</label>${[['off', 'Off'], ['soft', 'Soft'], ['med', 'Medium']].map(([k, l]) => `<button class="chip" data-mu="${k}" aria-pressed="${k === 'off' ? S.music === false : S.music !== false && (S.mlevel || 'soft') === k}">${l}</button>`).join('')}</div>
   <p class="note">Keep her in the app: open Settings, then Accessibility, then Guided Access, and turn it on. Triple-click the side or home button inside the app to start it.</p>
@@ -1568,9 +1578,9 @@ function avatarFull(a, shirt, acc) {
   <g class="armL"><rect x="19" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="23.5" cy="138" r="6" fill="${skin}"/><circle cx="23.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="23.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="22" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="17" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g><g class="armR"><rect x="72" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="76.5" cy="138" r="6" fill="${skin}"/><circle cx="76.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="76.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="75" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="70" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g></g></svg>`;
 }
 
-const TOWN = { x: 2460, y: 640 };
-const WELCOME_X = 2300;                              /* fixed ground sign in the clearing, off to the side of her spawn so it's never blocked by her */
-const WW = 6750, WH = 720, FGW = Math.round(WW * 1.2);
+const WELCOME_X = 2465;                              /* dead centre of the clearing between the playground gate (1990) and soft play (2940) */
+const TOWN = { x: WELCOME_X, y: 664 };               /* she lands in the middle of the welcome mat, under the sign */
+const WW = 7500, WH = 720, FGW = Math.round(WW * 1.2);
 const W_WOOD = '#C9975B', W_DARK = '#9A6B3A';
 const STRUCT = {
   studio: `<path d="M62 150 L86 40 M138 150 L114 40 M100 150 V70" stroke="${W_WOOD}" stroke-width="9" stroke-linecap="round"/><rect x="66" y="34" width="68" height="60" rx="6" fill="#fff" stroke="${W_DARK}" stroke-width="5"/><circle cx="88" cy="58" r="9" fill="#FF7A9A"/><circle cx="112" cy="52" r="8" fill="#5CB8FF"/><circle cx="104" cy="76" r="8" fill="#FFD84D"/><rect x="128" y="132" width="16" height="18" rx="4" fill="#5CD68A"/><rect x="150" y="136" width="14" height="14" rx="4" fill="#FF8A5C"/>`,
@@ -1593,7 +1603,7 @@ const DECOR = {
 };
 DECOR.sandbox = `<path d="M18 128 L40 100 H160 L182 128 V146 H18Z" fill="#C9975B"/><path d="M28 128 H172 L160 106 H40Z" fill="#F6D89A"/><g class="castle"><path d="M116 106 V82 h9 v-8 h8 v8 h9 v24Z" fill="#F0C36C"/></g><rect x="150" y="96" width="14" height="12" rx="3" fill="#FF7A9A"/>`;
 DECOR.merry = `<ellipse cx="100" cy="140" rx="86" ry="14" fill="#B79BFF"/><ellipse cx="100" cy="134" rx="82" ry="12" fill="#D8C8FF"/><rect x="94" y="30" width="12" height="104" rx="5" fill="#FFD84D"/><path d="M14 44 Q100 -20 186 44Q160 34 143 44Q120 30 100 44Q80 30 57 44Q40 34 14 44Z" fill="#FF7A9A"/><g class="h1"><path d="M52 60 V120" stroke="#fff" stroke-width="4"/><rect x="36" y="112" width="34" height="12" rx="6" fill="#5CB8FF"/></g><g class="h2"><path d="M148 60 V120" stroke="#fff" stroke-width="4"/><rect x="132" y="112" width="34" height="12" rx="6" fill="#FFB020"/></g>`;
-const DECOR_AT = [['swing', 320, 622], ['sandbox', 640, 696], ['slide', 900, 622], ['seesaw', 1470, 696], ['merry', 1770, 622], ['gym', 3190, 622], ['ballpit', 3520, 696], ['blocks', 3860, 622], ['tunnel', 4210, 696], ['teaparty', 5410, 622], ['dressup', 5790, 696], ['trampoline', 6170, 622]];
+const DECOR_AT = [['swing', 320, 622], ['sandbox', 640, 696], ['slide', 900, 622], ['seesaw', 1470, 696], ['merry', 1770, 622], ['gym', 3190, 622], ['ballpit', 3520, 696], ['blocks', 3860, 622], ['tunnel', 4210, 696], ['teaparty', 5390, 622], ['hopscotch', 5790, 696], ['dressup', 6140, 622], ['ringtoss', 6560, 696], ['trampoline', 6900, 622]];
 const tree = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="14" cy="4" rx="58" ry="12" fill="rgba(30,80,40,.28)"/><rect x="-9" y="-44" width="18" height="48" rx="7" fill="url(#bark)"/><circle cx="0" cy="-72" r="40" fill="url(#leaf)"/><circle cx="-26" cy="-50" r="27" fill="url(#leaf2)"/><circle cx="26" cy="-54" r="27" fill="url(#leaf)"/><circle cx="-12" cy="-86" r="10" fill="#fff" opacity=".18"/></g>`;
 const bush = (x, y, sz) => `<g transform="translate(${x} ${y}) scale(${sz})"><ellipse cx="6" cy="2" rx="40" ry="8" fill="rgba(30,80,40,.25)"/><circle cx="-16" cy="-12" r="18" fill="url(#leaf2)"/><circle cx="14" cy="-14" r="22" fill="url(#leaf)"/><circle cx="34" cy="-8" r="14" fill="url(#leaf2)"/></g>`;
 const tuft = (x, y) => `<path d="M${x} ${y} q-3 -9 -7 -12 M${x} ${y} q1 -12 0 -17 M${x} ${y} q4 -8 8 -11" stroke="#3FA556" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/>`;
@@ -1619,9 +1629,9 @@ SCREENS.world = el => {
       <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
       <pattern id="mow" width="260" height="10" patternUnits="userSpaceOnUse"><rect width="130" height="10" fill="#fff" opacity=".08"/></pattern></defs>
       <rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#gg)"/><rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#mow)"/><rect x="-400" y="300" width="${WW + 800}" height="70" fill="url(#haze)"/>${trees}${bushes}${fence}
-      <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${PLAY_MAT()}${softMat()}${samaMat()}${welcomeSign(WELCOME_X, 560)}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
+      <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${PLAY_MAT()}${softMat()}${samaMat()}${welcomeMat(WELCOME_X, 660)}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
     ${Array.from({ length: 0 }, (_, i) => `<button class="bfly" style="left:${rnd(150, WW - 150)}px;top:${rnd(380, 600)}px;z-index:1500;--a:${rnd(-160, 160)}px;--b:${rnd(-70, 40)}px;--c:${rnd(-200, 200)}px;--d:${rnd(-60, 60)}px;--t:${rnd(13, 22)}s;--h:${pick([330, 20, 50, 280, 190])}" aria-label="Butterfly"><svg viewBox="0 0 40 30"><g class="wl"><path d="M20 15 Q4 -2 6 12 Q6 24 20 17Z" fill="hsl(var(--h) 90% 70%)"/></g><g class="wr"><path d="M20 15 Q36 -2 34 12 Q34 24 20 17Z" fill="hsl(var(--h) 90% 76%)"/></g><rect x="19" y="8" width="2" height="14" rx="1" fill="#5b5478"/></svg></button>`).join('')}
-    ${PGRAD}<div class="dzone" style="left:${ZONE_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate()}</svg></div><div class="dzone" style="left:${ZONE2_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE2_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(`<g transform="translate(37 116)">${ICON_SOFT}</g>`)}</svg></div><div class="dzone" style="left:${ZONE3_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE3_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(`<g transform="translate(37 116)">${ICON_SAMA}</g>`)}</svg></div><div class="naya p-sit" id="naya" style="z-index:${SOFT_HOME[1]}" aria-label="Naya">${nayaSVG()}</div><div class="sama p-stand" id="sama" style="z-index:${SAMA_HOME[1]}" aria-label="Sama">${samaSVG()}</div>${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
+    ${PGRAD}<div class="dzone" style="left:${ZONE_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(0, 'Playground')}</svg></div><div class="dzone" style="left:${ZONE2_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE2_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(`<g transform="translate(37 116)">${ICON_SOFT}</g>`, 'Baby Naya')}</svg></div><div class="dzone" style="left:${ZONE3_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE3_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(`<g transform="translate(37 116)">${ICON_SAMA}</g>`, 'Cousin Sama')}</svg></div><div class="dzone" style="left:${WELCOME_X - 230}px;top:258px;z-index:566" aria-hidden="true"><svg width="460" height="310" viewBox="0 0 460 310">${welcomeBoard(S.name)}</svg></div><div class="naya p-sit" id="naya" style="z-index:${SOFT_HOME[1]}" aria-label="Naya">${nayaSVG()}<b class="ntag">Naya</b></div><div class="sama p-stand" id="sama" style="z-index:${SAMA_HOME[1]}" aria-label="Sama">${samaSVG()}<b class="ntag">Sama</b></div>${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
     ${TOWN_SPOTS.map(([id, l, tone, s, x, y], i) => `<button class="spot" style="left:${x - 100}px;top:${y - 250}px;z-index:${y};--i:${i}" data-id="${id}" data-say="${esc(s)}" aria-label="${l}"><span class="plate ${tone}">${tileIcon(id)}</span><span class="sign">${l}</span><svg class="struct" viewBox="0 -10 200 160">${STRUCT[id]}</svg></button>`).join('')}
     <button class="ball" id="ball" style="left:1150px;top:620px" aria-label="Ball"><i></i></button>
     ${S.pet ? `<div class="tpet" id="tpet"><div class="flip">${petSVG(S.pet)}</div></div>` : ''}
@@ -1670,7 +1680,7 @@ SCREENS.world = el => {
     if (!alive) return; const dt = Math.min(.05, (now - last) / 1000); last = now;
     let moving = false;
     if (target && !busy) {
-      const dx = target.x - pos.x, dy = target.y - pos.y, d = Math.hypot(dx, dy), step = 340 * dt;
+      const dx = target.x - pos.x, dy = target.y - pos.y, d = Math.hypot(dx, dy), step = (340 + Math.min(660, Math.max(0, d - 400) * .35)) * dt;
       if (d <= step) { pos.x = target.x; pos.y = target.y; target = null; if (pending) { const fn = pending; pending = null; setPos(pos); try { fn(); } catch (err) { busy = false; riding = false; } } }
       else { pos.x += dx / d * step; pos.y += dy / d * step; moving = true; if (Math.abs(dx) > 4) face = dx < 0 ? -1 : 1; stepT += dt; if (stepT > .3) { stepT = 0; sfx.step(); } }
       setPos(pos);
@@ -1982,22 +1992,35 @@ const PLAY_MAT = () => {
 const ICON_PLAY = `<!-- swing -->${ln(48, 172, 62, 128, 5, '#FF7A9A')}${ln(76, 172, 62, 128, 5, '#FF7A9A')}${ln(57, 130, 57, 158, 2.5, '#8F86B4')}${ln(67, 130, 67, 158, 2.5, '#8F86B4')}${rr(52, 158, 20, 6, 3, '#FFD84D')}
   <!-- slide -->${ln(112, 172, 118, 132, 5, '#C99555')}${ln(124, 132, 124, 172, 4, '#C99555')}${ln(112, 134, 128, 134, 5, '#FF7A9A')}<path d="M128 134 Q158 138 170 170" fill="none" stroke="#4FA6EC" stroke-width="7" stroke-linecap="round"/>
   `;
-/* ---------------- WELCOME SIGN: a painted mat laid on the grass right where Liyana arrives ---------------- */
-function welcomeSign(cx, cy) {
-  const spark = (dx, dy, s = 1) => `<path d="M${cx + dx} ${cy + dy} l${3 * s} ${8 * s} ${8 * s} ${3 * s} -${8 * s} ${3 * s} -${3 * s} ${8 * s} -${3 * s} -${8 * s} -${8 * s} -${3 * s} ${8 * s} -${3 * s}z" fill="#FFD84D" opacity=".85"/>`;
-  return `<g>
-    <ellipse cx="${cx}" cy="${cy + 36}" rx="248" ry="52" fill="#FF9DB8"/><ellipse cx="${cx}" cy="${cy + 30}" rx="248" ry="52" fill="#FFF3D2"/>
-    <ellipse cx="${cx}" cy="${cy + 28}" rx="248" ry="52" fill="none" stroke="#fff" stroke-width="11"/>
-    <ellipse cx="${cx}" cy="${cy + 26}" rx="214" ry="40" fill="none" stroke="#FF9DB8" stroke-width="7" stroke-dasharray="14 12" opacity=".85"/>
-    <text x="${cx}" y="${cy + 12}" font-family="Fredoka,sans-serif" font-weight="700" font-size="50" fill="#C0506A" text-anchor="middle">Welcome Liyana!</text>
-    <text x="${cx}" y="${cy + 40}" font-family="Fredoka,sans-serif" font-weight="600" font-size="20" fill="#7B5CD6" text-anchor="middle" opacity=".85">Where should we play today?</text>
-    ${spark(-190, -38, .9)}${spark(192, -34, 1)}${spark(-224, 8, .7)}${spark(226, 12, .8)}
-  </g>`;
+/* ---------------- WELCOME: a painted mat on the grass + a standing signboard above it, both centred on the clearing ---------------- */
+function welcomeMat(cx, cy) {                        /* drawn flat on the ground, she lands right in the middle of it */
+  const petals = Array.from({ length: 20 }, (_, i) => { const a = i / 20 * 6.2832; return `<ellipse cx="${(cx + Math.cos(a) * 196).toFixed(1)}" cy="${(cy + Math.sin(a) * 44).toFixed(1)}" rx="22" ry="12" fill="${i % 2 ? '#FFD3E0' : '#FFF3D2'}"/>`; }).join('');
+  const spark = (dx, dy, s) => `<path d="M${cx + dx} ${cy + dy} l${3 * s} ${8 * s} ${8 * s} ${3 * s} -${8 * s} ${3 * s} -${3 * s} ${8 * s} -${3 * s} -${8 * s} -${8 * s} -${3 * s} ${8 * s} -${3 * s}z" fill="#FFD84D" opacity=".9"/>`;
+  return `<g>${petals}<ellipse cx="${cx}" cy="${cy}" rx="196" ry="44" fill="#fff"/><ellipse cx="${cx}" cy="${cy}" rx="184" ry="38" fill="#FFF3D2"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="160" ry="30" fill="none" stroke="#FF9DB8" stroke-width="6" stroke-dasharray="14 12" opacity=".8"/>
+  <path d="M${cx} ${cy + 12} c-13 -16 -34 -5 -21 11 l21 20 21 -20 c13 -16 -8 -27 -21 -11z" fill="#FF8FB0" opacity=".55"/>
+  ${spark(-142, -14, 1)}${spark(146, -10, .9)}${spark(-92, 16, .7)}${spark(96, 18, .8)}</g>`;
 }
-function zoneGate(icons) {   /* svg 220x340, arch centre at x=110, ground at y=330 */
+function welcomeBoard(name) {                        /* svg 460x310, centre x=230, posts reach the ground at y=302 */
+  const line = 'Welcome ' + name + '!';
+  const fs = Math.max(26, Math.min(44, Math.round(640 / line.length)));
+  const post = x => `${shd(x + 11, 300, 30, 8)}${rr(x, 150, 22, 152, 10, 'url(#pgWoodH)')}${rr(x - 6, 144, 34, 14, 7, 'url(#pgYel)')}`;
+  const flag = (x, c) => poly([[x, 26], [x + 28, 26], [x + 14, 56]], c, 'stroke="#fff" stroke-width="2.5" stroke-linejoin="round"');
+  return `<g>${post(76)}${post(362)}
+  <path d="M22 34 Q230 6 438 34" stroke="#C9975B" stroke-width="5" fill="none" stroke-linecap="round"/>
+  ${[0, 1, 2, 3, 4, 5, 6].map(i => flag(38 + i * 56, ['#FF8FB0', '#FFD24D', '#8EDCC0', '#B79BFF', '#FF8FB0', '#FFD24D', '#8EDCC0'][i])).join('')}
+  ${rr(20, 70, 420, 122, 28, 'url(#pgWoodV)', 'stroke="#8E5C30" stroke-width="6"')}${rr(34, 84, 392, 94, 20, '#FFF6D2')}
+  <text x="230" y="${128}" font-family="Fredoka,sans-serif" font-weight="700" font-size="${fs}" fill="#C0506A" text-anchor="middle">${esc(line)}</text>
+  <text x="230" y="158" font-family="Fredoka,sans-serif" font-weight="600" font-size="19" fill="#7B5CD6" text-anchor="middle">Where should we play today?</text>
+  <circle cx="42" cy="131" r="14" fill="url(#pgRed)"/><circle cx="42" cy="127" r="4.5" fill="#fff" opacity=".6"/>
+  <circle cx="418" cy="131" r="14" fill="url(#pgMint)"/><circle cx="418" cy="127" r="4.5" fill="#fff" opacity=".6"/></g>`;
+}
+function zoneGate(icons, label) {   /* svg 220x340, arch centre at x=110, ground at y=330 */
   const post = x => `${shd(x + 9, 332, 24, 6)}${rr(x, 60, 18, 272, 8, 'url(#pgWoodH)')}${rr(x - 4, 54, 26, 14, 7, 'url(#pgYel)')}<circle cx="${x + 9}" cy="44" r="12" fill="url(#pgRed)"/><circle cx="${x + 5}" cy="40" r="4" fill="#fff" opacity=".6"/>`;
+  const fs = !label ? 0 : label.length > 11 ? 15 : 18;
   return `<g>${post(28)}${post(174)}
   ${rr(20, 66, 180, 26, 12, 'url(#pgPinkV)')}${rr(20, 66, 180, 8, 4, '#FFC0D2')}
+  ${label ? `<text x="110" y="87" font-family="Fredoka,sans-serif" font-weight="700" font-size="${fs}" fill="#fff" text-anchor="middle">${esc(label)}</text>` : ''}
   ${ln(60, 92, 60, 112, 4, '#8E5C30')}${ln(160, 92, 160, 112, 4, '#8E5C30')}
   ${rr(30, 108, 160, 82, 18, 'url(#pgWoodV)', 'stroke="#8E5C30" stroke-width="3"')}${rr(37, 115, 146, 68, 13, '#FFF6D2')}
   ${icons || ICON_PLAY}
@@ -2379,91 +2402,186 @@ Object.assign(PLAY_RIDE, {
     g.end = null; return TOT;
   },
 });
-/* ===== SAMA'S YARD: a third zone where Liyana visits her cousin Sama (3-4yo) — tea party table, dress-up trunk + mirror, trampoline.
-   Same architecture as the playground (03e) and soft play (03f): each prop = bk layer + fr layer; rides are choreographed with
-   the real avatar + Sama. Static art only. ===== */
-const ZONE3_X = 5150, ZONE3_END_X = 6610;
-const SAMA_HOME = [6450, 692];                       /* where Sama stands when nobody is playing */
+/* ===== SAMA'S YARD: a third zone where Liyana visits her cousin Sama (3-4yo). Five things they do together:
+   tea party, hopscotch (counting!), dress-up, ring toss and the trampoline.
+   Same architecture as the playground (03e) and soft play (03f): each prop = bk layer + fr layer (the fr layer repeats the
+   near-side art so the girls can stand/sit INSIDE the prop), rides are choreographed with the real avatar + Sama. ===== */
+const ZONE3_X = 5150, ZONE3_END_X = 7360;
+const SAMA_HOME = [7180, 692];                       /* where Sama stands when nobody is playing */
 
-/* ---------------- TEA PARTY TABLE ---------------- */
-function teaTableBack() {
-  return `<g>${shd(170, 214, 150, 14)}
-  <ellipse cx="170" cy="150" rx="86" ry="58" fill="#F6D89A"/><ellipse cx="170" cy="144" rx="86" ry="58" fill="#FFE9B8"/>
-  <ellipse cx="170" cy="144" rx="86" ry="58" fill="none" stroke="#fff" stroke-width="6" stroke-dasharray="10 10" opacity=".75"/>
-  <rect x="160" y="150" width="20" height="60" rx="6" fill="url(#pgWoodH)"/><ellipse cx="170" cy="210" rx="30" ry="7" fill="url(#pgWoodH)"/>
-  <g transform="translate(70 194)">${rr(-22, -12, 44, 12, 5, 'url(#pgPinkV)')}${rr(-22, -42, 44, 32, 10, 'url(#pgPinkV)')}</g>
-  <g transform="translate(270 194)">${rr(-22, -12, 44, 12, 5, 'url(#pgLil)')}${rr(-22, -42, 44, 32, 10, 'url(#pgLil)')}</g>
-  <g transform="translate(170 118)"><ellipse cx="0" cy="12" rx="28" ry="18" fill="#fff" stroke="#C94870" stroke-width="3"/><path d="M-28 6 Q-44 0 -40 -9" stroke="#C94870" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M24 2 L40 -8" stroke="#C94870" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="0" cy="-4" r="9" fill="#fff" stroke="#C94870" stroke-width="3"/><ellipse cx="0" cy="12" rx="28" ry="18" fill="none" stroke="#FFC0D2" stroke-width="3" opacity=".8"/></g>
-  <g class="cup cup0" transform="translate(120 154)"><ellipse cx="0" cy="4" rx="13" ry="8" fill="#fff" stroke="#4FA6EC" stroke-width="2.5"/><path d="M11 0 Q19 0 19 6" stroke="#4FA6EC" stroke-width="2.5" fill="none"/></g>
-  <g class="cup cup1" transform="translate(220 154)"><ellipse cx="0" cy="4" rx="13" ry="8" fill="#fff" stroke="#FFB020" stroke-width="2.5"/><path d="M11 0 Q19 0 19 6" stroke="#FFB020" stroke-width="2.5" fill="none"/></g>
-  </g>`;
+/* ---------------- TEA PARTY: cloth-covered table, two chairs, teapot, cake stand, two cups ---------------- */
+function teaBack() {
+  const chair = (x, col, dk) => `<g transform="translate(${x} 214)">${shd(0, 6, 34, 9)}
+    ${rr(-28, -112, 56, 66, 17, col, `stroke="${dk}" stroke-width="3"`)}${rr(-20, -104, 40, 18, 9, '#fff', 'opacity=".4"')}<circle cx="0" cy="-70" r="9" fill="#fff" opacity=".5"/>
+    ${rr(-32, -52, 64, 18, 9, col, `stroke="${dk}" stroke-width="3"`)}
+    ${ln(-23, -36, -26, 2, 8, dk)}${ln(23, -36, 26, 2, 8, dk)}</g>`;
+  const scallop = Array.from({ length: 26 }, (_, i) => { const a = i / 26 * 6.2832; return `<circle cx="${(180 + Math.cos(a) * 107).toFixed(1)}" cy="${(136 + Math.sin(a) * 41).toFixed(1)}" r="10" fill="#FFD3E0"/>`; }).join('');
+  const cupcake = (x, y) => `<g transform="translate(${x} ${y})"><path d="M-10 0 h20 l-3 -13 h-14z" fill="#FFE9B8" stroke="#E0B060" stroke-width="2"/><path d="M-10 -13 q10 -15 20 0z" fill="#FF9DB8"/><circle cx="0" cy="-18" r="3.6" fill="#E24A5A"/></g>`;
+  const cake = `<g transform="translate(148 100)">${ln(0, 2, 0, 42, 5, '#C9C1E2')}<ellipse cx="0" cy="44" rx="28" ry="8" fill="url(#pgMetal)"/>
+    <ellipse cx="0" cy="2" rx="36" ry="11" fill="url(#pgMetal)"/><ellipse cx="0" cy="0" rx="36" ry="11" fill="#fff" opacity=".35"/>
+    ${cupcake(-18, -2)}${cupcake(0, -6)}${cupcake(18, -2)}</g>`;
+  const pot = `<g class="pot" style="transform-origin:212px 136px"><g transform="translate(212 114)">
+    <ellipse cx="0" cy="12" rx="29" ry="22" fill="#fff" stroke="#C94870" stroke-width="3"/><ellipse cx="-6" cy="4" rx="16" ry="9" fill="#FFD3E0" opacity=".6"/>
+    <path d="M-28 6 q-17 -2 -14 -13 q2 -6 10 -5" fill="none" stroke="#C94870" stroke-width="5" stroke-linecap="round"/>
+    <path d="M26 4 q13 -5 17 -14" fill="none" stroke="#C94870" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-17 -9 q17 -9 34 0" fill="#fff" stroke="#C94870" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="0" cy="-15" r="6.5" fill="#FF8FB0" stroke="#C94870" stroke-width="2.5"/></g></g>`;
+  /* NOTE: the animated <g> must NOT carry a transform attribute — a WAAPI transform would replace it and fling the cup to 0,0 */
+  const cup = (x, i, col) => `<g class="cup cup${i}"><g transform="translate(${x} 150)"><ellipse cx="0" cy="11" rx="21" ry="7" fill="#fff" stroke="#C9C1E2" stroke-width="2"/>
+    <path d="M-14 -3 q0 15 14 15 q14 0 14 -15z" fill="#fff" stroke="${col}" stroke-width="2.5" stroke-linejoin="round"/><ellipse cx="0" cy="-3" rx="14" ry="4.4" fill="#C98A52"/>
+    <path d="M14 1 q12 1 10 8 q-2 6 -10 4" fill="none" stroke="${col}" stroke-width="2.5"/></g></g>`;
+  return `<g><defs><pattern id="tpCheck" width="36" height="36" patternUnits="userSpaceOnUse"><rect width="36" height="36" fill="#FFF6E2"/><rect width="18" height="18" fill="#FFD3E0"/><rect x="18" y="18" width="18" height="18" fill="#FFD3E0"/></pattern></defs>
+  ${shd(180, 224, 152, 14)}${chair(58, 'url(#pgPinkV)', '#C94870')}${chair(302, 'url(#pgLil)', '#7B5CD6')}
+  ${ln(180, 140, 180, 206, 20, 'url(#pgWoodH)')}<ellipse cx="180" cy="212" rx="50" ry="14" fill="url(#pgWoodD)"/><ellipse cx="180" cy="208" rx="50" ry="14" fill="url(#pgWoodH)"/>
+  ${scallop}<ellipse cx="180" cy="136" rx="107" ry="41" fill="url(#tpCheck)"/><ellipse cx="180" cy="136" rx="107" ry="41" fill="none" stroke="#fff" stroke-width="5"/>
+  ${cake}${pot}${cup(112, 0, '#4FA6EC')}${cup(250, 1, '#F4B435')}</g>`;
 }
 
-/* ---------------- DRESS-UP TRUNK + MIRROR ---------------- */
-function dressupBack() {
-  return `<g>${shd(160, 238, 150, 14)}
-  <g transform="translate(232 40)"><ellipse cx="0" cy="90" rx="52" ry="86" fill="url(#pgMetal)"/><ellipse cx="0" cy="90" rx="42" ry="76" fill="#DDEBFF"/><ellipse cx="-14" cy="50" rx="12" ry="30" fill="#fff" opacity=".4"/><rect x="-8" y="172" width="16" height="30" rx="6" fill="url(#pgWoodH)"/><ellipse cx="0" cy="204" rx="30" ry="7" fill="url(#pgWoodH)"/></g>
-  <g transform="translate(70 172)">${rr(-64, -40, 128, 70, 14, 'url(#pgPinkV)', 'stroke="#C94870" stroke-width="4"')}${rr(-64, -40, 128, 18, 10, '#FFC0D2', 'opacity=".6"')}
-    <path d="M-60 -40 Q-66 -70 -30 -74 H30 Q66 -70 60 -40Z" fill="url(#pgLil)" stroke="#7B5CD6" stroke-width="4"/>
-    <g class="hat"><path d="M-40 -50 Q-20 -86 10 -60" fill="none" stroke="#FF9DB8" stroke-width="10" stroke-linecap="round"/></g>
-    <g class="boa"><circle cx="-10" cy="-66" r="14" fill="#FFD84D"/></g><g class="scarf"><rect x="20" y="-70" width="22" height="16" rx="6" fill="#8EDCC0"/></g>
-  </g></g>`;
+/* ---------------- HOPSCOTCH: five chalked squares, counted out loud ---------------- */
+const HOP = [[48, 176], [118, 176], [188, 176], [258, 176], [328, 176]];
+function hopBack() {
+  const TONE = ['#FFD3E0', '#CFE9FF', '#D8F5E6', '#FFEFC2', '#E7D9FF'];
+  const sq = HOP.map(([x, y], i) => `<g class="hsq hsq${i}" style="transform-origin:${x}px ${y}px">
+    <path d="M${x - 34} ${y + 19} L${x - 27} ${y - 19} L${x + 27} ${y - 19} L${x + 34} ${y + 19}Z" fill="#FFFDF4" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M${x - 34} ${y + 19} L${x - 27} ${y - 19} L${x + 27} ${y - 19} L${x + 34} ${y + 19}Z" fill="${TONE[i]}" opacity=".85"/>
+    <text x="${x}" y="${y + 12}" font-family="Fredoka,sans-serif" font-weight="700" font-size="30" fill="#7B5CD6" text-anchor="middle" opacity=".9">${i + 1}</text></g>`).join('');
+  const chalk = `<g opacity=".8"><ellipse cx="12" cy="196" rx="16" ry="7" fill="#FFF6D2"/><ellipse cx="12" cy="193" rx="16" ry="7" fill="#fff"/>
+    <path d="M370 150 q22 6 22 22" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="9 8"/></g>`;
+  return `<g>${shd(190, 200, 180, 12, .55)}${sq}${chalk}
+  <ellipse cx="190" cy="132" rx="150" ry="10" fill="#fff" opacity=".25"/></g>`;
+}
+
+/* ---------------- DRESS-UP: garment rail, ornate mirror, big costume trunk ---------------- */
+const crownArt = `<g><path d="M-26 8 L-30 -20 l16 12 L0 -26 l14 18 16 -12 -4 28z" fill="url(#pgYel)" stroke="#D99A1E" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="-14" cy="-2" r="4" fill="#FF8FB0"/><circle cx="0" cy="-6" r="4.6" fill="#E24A5A"/><circle cx="14" cy="-2" r="4" fill="#6FBDF7"/>${rr(-27, 6, 54, 8, 4, '#F4B435')}</g>`;
+const partyHatArt = `<g><path d="M0 -34 L18 12 H-18Z" fill="url(#pgPinkV)" stroke="#C94870" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M-12 -4 h26 M-16 6 h30" stroke="#fff" stroke-width="3.4" stroke-linecap="round" opacity=".8"/><circle cx="0" cy="-38" r="8" fill="#FFD24D" stroke="#D99A1E" stroke-width="2.5"/></g>`;
+function dressBack() {
+  const hang = (x, col, dk) => `<g transform="translate(${x} 96)"><path d="M-9 -20 a9 9 0 0 1 18 0" fill="none" stroke="#C9C1E2" stroke-width="3"/><path d="M0 -12 l-7 8 h14z" fill="#C9C1E2"/>
+    <path d="M-5 -6 h10 l16 70 q-21 9 -42 0z" fill="${col}" stroke="${dk}" stroke-width="2.5" stroke-linejoin="round"/><path d="M-21 56 q21 9 42 0" fill="none" stroke="#fff" stroke-width="3.5" opacity=".6"/></g>`;
+  const mirror = `<g transform="translate(382 134)"><ellipse cx="0" cy="0" rx="56" ry="84" fill="url(#pgYel)"/><ellipse cx="0" cy="0" rx="46" ry="74" fill="#DDEBFF"/>
+    <ellipse cx="0" cy="0" rx="46" ry="74" fill="url(#pgBlueS)" opacity=".45"/><path d="M-22 -48 q-11 30 3 72" stroke="#fff" stroke-width="11" fill="none" opacity=".5" stroke-linecap="round"/>
+    ${Array.from({ length: 12 }, (_, i) => { const a = i / 12 * 6.2832; return `<circle cx="${(Math.cos(a) * 56).toFixed(1)}" cy="${(Math.sin(a) * 84).toFixed(1)}" r="5.5" fill="#FFE887" stroke="#D99A1E" stroke-width="1.6"/>`; }).join('')}
+    <path d="M-11 82 h22 l9 44 h-40z" fill="url(#pgWoodH)"/><ellipse cx="0" cy="128" rx="36" ry="10" fill="url(#pgWoodD)"/></g>`;
+  return `<g>${shd(220, 266, 200, 14)}
+  ${ln(172, 250, 172, 78, 8, 'url(#pgMetal)')}${ln(300, 250, 300, 78, 8, 'url(#pgMetal)')}${ln(166, 80, 306, 80, 8, 'url(#pgMetal)')}
+  <ellipse cx="172" cy="252" rx="22" ry="7" fill="rgba(61,51,88,.2)"/><ellipse cx="300" cy="252" rx="22" ry="7" fill="rgba(61,51,88,.2)"/>
+  ${hang(200, '#FF8FB0', '#D14D78')}${hang(236, '#8EDCC0', '#3FA58A')}${hang(272, '#FFD24D', '#D99A1E')}
+  ${mirror}${trunkArt()}</g>`;
+}
+function trunkArt() {
+  return `<g transform="translate(80 226)">
+  <path d="M-64 -18 Q-68 -62 -26 -66 H26 Q68 -62 64 -18Z" fill="url(#pgLil)" stroke="#7B5CD6" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M-52 -26 Q-54 -54 -22 -57 H22 Q54 -54 52 -26Z" fill="#CBB6FF" opacity=".7"/>
+  <circle cx="-30" cy="-36" r="17" fill="#FFD24D" stroke="#D99A1E" stroke-width="2.5"/><path d="M2 -32 q20 -24 44 -8" stroke="#FF9DB8" stroke-width="12" fill="none" stroke-linecap="round"/>
+  ${rr(-66, -6, 132, 54, 14, 'url(#pgPinkV)', 'stroke="#C94870" stroke-width="4"')}${rr(-66, -6, 132, 16, 8, '#FFC0D2', 'opacity=".55"')}
+  ${ln(-40, -6, -40, 48, 6, '#C94870')}${ln(40, -6, 40, 48, 6, '#C94870')}
+  ${rr(-15, 12, 30, 22, 7, 'url(#pgYel)', 'stroke="#D99A1E" stroke-width="3"')}<circle cx="0" cy="23" r="4" fill="#8E5C30"/>
+  <path d="M-54 -4 q11 -19 31 -11" stroke="#8EDCC0" stroke-width="11" fill="none" stroke-linecap="round"/></g>`;
+}
+function dressFront() {   /* the trunk's near side again (so it can cover a passing leg) + the costumes they put on */
+  return `<g><g transform="translate(80 226)">${rr(-66, -6, 132, 54, 14, 'url(#pgPinkV)', 'stroke="#C94870" stroke-width="4"')}${rr(-66, -6, 132, 16, 8, '#FFC0D2', 'opacity=".55"')}
+  ${ln(-40, -6, -40, 48, 6, '#C94870')}${ln(40, -6, 40, 48, 6, '#C94870')}
+  ${rr(-15, 12, 30, 22, 7, 'url(#pgYel)', 'stroke="#D99A1E" stroke-width="3"')}<circle cx="0" cy="23" r="4" fill="#8E5C30"/>
+  <path d="M-54 -4 q11 -19 31 -11" stroke="#8EDCC0" stroke-width="11" fill="none" stroke-linecap="round"/></g>
+  <g class="wearA" opacity="0">${crownArt}</g><g class="wearB" opacity="0">${partyHatArt}</g></g>`;
+}
+
+/* ---------------- RING TOSS ---------------- */
+const ringArt = (x, y, c, d) => `<ellipse cx="${x}" cy="${y}" rx="36" ry="13" fill="none" stroke="${d}" stroke-width="11"/><ellipse cx="${x}" cy="${y}" rx="36" ry="13" fill="none" stroke="${c}" stroke-width="8"/><ellipse cx="${x}" cy="${y - 2}" rx="36" ry="13" fill="none" stroke="#fff" stroke-width="3" opacity=".45"/>`;
+function ringBack() {
+  return `<g>${shd(268, 212, 96, 13)}
+  <ellipse cx="268" cy="205" rx="78" ry="22" fill="url(#pgWoodD)"/><ellipse cx="268" cy="198" rx="78" ry="22" fill="url(#pgWoodH)"/><ellipse cx="268" cy="198" rx="54" ry="15" fill="#fff" opacity=".22"/>
+  ${ln(268, 198, 268, 88, 14, 'url(#pgWoodD)')}${ln(265, 198, 265, 88, 6, '#E0B583')}
+  <circle cx="268" cy="84" r="12" fill="url(#pgRed)"/><circle cx="264" cy="80" r="4" fill="#fff" opacity=".6"/>
+  <g class="rgA" opacity="0" style="transform-origin:268px 178px">${ringArt(268, 178, '#4FB4F5', '#2F7FCB')}</g>
+  <g class="rgB" opacity="0" style="transform-origin:268px 154px">${ringArt(268, 154, '#FFC93D', '#D99A1E')}</g>
+  <g class="rgC" opacity="0" style="transform-origin:268px 130px">${ringArt(268, 130, '#52CE86', '#2E9E5E')}</g>
+  <g transform="translate(348 186)"><ellipse cx="0" cy="18" rx="30" ry="9" fill="rgba(61,51,88,.18)"/>
+    <ellipse cx="-2" cy="8" rx="28" ry="10" fill="none" stroke="#C94870" stroke-width="9"/><ellipse cx="2" cy="-2" rx="28" ry="10" fill="none" stroke="#7B5CD6" stroke-width="9"/></g></g>`;
+}
+function ringFront() {   /* the near rim of the base, so the rings sit THROUGH the peg rather than in front of it */
+  return `<g><path d="M190 198 A78 22 0 0 0 346 198 L322 197 A54 15 0 0 1 214 197Z" fill="url(#pgWoodH)"/>
+  <path d="M190 198 A78 22 0 0 0 346 198" fill="none" stroke="#E0B583" stroke-width="4" opacity=".8"/></g>`;
 }
 
 /* ---------------- TRAMPOLINE ---------------- */
-function trampolineBack() {
-  const springs = Array.from({ length: 10 }, (_, i) => { const x = 40 + (i / 9) * 220; return `<path d="M${x} 224 l6 -8 -6 -8 6 -8" stroke="#B9C4D8" stroke-width="3" fill="none"/>`; }).join('');
-  return `<g>${shd(150, 244, 140, 14)}
-  <ellipse cx="150" cy="230" rx="132" ry="26" fill="#3B86C8"/><ellipse cx="150" cy="222" rx="132" ry="26" fill="#5CB8FF"/>
-  <ellipse cx="150" cy="216" rx="104" ry="18" fill="#7FCBFF"/><ellipse cx="150" cy="210" rx="104" ry="18" fill="#A9DBFF"/>
-  ${springs}
-  <path d="M30 220 V70 M270 220 V70" stroke="#C9975B" stroke-width="8" stroke-linecap="round"/><path d="M30 70 Q150 40 270 70" stroke="#C9975B" stroke-width="8" fill="none" stroke-linecap="round"/>
-  </g>`;
+const trampSpring = a => { const c = Math.cos(a), s = Math.sin(a); return ln(170 + c * 112, 194 + s * 33, 170 + c * 136, 198 + s * 43, 5, '#E3ECFA'); };
+function trampBack() {
+  const back = Array.from({ length: 13 }, (_, i) => trampSpring(Math.PI + i / 12 * Math.PI)).join('');
+  const mesh = Array.from({ length: 9 }, (_, i) => { const u = i / 8, x0 = 44 + u * 252, x1 = 40 + u * 260; return `<path d="M${x1} ${52 + Math.sin(u * Math.PI) * -18} L${x0} 190" stroke="#fff" stroke-width="2.5" opacity=".35" fill="none"/>`; }).join('');
+  return `<g>${shd(170, 254, 150, 14)}
+  ${ln(72, 212, 52, 252, 11, '#9990BE')}${ln(268, 212, 288, 252, 11, '#9990BE')}${ln(170, 230, 170, 254, 11, '#9990BE')}
+  ${ln(44, 196, 38, 50, 9, 'url(#pgMetal)')}${ln(296, 196, 302, 50, 9, 'url(#pgMetal)')}<path d="M38 50 Q170 14 302 50" stroke="url(#pgMetal)" stroke-width="9" fill="none" stroke-linecap="round"/>${mesh}
+  <ellipse cx="170" cy="206" rx="138" ry="44" fill="#2F72C2"/><ellipse cx="170" cy="198" rx="138" ry="44" fill="url(#pgBlueW)"/><ellipse cx="170" cy="190" rx="138" ry="44" fill="none" stroke="#fff" stroke-width="3" opacity=".25"/>
+  <ellipse cx="170" cy="196" rx="112" ry="33" fill="#1B3357"/>
+  <g class="tmat" style="transform-origin:170px 192px"><ellipse cx="170" cy="192" rx="112" ry="33" fill="#41406E"/><ellipse cx="170" cy="192" rx="112" ry="33" fill="url(#pgLil)" opacity=".3"/>
+    ${[84, 56, 28].map(r => `<ellipse cx="170" cy="192" rx="${r}" ry="${(r * 33 / 112).toFixed(1)}" fill="none" stroke="#fff" stroke-width="2" opacity=".22"/>`).join('')}</g>${back}</g>`;
+}
+function trampFront() {
+  const front = Array.from({ length: 13 }, (_, i) => trampSpring(i / 12 * Math.PI)).join('');
+  return `<g><path d="M32 198 A138 44 0 0 0 308 198 L282 196 A112 33 0 0 1 58 196Z" fill="url(#pgBlueW)"/>
+  <path d="M32 198 A138 44 0 0 0 308 198" fill="none" stroke="#7FCBFF" stroke-width="4" opacity=".7"/>${front}</g>`;
 }
 
 /* ---------------- ZONE 3 sign + mat ---------------- */
-const ICON_SAMA = `<circle cx="60" cy="150" r="0"/><g transform="translate(16 8)"><ellipse cx="42" cy="46" rx="27" ry="18" fill="#fff" stroke="#8E5C30" stroke-width="3"/><path d="M15 46 Q42 18 69 46" fill="none" stroke="#C94870" stroke-width="4"/><circle cx="42" cy="30" r="6" fill="#FFD84D"/></g><g transform="translate(98 12)"><rect x="0" y="22" width="26" height="30" rx="6" fill="#FF8FB0" stroke="#D14D78" stroke-width="2.5"/><path d="M2 22 Q13 4 24 22" fill="none" stroke="#7B5CD6" stroke-width="4"/></g>`;
+const ICON_SAMA = `<circle cx="60" cy="150" r="0"/><g transform="translate(14 10)"><ellipse cx="42" cy="44" rx="27" ry="17" fill="#fff" stroke="#8E5C30" stroke-width="3"/><path d="M15 44 Q42 16 69 44" fill="none" stroke="#C94870" stroke-width="4"/><circle cx="42" cy="28" r="6" fill="#FFD84D"/><path d="M69 38 q10 -2 12 -10" stroke="#C94870" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+<g transform="translate(100 14)"><path d="M13 0 L28 40 H-2Z" fill="#FF8FB0" stroke="#D14D78" stroke-width="2.5" stroke-linejoin="round"/><path d="M4 26 h18" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="13" cy="-4" r="5" fill="#FFD24D"/></g>`;
 function samaMat() {
   const x0 = ZONE3_X, x1 = ZONE3_END_X, y0 = 548, y1 = 720, P = `M${x0 + 16} ${y0} H${x1 - 16} Q${x1 + 6} ${y0} ${x1 + 14} ${y1} H${x0 - 14} Q${x0 - 6} ${y0} ${x0 + 16} ${y0}Z`;
-  return `<g><defs><pattern id="pgSama" width="52" height="52" patternUnits="userSpaceOnUse"><rect width="52" height="52" fill="#E7D9FF"/><rect x="2" y="2" width="48" height="48" rx="12" fill="#F1E7FF"/><circle cx="26" cy="26" r="7" fill="#FFD3E0" opacity=".85"/></pattern></defs>
+  return `<g><defs><pattern id="pgSama" width="54" height="54" patternUnits="userSpaceOnUse"><rect width="54" height="54" fill="#E7D9FF"/><rect x="2" y="2" width="50" height="50" rx="13" fill="#F3EAFF"/><circle cx="27" cy="27" r="7" fill="#FFD3E0" opacity=".9"/></pattern></defs>
   <path d="${P}" fill="none" stroke="#7FDDBB" stroke-width="34" stroke-linejoin="round"/><path d="${P}" fill="none" stroke="#fff" stroke-width="20" stroke-linejoin="round"/><path d="${P}" fill="url(#pgSama)"/>
   <path d="M${x0 + 30} ${y0 + 14} H${x1 - 30}" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/></g>`;
 }
 
-/* ---------------- SAMA (cousin, 3-4yo): standing child. Poses toggled by class: p-stand | p-sit | p-bounce ---------------- */
+/* ---------------- SAMA (cousin, 3-4yo). Poses: p-stand | p-sit | p-bounce.
+     Every pose is drawn so the FLOOR CONTACT sits at y=190 in the 140x200 box, except p-sit whose SEAT sits at y=180. ---------------- */
 function samaSVG() {
-  const skin = SKIN[2], HAIR = '#7A4B2E', DRESS = '#B79BFF', DRESSd = '#9575E8', DK = '#3D3358';
-  const head = (x, y, rot = 0) => `<g transform="translate(${x} ${y}) rotate(${rot})"><ellipse cx="-30" cy="4" rx="7" ry="8" fill="${skin}"/><ellipse cx="30" cy="4" rx="7" ry="8" fill="${skin}"/><circle r="32" fill="${skin}"/>
-    <path d="M-28 -12 Q-24 -38 0 -36 Q24 -38 28 -12 Q12 -26 0 -22 Q-12 -26 -28 -12Z" fill="${HAIR}"/>
-    <circle cx="-38" cy="-6" r="11" fill="${HAIR}"/><circle cx="38" cy="-6" r="11" fill="${HAIR}"/><circle cx="-38" cy="-6" r="4" fill="#FF9DB8"/><circle cx="38" cy="-6" r="4" fill="#FF9DB8"/>
-    <ellipse cx="-13" cy="2" rx="5.6" ry="6.2" fill="${DK}"/><ellipse cx="13" cy="2" rx="5.6" ry="6.2" fill="${DK}"/><circle cx="-11" cy="0" r="2.1" fill="#fff"/><circle cx="15" cy="0" r="2.1" fill="#fff"/>
-    <circle cx="-20" cy="14" r="6.5" fill="#FF8FAE" opacity=".5"/><circle cx="20" cy="14" r="6.5" fill="#FF8FAE" opacity=".5"/><path d="M-7 15 Q0 24 7 15Z" fill="#C0506A" stroke="#C0506A" stroke-width="2" stroke-linejoin="round"/></g>`;
-  const stand = `<g class="sp sp-stand"><ellipse cx="70" cy="192" rx="34" ry="6" fill="rgba(61,51,88,.18)"/>
-    <rect x="52" y="140" width="14" height="46" rx="7" fill="${skin}"/><rect x="74" y="140" width="14" height="46" rx="7" fill="${skin}"/><ellipse cx="59" cy="188" rx="14" ry="8" fill="#FF9DB8"/><ellipse cx="81" cy="188" rx="14" ry="8" fill="#FF9DB8"/>
-    <path d="M40 92 Q70 82 100 92 L112 168 Q70 182 28 168Z" fill="${DRESS}"/><path d="M40 92 Q70 82 100 92 L108 118 Q70 128 32 118Z" fill="${DRESSd}"/>
-    <g class="sa sa-l"><rect x="24" y="98" width="13" height="42" rx="6.5" fill="${skin}"/><circle cx="30" cy="140" r="8" fill="${skin}"/></g>
-    <g class="sa sa-r"><rect x="103" y="98" width="13" height="42" rx="6.5" fill="${skin}"/><circle cx="109" cy="140" r="8" fill="${skin}"/></g>
-    ${head(70, 62)}</g>`;
-  const sit = `<g class="sp sp-sit"><ellipse cx="70" cy="186" rx="36" ry="6" fill="rgba(61,51,88,.18)"/>
-    <ellipse cx="46" cy="172" rx="15" ry="9" fill="${skin}"/><ellipse cx="94" cy="172" rx="15" ry="9" fill="${skin}"/><ellipse cx="44" cy="176" rx="10" ry="6" fill="#FF9DB8"/><ellipse cx="96" cy="176" rx="10" ry="6" fill="#FF9DB8"/>
-    <path d="M38 108 Q70 98 102 108 L112 158 Q70 170 28 158Z" fill="${DRESS}"/>
-    <g class="sa sa-l"><rect x="20" y="118" width="12" height="34" rx="6" fill="${skin}"/><circle cx="26" cy="152" r="7" fill="${skin}"/></g>
-    <g class="sa sa-r"><rect x="108" y="118" width="12" height="34" rx="6" fill="${skin}"/><circle cx="114" cy="152" r="7" fill="${skin}"/></g>
-    ${head(70, 80)}</g>`;
-  const bounce = `<g class="sp sp-bounce"><rect x="54" y="96" width="13" height="30" rx="6.5" fill="${skin}" transform="rotate(18 60 96)"/><rect x="73" y="96" width="13" height="30" rx="6.5" fill="${skin}" transform="rotate(-18 80 96)"/>
-    <path d="M42 60 Q70 50 98 60 L106 110 Q70 122 34 110Z" fill="${DRESS}"/>
-    <g class="sa sa-l" style="transform:rotate(-40deg)"><rect x="18" y="52" width="13" height="40" rx="6.5" fill="${skin}"/><circle cx="24" cy="50" r="8" fill="${skin}"/></g>
-    <g class="sa sa-r" style="transform:rotate(40deg)"><rect x="109" y="52" width="13" height="40" rx="6.5" fill="${skin}"/><circle cx="115" cy="50" r="8" fill="${skin}"/></g>
-    ${head(70, 30)}</g>`;
+  const skin = SKIN[2], HAIR = '#5A3A22', HAIRL = '#8A5F38', D1 = '#C4A8FF', D2 = '#9B79EE', TRIM = '#8FE0C4', DK = '#3D3358';
+  const bow = (x, y) => `<g transform="translate(${x} ${y})"><path d="M0 0 l-13 -8 v16z" fill="#FF7A9A"/><path d="M0 0 l13 -8 v16z" fill="#FF7A9A"/><circle r="4.4" fill="#E24A5A"/></g>`;
+  const head = (x, y, rot = 0) => `<g transform="translate(${x} ${y}) rotate(${rot})">
+    <circle cx="-34" cy="4" r="15" fill="${HAIR}"/><circle cx="34" cy="4" r="15" fill="${HAIR}"/>
+    <ellipse cx="-29" cy="7" rx="6" ry="7.5" fill="${skin}"/><ellipse cx="29" cy="7" rx="6" ry="7.5" fill="${skin}"/>
+    <circle r="30" fill="${skin}"/>
+    <path d="M-30 -8 Q-30 -35 0 -35 Q30 -35 30 -8 Q20 -23 8 -19 Q-2 -27 -13 -18 Q-22 -23 -30 -8Z" fill="${HAIR}"/>
+    <path d="M-23 -23 q10 -8 20 -5" stroke="${HAIRL}" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>
+    ${bow(-34, -10)}${bow(34, -10)}
+    <path d="M-19 -6 q7 -5 13 -1 M19 -6 q-7 -5 -13 -1" stroke="${DK}" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="-12" cy="4" rx="6" ry="6.8" fill="${DK}"/><ellipse cx="12" cy="4" rx="6" ry="6.8" fill="${DK}"/><circle cx="-10" cy="1.6" r="2.3" fill="#fff"/><circle cx="14" cy="1.6" r="2.3" fill="#fff"/>
+    <circle cx="-21" cy="15" r="6.5" fill="#FF8FAE" opacity=".45"/><circle cx="21" cy="15" r="6.5" fill="#FF8FAE" opacity=".45"/>
+    <path d="M-7 15 Q0 24 7 15Z" fill="#C0506A" stroke="#C0506A" stroke-width="2" stroke-linejoin="round"/></g>`;
+  const shoe = (x, y) => `<ellipse cx="${x}" cy="${y}" rx="15" ry="8.5" fill="#FF7A9A"/><path d="M${x - 10} ${y - 3} q10 6 20 0" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  const arm = (cls, x, y) => `<g class="sa ${cls}" style="transform-origin:${x + 6}px ${y + 3}px"><rect x="${x}" y="${y}" width="13" height="40" rx="6.5" fill="${skin}"/><circle cx="${x + 6.5}" cy="${y + 42}" r="8" fill="${skin}"/><path d="M${x - 3} ${y - 2} h19 v15 q-9 4 -19 0z" fill="${D1}"/></g>`;
+  const stand = `<g class="sp sp-stand"><ellipse cx="70" cy="190" rx="33" ry="6" fill="rgba(61,51,88,.2)"/>
+    <rect x="53" y="140" width="14" height="44" rx="7" fill="${skin}"/><rect x="73" y="140" width="14" height="44" rx="7" fill="${skin}"/>${shoe(59, 186)}${shoe(81, 186)}
+    <path d="M42 94 Q70 84 98 94 L118 154 Q70 174 22 154Z" fill="${D1}"/><path d="M42 94 Q70 84 98 94 L104 120 Q70 132 36 120Z" fill="${D2}"/>
+    <path d="M22 154 Q70 174 118 154 L116 145 Q70 164 24 145Z" fill="${TRIM}"/><circle cx="70" cy="118" r="6" fill="#FFE887"/>
+    ${arm('sa-l', 29, 98)}${arm('sa-r', 98, 98)}${head(70, 60)}</g>`;
+  const sit = `<g class="sp sp-sit"><ellipse cx="74" cy="196" rx="34" ry="6" fill="rgba(61,51,88,.16)"/>
+    <rect x="76" y="150" width="15" height="34" rx="7.5" fill="${skin}" transform="rotate(-14 83 150)"/><rect x="96" y="150" width="15" height="34" rx="7.5" fill="${skin}" transform="rotate(-14 103 150)"/>
+    ${shoe(74, 188)}${shoe(94, 190)}
+    <path d="M40 108 Q70 98 100 108 L112 156 Q70 172 32 156Z" fill="${D1}"/><path d="M40 108 Q70 98 100 108 L104 128 Q70 140 36 128Z" fill="${D2}"/>
+    <path d="M32 156 Q70 172 112 156 L110 148 Q70 164 34 148Z" fill="${TRIM}"/>
+    ${arm('sa-l', 27, 112)}${arm('sa-r', 96, 112)}${head(70, 74)}</g>`;
+  const bounce = `<g class="sp sp-bounce">
+    <g transform="rotate(16 62 148)"><rect x="55" y="146" width="14" height="36" rx="7" fill="${skin}"/>${shoe(60, 186)}</g>
+    <g transform="rotate(-16 80 148)"><rect x="73" y="146" width="14" height="36" rx="7" fill="${skin}"/>${shoe(82, 186)}</g>
+    <path d="M42 94 Q70 84 98 94 L116 152 Q70 170 24 152Z" fill="${D1}"/><path d="M42 94 Q70 84 98 94 L104 120 Q70 132 36 120Z" fill="${D2}"/>
+    <path d="M24 152 Q70 170 116 152 L114 143 Q70 161 26 143Z" fill="${TRIM}"/>
+    <g class="sa sa-l" style="transform-origin:28px 100px"><g transform="rotate(-48 28 100)"><rect x="21" y="98" width="13" height="40" rx="6.5" fill="${skin}"/><circle cx="27.5" cy="140" r="8" fill="${skin}"/></g></g>
+    <g class="sa sa-r" style="transform-origin:112px 100px"><g transform="rotate(48 112 100)"><rect x="106" y="98" width="13" height="40" rx="6.5" fill="${skin}"/><circle cx="112.5" cy="140" r="8" fill="${skin}"/></g></g>
+    ${head(70, 60)}</g>`;
   return `<svg viewBox="0 0 140 200" class="ssv" aria-hidden="true">${stand}${sit}${bounce}</svg>`;
 }
 
 /* ---------------- register Sama's props with the same machinery as the playground ---------------- */
-PLAY.teaparty = { w: 340, h: 230, ax: 170, ay: 214, bk: teaTableBack, fr: () => '', walk: [-100, 10] };
-PLAY.dressup = { w: 320, h: 260, ax: 160, ay: 238, bk: dressupBack, fr: () => '', walk: [-100, -6] };
-PLAY.trampoline = { w: 300, h: 260, ax: 150, ay: 244, bk: trampolineBack, fr: () => '', walk: [-90, -8] };
+PLAY.teaparty   = { w: 360, h: 250, ax: 180, ay: 226, bk: teaBack,    fr: () => '',   walk: [-160, 0] };
+PLAY.hopscotch  = { w: 380, h: 220, ax: 190, ay: 198, bk: hopBack,    fr: () => '',   walk: [-192, 0] };
+PLAY.dressup    = { w: 440, h: 300, ax: 220, ay: 262, bk: dressBack,  fr: dressFront, walk: [-230, 6] };
+PLAY.ringtoss   = { w: 400, h: 240, ax: 200, ay: 214, bk: ringBack,   fr: ringFront,  walk: [-178, 4] };
+PLAY.trampoline = { w: 340, h: 280, ax: 170, ay: 250, bk: trampBack,  fr: trampFront, walk: [-142, -4] };
 
-/* Sama helpers: feet-based transform (bottom-centre of her 140x200 box) */
+/* Sama helpers: floor-contact transform (bottom-centre of her 140x200 box) */
 const SAS = .92;
 const saF = (x, y, s = SAS, r = 0) => `translate(${(x - 70).toFixed(1)}px,${(y - 200).toFixed(1)}px) rotate(${r.toFixed(1)}deg) scale(${s})`;
 function samaRig(g) {                                 /* adds Sama helpers to a playRig */
@@ -2472,69 +2590,180 @@ function samaRig(g) {                                 /* adds Sama helpers to a 
   g.scls = (c, on, ms) => g.T(() => g.sama.classList.toggle(c, on), ms);
   g.spose = (p, ms) => g.T(() => { g.sama.classList.remove('p-stand', 'p-sit', 'p-bounce'); g.sama.classList.add(p); }, ms);
   g.sflip = (fromX, toX, ms) => g.scls('fl', toX < fromX, ms);
-  g.swalk = (a, b, t0, t1, s = SAS) => { const n = Math.max(2, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / 60)), out = []; for (let i = 0; i <= n; i++) { const u = i / n; out.push([lerp(t0, t1, u), g.sa(lerp(a[0], b[0], u), lerp(a[1], b[1], u) - Math.sin(Math.PI * u) * 18, s)]); } return out; };
+  g.swalk = (a, b, t0, t1, s = SAS) => { const n = Math.max(2, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / 55)), out = []; for (let i = 0; i <= n; i++) { const u = i / n; out.push([lerp(t0, t1, u), g.sa(lerp(a[0], b[0], u), lerp(a[1], b[1], u) - Math.sin(Math.PI * u) * 16, s)]); } return out; };
+  g.ring = (sx, sy, dx, dy, col) => {                 /* a ring flying towards the peg */
+    const [x, y] = g.W(sx, sy), p = document.createElement('i'); p.className = 'prt pring'; p.style.cssText = `left:${x - 23}px;top:${y - 23}px;border-color:${col}`; g.ts.appendChild(p);
+    const a = p.animate([{ transform: 'translate(0,0) rotate(0) scale(1)', opacity: 1 }, { transform: `translate(${dx * .5}px,${dy - 104}px) rotate(220deg) scale(.9)`, opacity: 1, offset: .55 }, { transform: `translate(${dx}px,${dy}px) rotate(400deg) scale(.86)`, opacity: 1, offset: .93 }, { transform: `translate(${dx}px,${dy}px) rotate(400deg) scale(.86)`, opacity: 0 }], { duration: 900, easing: 'cubic-bezier(.35,.5,.6,1)' });
+    a.onfinish = () => p.remove();
+  };
+  g.twirl = (el, t0, t1, TOT) => {                    /* spin on the spot: scaleX swings through 0 to the back and round again */
+    const K = [1, .14, -1, -.14, 1, .14, -1, -.14, 1], fr = [{ offset: 0, transform: 'scaleX(1)' }];
+    K.forEach((k, i) => fr.push({ offset: Math.min(1, lerp(t0, t1, i / (K.length - 1)) / TOT), transform: `scaleX(${k})` }));
+    fr.push({ offset: 1, transform: 'scaleX(1)' }); g.anims.push(el.animate(fr, { duration: TOT, fill: 'forwards' }));
+  };
+  g.reveal = (el, at, TOT, from) => g.anims.push(el.animate([{ offset: 0, opacity: 0, transform: from }, { offset: at / TOT, opacity: 0, transform: from }, { offset: (at + 70) / TOT, opacity: 1, transform: 'translate(0,0) scale(1.18,.78)' }, { offset: (at + 300) / TOT, opacity: 1, transform: 'translate(0,0) scale(1)' }, { offset: 1, opacity: 1, transform: 'translate(0,0) scale(1)' }], { duration: TOT, fill: 'forwards' }));
   return g;
 }
 
 Object.assign(PLAY_RIDE, {
-  /* ---------------------------------- TEA PARTY: sit at the little table, pour, clink cups, sip, giggle ---------------------------------- */
+  /* ---------------------------------- TEA PARTY: sit down together, pour, clink cups, three little sips ---------------------------------- */
   teaparty(g) {
-    samaRig(g); const TOT = 8400, A = .66, SEAT = [70, 176], SSEAT = [270, 176];
-    const av = [[0, g.start], [500, g.avF(70, 224, A)]];
-    g.hopArc([70, 224], [SEAT[0], SEAT[1] + g.HIP * A], 55, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([500 + i * 70, tr]));
-    av.push([1200, g.avS(SEAT[0], SEAT[1], A)], [7400, g.avS(SEAT[0], SEAT[1], A)], [7500, g.avF(SEAT[0], SEAT[1] + g.HIP * A, A)]);
-    g.hopArc([SEAT[0], SEAT[1] + g.HIP * A], [70, 226], 50, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([7500 + i * 70, tr]));
-    av.push([TOT, g.avF(70, 226, A)]); g.track(g.av, av, TOT);
-    g.cls(g.av, 'sit', true, 1150); g.cls(g.av, 'sit', false, 7480);
-    [[2400, 3000], [4500, 5100], [6200, 6800]].forEach(([a, b]) => { g.cls(g.av, 'wee', true, a); g.cls(g.av, 'wee', false, b); });
-    const S = g.samaS, sa = g.swalk(S, SSEAT, 0, 1300); g.sflip(S[0], SSEAT[0], 0);
-    sa.push([1400, g.sa(SSEAT[0], SSEAT[1])], [7300, g.sa(SSEAT[0], SSEAT[1])], [7400, g.sa(SSEAT[0] - 6, SSEAT[1] - 14)], [7550, g.sa(SSEAT[0], SSEAT[1])], [TOT, g.sa(SSEAT[0], SSEAT[1])]);
-    g.track(g.sama, sa, TOT); g.spose('p-sit', 1400); g.scls('clap', true, 7000); g.scls('clap', false, 7900);
-    const cups = g.decor.querySelectorAll('.cup'), sips = [2500, 4600, 6300];
-    cups.forEach(c => { const fr = []; for (let t = 0; t <= TOT; t += 100) { let k = 0; for (const s of sips) if (t >= s && t <= s + 500) k = -Math.sin((t - s) / 500 * Math.PI) * 14; fr.push({ offset: t / TOT, transform: `translateY(${k.toFixed(1)}px)` }); } g.anims.push(c.animate(fr, { duration: TOT, fill: 'forwards' })); });
-    sips.forEach(t => { g.T(() => g.sfx.chime(), t + 120); g.T(() => g.sfx.giggle(), t + 300); });
-    g.T(() => g.puff(170, 130, 8, ['#FFB3C8', '#FFD84D', '#fff'], 60, 50), 2600); g.T(() => g.say('Tea time with Sama!'), 1300); g.T(() => g.sfx.yay(), 7500);
-    g.end = { av: [70, 226], sama: [SSEAT[0], SSEAT[1]] }; return TOT;
+    samaRig(g); const TOT = 9400, A = .66, SEAT = [58, 166], SS = [302, 166], IN = [4, 226];
+    const pot = g.decor.querySelector('.pot'), cups = g.decor.querySelectorAll('.cup'), sip = [3600, 5400, 7000], clink = [2700];
+    const av = [[0, g.start], [500, g.avF(IN[0], IN[1], A)]];
+    g.hopArc(IN, [SEAT[0], SEAT[1] + g.HIP * A], 58, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([500 + i * 70, tr]));
+    av.push([1250, g.avS(SEAT[0], SEAT[1], A)]);
+    sip.forEach(t => av.push([t, g.avS(SEAT[0], SEAT[1], A, 0)], [t + 320, g.avS(SEAT[0] + 7, SEAT[1] + 5, A, 6)], [t + 760, g.avS(SEAT[0], SEAT[1], A, 0)]));
+    av.push([8250, g.avS(SEAT[0], SEAT[1], A)], [8350, g.avF(SEAT[0], SEAT[1] + g.HIP * A, A)]);
+    g.hopArc([SEAT[0], SEAT[1] + g.HIP * A], [IN[0], IN[1] + 2], 52, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([8350 + i * 70, tr]));
+    av.push([TOT, g.avF(IN[0], IN[1] + 2, A)]);
+    g.track(g.av, av.sort((a, b) => a[0] - b[0]), TOT);
+    g.cls(g.av, 'sit', true, 1200); g.cls(g.av, 'sit', false, 8330);
+    [[2600, 3300], [6000, 6600], [7700, 8200]].forEach(([a, b]) => { g.cls(g.av, 'wee', true, a); g.cls(g.av, 'wee', false, b); });
+    /* Sama walks round to her chair and sits */
+    const S = g.samaS, sa = g.swalk(S, [SS[0] + 30, 214], 0, 1100); g.sflip(S[0], SS[0], 0);
+    g.hopArc([SS[0] + 30, 214], [SS[0], SS[1] + 20], 40, 5, (x, y) => g.sa(x, y)).forEach((tr, i) => sa.push([1150 + i * 70, tr]));
+    sa.push([1500, g.sa(SS[0], SS[1] + 20)]);
+    sip.forEach(t => sa.push([t + 200, g.sa(SS[0], SS[1] + 20)], [t + 500, g.sa(SS[0] - 6, SS[1] + 24, SAS, -5)], [t + 900, g.sa(SS[0], SS[1] + 20)]));
+    sa.push([8300, g.sa(SS[0], SS[1] + 20)], [8450, g.sa(SS[0], 214)], [TOT, g.sa(SS[0], 214)]);
+    g.track(g.sama, sa.sort((a, b) => a[0] - b[0]), TOT); g.spose('p-sit', 1200); g.sflip(SS[0], 0, 1200); g.spose('p-stand', 8420);
+    g.scls('clap', true, 2700); g.scls('clap', false, 3400); g.scls('clap', true, 7900); g.scls('clap', false, 8300);
+    /* the pot pours, then the cups meet in the middle for a "cheers" */
+    g.anims.push(pot.animate([{ offset: 0, transform: 'rotate(0)' }, { offset: 1700 / TOT, transform: 'rotate(0)' }, { offset: 1950 / TOT, transform: 'rotate(-26deg)' }, { offset: 2350 / TOT, transform: 'rotate(-26deg)' }, { offset: 2600 / TOT, transform: 'rotate(0)' }, { offset: 1, transform: 'rotate(0)' }], { duration: TOT, fill: 'forwards' }));
+    cups.forEach((c, i) => { const dir = i ? -1 : 1, fr = [];
+      for (let t = 0; t <= TOT; t += 80) { let tx = 0, ty = 0;
+        for (const s of sip) if (t >= s && t <= s + 760) ty = -Math.sin((t - s) / 760 * Math.PI) * 27;
+        for (const s of clink) if (t >= s && t <= s + 800) { const u = (t - s) / 800; ty = -Math.sin(u * Math.PI) * 30; tx = Math.sin(u * Math.PI) * (68 - i * 4) * dir; }
+        fr.push({ offset: t / TOT, transform: `translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px)` }); }
+      g.anims.push(c.animate(fr, { duration: TOT, fill: 'forwards' })); });
+    g.T(() => { g.sfx.pop(); g.puff(150, 140, 7, ['#C98A52', '#FFE9B8', '#fff'], 40, 34); }, 2000);
+    g.T(() => { g.sfx.chime(); g.sfx.chime(); g.puff(180, 116, 8, ['#fff', '#FFD3E0', '#FFE887'], 60, 46); g.say('Cheers, Sama!'); }, 3050);
+    sip.forEach((t, i) => { g.T(() => g.sfx.chime(), t + 180); g.T(() => g.sfx.giggle(), t + 520); if (i === 1) g.T(() => g.say('Yummy tea and cakes!'), t + 200); });
+    g.T(() => g.say('Tea party with Sama!'), 1300); g.T(() => { g.sfx.yay(); g.puff(180, 120, 12, ['#FFB3C8', '#FFD84D', '#fff', '#B79BFF'], 90, 70); }, 7900);
+    g.end = { av: [IN[0], IN[1] + 2], sama: [SS[0], 214] }; return TOT;
   },
 
-  /* ---------------------------------- DRESS-UP: try on silly hats and scarves, twirl by the mirror, giggle ---------------------------------- */
+  /* ---------------------------------- HOPSCOTCH: hop the five squares counting out loud, then Sama takes her turn ---------------------------------- */
+  hopscotch(g) {
+    samaRig(g); const TOT = 10600, A = .66, sq = [...g.decor.querySelectorAll('.hsq')], P = HOP.map(([x, y]) => [x, y + 12]);
+    const NUM = ['One!', 'Two!', 'Three!', 'Four!', 'Five!'], IN = [-14, 200];
+    const av = [[0, g.start], [400, g.avF(IN[0], IN[1], A)]];
+    let t = 800; const land = [];
+    P.forEach((p, i) => { g.hopArc(i ? P[i - 1] : IN, p, 56, 5, (x, y) => g.avF(x, y, A)).forEach((tr, k) => av.push([t + k * 86, tr])); t += 540; land.push(t - 110); });
+    const END = P[4]; av.push([t + 200, g.avF(END[0], END[1], A)]);
+    for (let k = 0; k < 8; k++) av.push([t + 400 + k * 260, g.avF(END[0], END[1] - (k % 2 ? 16 : 0), A)]);   /* cheers while Sama hops */
+    av.push([9600, g.avF(END[0], END[1], A)]); g.hopArc(END, [END[0] + 34, 202], 40, 5, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([9600 + i * 80, tr]));
+    av.push([TOT, g.avF(END[0] + 34, 202, A)]);
+    g.track(g.av, av.sort((a, b) => a[0] - b[0]), TOT);
+    g.cls(g.av, 'wee', true, t + 350); g.cls(g.av, 'wee', false, 9500);
+    land.forEach((lt, i) => { g.T(() => { g.sfx.dot(); g.say(NUM[i]); g.puff(HOP[i][0], HOP[i][1] + 14, 5, ['#fff', '#FFE887', '#FFD3E0'], 34, 26);
+      sq[i].animate([{ transform: 'scale(1)' }, { transform: 'scale(1.14)' }, { transform: 'scale(1)' }], { duration: 420, easing: 'ease-out' }); }, lt); });
+    g.T(() => g.say("Hop hop! Let's count!"), 400); g.T(() => { g.sfx.yay(); g.puff(END[0], END[1] - 60, 12, ['#FFD84D', '#FF9DB8', '#fff', '#8EDCC0'], 80, 70); }, t + 260);
+    /* Sama's turn: she hops the row the other way while Liyana cheers */
+    const S = g.samaS, st = t + 700, sa = g.swalk(S, [P[4][0] + 78, 206], 0, st - 400);
+    sa.push([st, g.sa(P[4][0] + 78, 206)]); let u = st;
+    for (let i = 4; i >= 0; i--) { g.hopArc(i === 4 ? [P[4][0] + 78, 206] : P[i + 1], P[i], 46, 4, (x, y) => g.sa(x, y)).forEach((tr, k) => sa.push([u + k * 90, tr])); u += 480;
+      g.T(() => { g.sfx.dot(); sq[i].animate([{ transform: 'scale(1)' }, { transform: 'scale(1.14)' }, { transform: 'scale(1)' }], { duration: 420, easing: 'ease-out' }); }, u - 100); }
+    sa.push([u + 200, g.sa(P[0][0], P[0][1])]); for (let k = 0; k < 4; k++) sa.push([u + 360 + k * 240, g.sa(P[0][0], P[0][1] - (k % 2 ? 14 : 0))]);
+    sa.push([TOT, g.sa(P[0][0], P[0][1])]);
+    g.track(g.sama, sa.sort((a, b) => a[0] - b[0]), TOT); g.sflip(S[0], P[4][0] + 78, 0); g.sflip(1, 0, st); g.spose('p-bounce', st - 60); g.spose('p-stand', u + 260); g.scls('clap', true, u + 320); g.scls('clap', false, 10400);
+    g.T(() => g.say('Your turn, Sama!'), st - 200); g.T(() => { g.sfx.yay(); g.sfx.giggle(); g.puff(P[0][0], P[0][1] - 60, 12, ['#B79BFF', '#FFD84D', '#fff'], 80, 70); }, u + 240);
+    g.end = { av: [END[0] + 34, 202], sama: [P[0][0], P[0][1]] }; return TOT;
+  },
+
+  /* ---------------------------------- DRESS-UP: a crown for Liyana, a party hat for Sama, then twirls in the mirror ---------------------------------- */
   dressup(g) {
-    samaRig(g); const TOT = 8600, A = .66, AP = [90, 226], SP = [214, 226];
-    const av = [[0, g.start], [500, g.avF(60, 236, A)]];
-    g.hopArc([60, 236], AP, 55, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([500 + i * 70, tr]));
-    av.push([1200, g.avF(AP[0], AP[1], A)]);
-    [[2000, 3200], [4600, 5800]].forEach(([a, b]) => { av.push([a, g.avF(AP[0], AP[1], A, 0)], [(a + b) / 2, g.avF(AP[0], AP[1] - 6, A, 180)], [b, g.avF(AP[0], AP[1], A, 360)]); });
-    av.push([7200, g.avF(AP[0], AP[1], A)]);
-    g.hopArc(AP, [60, 238], 50, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([7200 + i * 70, tr])); av.push([TOT, g.avF(60, 238, A)]);
-    g.track(g.av, av, TOT); [[2000, 3200], [4600, 5800]].forEach(([a, b]) => { g.cls(g.av, 'wee', true, a); g.cls(g.av, 'wee', false, b); });
-    const S = g.samaS, sa = g.swalk(S, SP, 0, 1300); g.sflip(S[0], SP[0], 0); sa.push([1400, g.sa(SP[0], SP[1])]);
-    [[2600, 3800], [5200, 6400]].forEach(([a, b]) => { sa.push([a, g.sa(SP[0], SP[1], SAS, 0)], [(a + b) / 2, g.sa(SP[0], SP[1] - 6, SAS, -180)], [b, g.sa(SP[0], SP[1], SAS, -360)]); });
-    sa.push([7000, g.sa(SP[0], SP[1])], [TOT, g.sa(SP[0], SP[1])]); g.track(g.sama, sa, TOT); g.spose('p-stand', 1400);
-    const bits = g.decor.querySelectorAll('.hat,.boa,.scarf'); bits.forEach((b, i) => { const fr = []; for (let t = 0; t <= TOT; t += 100) { const k = t > 1200 && t < 7200 ? Math.sin(t / 380 + i * 2) * 5 : 0; fr.push({ offset: t / TOT, transform: `rotate(${k.toFixed(1)}deg)` }); } g.anims.push(b.animate(fr, { duration: TOT, fill: 'forwards' })); });
-    [2000, 4600].forEach(t => g.T(() => { g.sfx.whoosh && g.sfx.whoosh(); g.puff(160, 200, 10, ['#FFD84D', '#8EDCC0', '#FF9DB8', '#fff'], 70, 60); }, t));
-    [2600, 5200].forEach(t => g.T(() => g.sfx.giggle(), t)); g.T(() => g.sfx.yay(), 6600); g.T(() => g.say('So fancy!'), 1300);
-    g.end = { av: [60, 238], sama: [SP[0], SP[1]] }; return TOT;
+    samaRig(g); const TOT = 10200, A = .66, AP = [212, 262], SP = [296, 264], IN = [-10, 268];
+    const wA = g.fr.querySelector('.wearA'), wB = g.fr.querySelector('.wearB'), HA = [212, 122], HB = [296, 114], TRUNK = [80, 186];
+    const av = [[0, g.start], [500, g.avF(IN[0], IN[1], A)]];
+    g.hopArc(IN, AP, 50, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([500 + i * 70, tr]));
+    av.push([1200, g.avF(AP[0], AP[1], A)], [1700, g.avF(AP[0], AP[1], A)], [1950, g.avF(AP[0], AP[1] + 10, A)], [2300, g.avF(AP[0], AP[1], A)]);   /* reaches into the trunk */
+    [[3400, 4700], [6300, 7600]].forEach(([a, b]) => { av.push([a, g.avF(AP[0], AP[1], A)], [(a + b) / 2, g.avF(AP[0], AP[1] - 10, A)], [b, g.avF(AP[0], AP[1], A)]); g.twirl($('.flip', g.av), a, b, TOT); });
+    for (let k = 0; k < 4; k++) av.push([7900 + k * 240, g.avF(AP[0], AP[1] - (k % 2 ? 16 : 0), A)]);
+    av.push([9200, g.avF(AP[0], AP[1], A)]); g.hopArc(AP, [IN[0], IN[1] + 2], 48, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([9200 + i * 70, tr]));
+    av.push([TOT, g.avF(IN[0], IN[1] + 2, A)]);
+    g.track(g.av, av.sort((a, b) => a[0] - b[0]), TOT); g.frOn(400); g.frOff(TOT - 60);
+    [[3400, 4700], [6300, 7600], [7850, 8900]].forEach(([a, b]) => { g.cls(g.av, 'wee', true, a); g.cls(g.av, 'wee', false, b); });
+    const S = g.samaS, sa = g.swalk(S, SP, 0, 1300); g.sflip(S[0], SP[0], 0);
+    sa.push([1400, g.sa(SP[0], SP[1])], [2700, g.sa(SP[0], SP[1])], [2950, g.sa(SP[0], SP[1] + 8)], [3250, g.sa(SP[0], SP[1])]);
+    [[4900, 6100], [7700, 8800]].forEach(([a, b]) => { sa.push([a, g.sa(SP[0], SP[1])], [(a + b) / 2, g.sa(SP[0], SP[1] - 10)], [b, g.sa(SP[0], SP[1])]); g.twirl($('.ssv', g.sama), a, b, TOT); });
+    sa.push([9000, g.sa(SP[0], SP[1])], [TOT, g.sa(SP[0], SP[1])]);
+    g.track(g.sama, sa.sort((a, b) => a[0] - b[0]), TOT); g.spose('p-stand', 1400); g.scls('clap', true, 8900); g.scls('clap', false, 9800);
+    /* the costumes fly out of the trunk onto their heads, and go back at the end */
+    const fly = (el, head, out, back) => { const tr = (x, y, s = 1, r = 0) => `translate(${x}px,${y}px) rotate(${r}deg) scale(${s})`;
+      g.anims.push(el.animate([{ offset: 0, opacity: 0, transform: tr(TRUNK[0], TRUNK[1], .5) }, { offset: out / TOT, opacity: 0, transform: tr(TRUNK[0], TRUNK[1], .5) },
+        { offset: (out + 120) / TOT, opacity: 1, transform: tr(TRUNK[0], TRUNK[1] - 30, .8, -20) }, { offset: (out + 520) / TOT, opacity: 1, transform: tr((TRUNK[0] + head[0]) / 2, head[1] - 74, 1, 18) },
+        { offset: (out + 820) / TOT, opacity: 1, transform: tr(head[0], head[1], 1) }, { offset: back / TOT, opacity: 1, transform: tr(head[0], head[1], 1) },
+        { offset: (back + 420) / TOT, opacity: 1, transform: tr(TRUNK[0], TRUNK[1] - 20, .7, -30) }, { offset: (back + 560) / TOT, opacity: 0, transform: tr(TRUNK[0], TRUNK[1], .5) }, { offset: 1, opacity: 0, transform: tr(TRUNK[0], TRUNK[1], .5) }], { duration: TOT, fill: 'forwards' })); };
+    fly(wA, HA, 2050, 9000); fly(wB, HB, 3050, 9000);
+    [2100, 3100].forEach(t => g.T(() => { g.sfx.whoosh && g.sfx.whoosh(); g.puff(TRUNK[0], TRUNK[1] - 20, 8, ['#FFD24D', '#FF9DB8', '#fff'], 60, 60); }, t));
+    [2900, 3900].forEach(t => g.T(() => { g.sfx.boop(); g.sfx.star && g.sfx.star(); }, t));
+    [[3400, 'A princess crown!'], [4900, 'You look so pretty, Sama!']].forEach(([t, s]) => g.T(() => g.say(s), t));
+    [3500, 5000, 6400, 7800].forEach(t => g.T(() => { g.sfx.giggle(); g.puff(382, 160, 9, ['#fff', '#FFE887', '#CDB8FF'], 70, 60); }, t));
+    g.T(() => { g.sfx.yay(); g.puff(254, 170, 14, ['#FFD84D', '#8EDCC0', '#FF9DB8', '#fff'], 100, 80); }, 7900);
+    g.end = { av: [IN[0], IN[1] + 2], sama: [SP[0], SP[1]] }; return TOT;
   },
 
-  /* ---------------------------------- TRAMPOLINE: hop on together, bounce in sync, hop off ---------------------------------- */
+  /* ---------------------------------- RING TOSS: take turns tossing rings onto the peg ---------------------------------- */
+  ringtoss(g) {
+    samaRig(g); const TOT = 9600, A = .66, AP = [56, 216], SP = [128, 218], IN = [22, 218];
+    const rg = ['.rgA', '.rgB', '.rgC'].map(s => g.decor.querySelector(s)), PEG = [268, 150];
+    const av = [[0, g.start], [500, g.avF(IN[0], IN[1], A)], [900, g.avF(AP[0], AP[1], A)]];
+    const toss = [1500, 5000, 7000];                                  /* Liyana throws #1 and #3 */
+    [toss[0], toss[2]].forEach(t => av.push([t - 300, g.avF(AP[0], AP[1], A, 0)], [t - 60, g.avF(AP[0] - 6, AP[1], A, -8)], [t + 180, g.avF(AP[0] + 4, AP[1], A, 6)], [t + 500, g.avF(AP[0], AP[1], A, 0)]));
+    for (let k = 0; k < 5; k++) av.push([7900 + k * 240, g.avF(AP[0], AP[1] - (k % 2 ? 18 : 0), A)]);
+    av.push([9100, g.avF(AP[0], AP[1], A)], [TOT, g.avF(AP[0], AP[1], A)]);
+    g.track(g.av, av.sort((a, b) => a[0] - b[0]), TOT); g.frOn(300); g.frOff(TOT - 60);
+    [[1400, 2200], [6900, 7700], [7850, 9000]].forEach(([a, b]) => { g.cls(g.av, 'wee', true, a); g.cls(g.av, 'wee', false, b); });
+    const S = g.samaS, sa = g.swalk(S, SP, 0, 1200); g.sflip(S[0], SP[0], 0); sa.push([1300, g.sa(SP[0], SP[1])]);
+    sa.push([toss[1] - 300, g.sa(SP[0], SP[1], SAS, 0)], [toss[1] - 60, g.sa(SP[0] - 6, SP[1], SAS, -8)], [toss[1] + 180, g.sa(SP[0] + 4, SP[1], SAS, 7)], [toss[1] + 500, g.sa(SP[0], SP[1], SAS, 0)]);
+    for (let k = 0; k < 5; k++) sa.push([7900 + k * 240, g.sa(SP[0], SP[1] - (k % 2 ? 16 : 0))]);
+    sa.push([TOT, g.sa(SP[0], SP[1])]);
+    g.track(g.sama, sa.sort((a, b) => a[0] - b[0]), TOT); g.spose('p-stand', 0); g.scls('clap', true, 2400); g.scls('clap', false, 4400); g.scls('clap', true, 7900); g.scls('clap', false, 9400);
+    const COL = ['#4FB4F5', '#FFC93D', '#52CE86'], FROM = [AP, SP, AP];
+    toss.forEach((t, i) => {
+      g.T(() => { g.sfx.whoosh && g.sfx.whoosh(); g.ring(FROM[i][0] + 14, FROM[i][1] - 76, PEG[0] - FROM[i][0] - 14, PEG[1] + 26 - (FROM[i][1] - 76), COL[i]); }, t);
+      g.reveal(rg[i], t + 880, TOT, 'translate(0,-34px) scale(1.2,.6)');
+      g.T(() => { g.sfx.pop(); g.sfx.star && g.sfx.star(); g.puff(PEG[0], PEG[1] + 28 - i * 24, 8, ['#fff', '#FFE887', COL[i]], 60, 44); }, t + 900);
+      g.T(() => g.say(['On the peg!', 'Sama got it!', 'Three rings!'][i]), t + 1000);
+    });
+    g.T(() => g.say("Let's toss the rings!"), 700);
+    [2600, 6000].forEach(t => g.T(() => g.sfx.giggle(), t)); g.T(() => { g.sfx.yay(); g.puff(268, 116, 16, ['#4FB4F5', '#FFC93D', '#52CE86', '#fff'], 110, 80); }, 7900);
+    g.end = { av: [AP[0], AP[1]], sama: [SP[0], SP[1]] }; return TOT;
+  },
+
+  /* ---------------------------------- TRAMPOLINE: bounce together, higher and higher, with a high-five at the top ---------------------------------- */
   trampoline(g) {
-    samaRig(g); const TOT = 8200, A = .66, AX = 108, SX = 192, BY = 226;
-    const amp = t => (t < 1100 || t > 6900) ? 0 : Math.min(1, (t - 1100) / 900) * (t > 6100 ? Math.max(0, (6900 - t) / 800) : 1);
-    const bob = (t, ph = 0) => amp(t) * Math.abs(Math.sin((t - 1100) / 700 * Math.PI + ph)) * 60;
-    const sampT = []; for (let t = 0; t <= TOT; t += 80) sampT.push(t);
-    const av = [[0, g.start], [500, g.avF(60, 236, A)]];
-    g.hopArc([60, 236], [AX, BY], 55, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([500 + i * 70, tr]));
-    av.push([1050, g.avF(AX, BY, A)]);
-    for (const t of sampT) if (t >= 1100 && t <= 6900) { const h = bob(t, 0); av.push([t, g.avF(AX, BY - h, A, h * .15)]); }
-    av.push([7000, g.avF(AX, BY, A)]);
-    g.hopArc([AX, BY], [60, 238], 50, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([7000 + i * 70, tr])); av.push([TOT, g.avF(60, 238, A)]);
-    g.track(g.av, av, TOT); for (let k = 0; k < 6; k++) { g.cls(g.av, 'wee', true, 1200 + k * 900); g.cls(g.av, 'wee', false, 1600 + k * 900); }
-    const S = g.samaS, sa = g.swalk(S, [SX, BY + 2], 0, 1200); g.sflip(S[0], SX, 0); sa.push([1300, g.sa(SX, BY + 2)]);
-    for (const t of sampT) if (t >= 1300 && t <= 6900) { const h = bob(t, Math.PI * .4); sa.push([t, g.sa(SX, BY + 2 - h, SAS, -h * .15)]); }
-    sa.push([7000, g.sa(SX, BY + 2)], [TOT, g.sa(SX, BY + 2)]); g.track(g.sama, sa, TOT); g.spose('p-bounce', 1050); g.spose('p-stand', 7000);
-    g.T(() => g.say('Boing boing!'), 1300); for (let k = 0; k < 6; k++) g.T(() => g.sfx.pop(), 1450 + k * 900);
-    [2600, 4400, 6000].forEach(t => g.T(() => g.sfx.giggle(), t)); g.T(() => g.sfx.yay(), 7000);
-    g.end = { av: [60, 238], sama: [SX, BY + 2] }; return TOT;
+    samaRig(g); const TOT = 9600, A = .66, AX = 126, SX = 216, BY = 196, IN = [28, 246], mat = g.decor.querySelector('.tmat');
+    const T0 = 1500, T1 = 7900, PER = 760;                                                  /* bounce window + one bounce */
+    const amp = t => t < T0 || t > T1 ? 0 : Math.min(1, (t - T0) / 1500) * (t > T1 - 1100 ? Math.max(0, (T1 - t) / 1100) : 1);
+    const bob = (t, ph) => amp(t) * Math.abs(Math.sin((t - T0) / PER * Math.PI + ph)) * 78;
+    const sampT = []; for (let t = 0; t <= TOT; t += 70) sampT.push(t);
+    const av = [[0, g.start], [450, g.avF(IN[0], IN[1], A)]];
+    g.hopArc(IN, [AX, BY], 66, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([450 + i * 74, tr]));
+    av.push([1100, g.avF(AX, BY, A)], [1300, g.avF(AX, BY + 12, A)]);                        /* crouch, then go */
+    for (const t of sampT) if (t >= T0 && t <= T1) { const h = bob(t, 0); av.push([t, g.avF(AX, BY - h, A, h * .07)]); }
+    av.push([T1 + 150, g.avF(AX, BY, A)]);
+    g.hopArc([AX, BY], [IN[0], IN[1] + 2], 56, 8, (x, y) => g.avF(x, y, A)).forEach((tr, i) => av.push([8300 + i * 74, tr]));
+    av.push([TOT, g.avF(IN[0], IN[1] + 2, A)]);
+    g.track(g.av, av.sort((a, b) => a[0] - b[0]), TOT); g.frOn(1050); g.frOff(8280);
+    for (let k = 0; k < 8; k++) { g.cls(g.av, 'wee', true, T0 + 120 + k * PER); g.cls(g.av, 'wee', false, T0 + 420 + k * PER); }
+    const S = g.samaS, sa = g.swalk(S, [SX + 66, 244], 0, 900); g.sflip(S[0], SX, 0);
+    g.hopArc([SX + 66, 244], [SX, BY], 60, 7, (x, y) => g.sa(x, y)).forEach((tr, i) => sa.push([950 + i * 74, tr]));
+    sa.push([1480, g.sa(SX, BY + 10)]);
+    for (const t of sampT) if (t >= T0 && t <= T1) { const h = bob(t, .28); sa.push([t, g.sa(SX, BY - h, SAS, -h * .07)]); }
+    sa.push([T1 + 150, g.sa(SX, BY)], [8400, g.sa(SX, BY)], [8600, g.sa(SX + 40, 240)], [TOT, g.sa(SX + 40, 240)]);
+    g.track(g.sama, sa.sort((a, b) => a[0] - b[0]), TOT); g.spose('p-bounce', 1250); g.spose('p-stand', T1 + 200);
+    /* the mat dips on every landing */
+    const dip = []; for (let t = 0; t <= TOT; t += 70) { let k = 1;
+      if (t >= T0 && t <= T1 + 200) { const ph = ((t - T0) / PER) % 1, near = Math.min(ph, 1 - ph); k = 1 - Math.max(0, (.18 - near)) / .18 * .22 * amp(t); }
+      dip.push({ offset: t / TOT, transform: `scale(1,${k.toFixed(3)})` }); }
+    g.anims.push(mat.animate(dip, { duration: TOT, fill: 'forwards' }));
+    for (let k = 0; k < 8; k++) { const t = T0 + k * PER; g.T(() => { g.sfx.pop(); g.puff(AX, BY + 4, 4, ['#fff', '#CDB8FF'], 34, 22); g.puff(SX, BY + 4, 4, ['#fff', '#CDB8FF'], 34, 22); }, t); }
+    g.T(() => g.say('Boing! Boing!'), 1600); g.T(() => g.say('High five, Sama!'), 4400);
+    g.T(() => { g.sfx.star && g.sfx.star(); g.puff((AX + SX) / 2, BY - 96, 10, ['#FFD84D', '#fff', '#FF9DB8'], 70, 50); }, 4600);
+    [3000, 5400, 6800].forEach(t => g.T(() => g.sfx.giggle(), t)); g.T(() => { g.sfx.yay(); g.puff((AX + SX) / 2, BY - 40, 14, ['#B79BFF', '#FFD84D', '#fff', '#8EDCC0'], 100, 70); }, T1);
+    g.end = { av: [IN[0], IN[1] + 2], sama: [SX + 40, 240] }; return TOT;
   },
 
   /* ---------------------------------- HUG: tap Sama — Liyana comes over, big hug, giggles and hearts ---------------------------------- */
@@ -2542,7 +2771,7 @@ Object.assign(PLAY_RIDE, {
     samaRig(g); const TOT = 2400, [x, y] = [g.samaPos.x, g.samaPos.y];
     g.scls('clap', true, 100); g.scls('clap', false, 2000); g.cls(g.av, 'wee', true, 100); g.cls(g.av, 'wee', false, 1900);
     const sa = [[0, g.samaStart]]; for (let t = 100; t <= 2000; t += 200) sa.push([t, saF(x, y - ((t / 200) % 2 ? 12 : 0), SAS * 1.04, ((t / 200) % 2 ? 4 : -4))]); sa.push([TOT, saF(x, y)]); g.track(g.sama, sa, TOT);
-    g.T(() => { g.sfx.giggle(); g.puff(x - 20, y - 90, 10, ['#CDB8FF', '#B79BFF', '#FFC1D2', '#fff'], 80, 80); }, 200); g.T(() => g.puff(x, y - 110, 8, ['#CDB8FF', '#FFC1D2'], 70, 70), 1100); g.T(() => g.sfx.yay(), 1300); g.T(() => g.say('A big hug for Sama!'), 100);
+    g.T(() => { g.sfx.giggle(); g.puff(x - 20, y - 100, 10, ['#CDB8FF', '#B79BFF', '#FFC1D2', '#fff'], 80, 80); }, 200); g.T(() => g.puff(x, y - 120, 8, ['#CDB8FF', '#FFC1D2'], 70, 70), 1100); g.T(() => g.sfx.yay(), 1300); g.T(() => g.say('A big hug for Sama!'), 100);
     g.end = null; return TOT;
   },
 });
