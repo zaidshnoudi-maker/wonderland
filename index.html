@@ -775,8 +775,8 @@ body[data-screen=petcare] #petbox{display:none!important}
 <style>.shapes:has(.finds){justify-content:center;gap:clamp(30px,9vh,90px)}</style>
 <style>
 /* ===================== PET CARE v2 ===================== */
-.care{--mh:clamp(66px,9.5vw,92px)}
-.cmodes{gap:clamp(8px,2vw,22px)}
+.care{--mh:clamp(52px,7.2vw,78px)}
+.cmodes{gap:clamp(5px,1.1vw,13px)}
 .cmode{width:var(--mh);border-radius:24px;padding:8px}
 .cmode .cchk{width:26px;height:26px;right:-6px;top:-6px}
 .carestars .cs svg{width:26px;height:26px}
@@ -869,6 +869,70 @@ body[data-screen=petcare] #petbox{display:none!important}
 /* view-toggle buttons carry a word so it is obvious what they do */
 .viewtoggle{position:relative}
 .viewtoggle::after{content:attr(data-l);position:absolute;left:50%;bottom:-13px;translate:-50% 0;white-space:nowrap;font:700 13px var(--display);color:var(--ink);background:#fff;border-radius:11px;padding:1px 9px;box-shadow:0 2px 0 var(--shadow)}
+</style>
+<style>
+/* ===================== PET CARE v3: check-up, walk, party ===================== */
+/* --- check-up --- */
+.m-vet .cpet{top:4%;width:min(34vh,260px)}
+.vtools{position:absolute;left:0;right:0;bottom:calc(var(--mh) + 24px);display:flex;justify-content:center;gap:clamp(12px,3vw,34px)}
+.vtool{position:relative;width:clamp(78px,11vw,124px);aspect-ratio:1;border:5px solid #fff;border-radius:28px;background:linear-gradient(#F4FBFF,#D9EEFF);box-shadow:0 6px 0 var(--shadow);cursor:pointer;padding:12px;animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i,0)*70ms)}
+.vtool svg{width:100%;height:100%;display:block}
+.vtool:active{transform:scale(.95)}
+.vtool.go{background:linear-gradient(#DFF6E8,#A9E8C6)}
+.vtool.got{border-color:#5CD68A}
+.vtool .tchk{position:absolute;right:-8px;top:-8px;width:30px;height:30px;border-radius:50%;background:#5CD68A;border:4px solid #fff;display:none;place-items:center;padding:4px}
+.vtool.got .tchk{display:grid}.vtool .tchk svg{stroke:#fff}
+.sore{position:absolute;left:50%;top:52%;width:34px;height:34px;margin-left:-4vw;border-radius:50%;background:radial-gradient(circle,#FF8FA3,#E2536B);border:4px solid #fff;box-shadow:0 3px 0 rgba(61,51,88,.2);animation:sorep 1.4s ease-in-out infinite;z-index:6}
+@keyframes sorep{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(1.14);opacity:.75}}
+.sore.fixed{background:#FFD9BC;animation:none;transform:rotate(-20deg) scale(1.15)}
+.vbeat{position:fixed;width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;border:6px solid #FF6B7A;opacity:0;pointer-events:none;z-index:60}
+.vbeat.go{animation:vbeat .52s ease-out}
+@keyframes vbeat{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+/* --- walk --- */
+.m-walk{overflow:hidden}
+.m-walk .wsky{position:absolute;inset:0 0 34% 0;background:linear-gradient(#CFEAFF,#EAF7FF)}
+.m-walk .wpath{position:absolute;left:-10%;right:-10%;bottom:calc(var(--mh) + 10px);height:22%;background:linear-gradient(#F5E6BF,#E4CF9C);border-top:7px solid #fff;border-radius:50% 50% 0 0/26px 26px 0 0}
+.m-walk .cpet{top:auto;bottom:calc(var(--mh) + 12%);left:14%;width:min(26vh,190px);transition:none}
+.m-walk .cpet.trot svg{animation:wtrot .28s ease-in-out infinite alternate}
+@keyframes wtrot{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-9px) rotate(2deg)}}
+.wfind{position:absolute;bottom:calc(var(--mh) + 17%);width:clamp(62px,9vw,104px);aspect-ratio:1;border:0;background:none;padding:0;cursor:pointer;z-index:5;animation:tilein .5s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i,0)*90ms)}
+.wfind .art,.wfind svg{width:100%;height:100%;display:block;filter:drop-shadow(0 4px 0 rgba(61,51,88,.18))}
+.wfind:active{transform:scale(.9)}
+.wfind.gone{animation:wgone .5s ease-out forwards;pointer-events:none}
+@keyframes wgone{to{transform:translateY(-40px) scale(.3) rotate(18deg);opacity:0}}
+/* --- party --- */
+.m-party .cpet{top:3%;left:22%;width:min(28vh,210px)}
+.cake{position:absolute;left:58%;translate:-50% 0;bottom:calc(var(--mh) + clamp(96px,14vh,150px));width:min(40vh,300px)}
+.cake>svg{width:100%;height:100%;display:block}
+.flames{position:absolute;left:0;right:0;top:0;height:30%}
+.flame{position:absolute;top:2%;width:13%;height:74%;left:calc(27.5% + var(--i)*16.7%);border:0;background:none;padding:0;cursor:pointer}
+.flame::after{content:'';position:absolute;left:50%;bottom:0;width:22px;height:30px;margin-left:-11px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(circle at 50% 70%,#FFF3A8,#FFB020 62%,#FF7A3D);opacity:0;transform:scale(.4)}
+.flame.lit::after{opacity:1;transform:scale(1);animation:flick .55s ease-in-out infinite alternate}
+@keyframes flick{from{transform:scale(1) translateY(0) rotate(-4deg)}to{transform:scale(1.16) translateY(-4px) rotate(4deg)}}
+.gifts{position:absolute;left:0;right:0;bottom:calc(var(--mh) + 18px);display:flex;justify-content:center;gap:clamp(14px,3.6vw,40px)}
+.gift{position:relative;width:clamp(74px,10.5vw,120px);aspect-ratio:1;border:5px solid #fff;border-radius:22px;box-shadow:0 6px 0 var(--shadow);cursor:pointer;background:linear-gradient(#FF9DB8,#E8739A);animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i,0)*80ms)}
+.gift:nth-child(2){background:linear-gradient(#9FD8FF,#4FA6EC)}.gift:nth-child(3){background:linear-gradient(#B9F0D6,#5CD6A4)}
+.gift::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 40%,#fff 40% 60%,transparent 60%),linear-gradient(0deg,transparent 40%,#fff 40% 60%,transparent 60%);border-radius:18px}
+.gift::after{content:'';position:absolute;left:50%;top:-16px;width:44px;height:26px;margin-left:-22px;border-radius:50% 50% 30% 30%;background:#FFD24D;border:4px solid #fff}
+.gift:active{transform:scale(.94)}
+.gift.open{animation:gopen .55s cubic-bezier(.3,1.5,.5,1) forwards}
+@keyframes gopen{50%{transform:translateY(-22px) rotate(-8deg) scale(1.1)}100%{transform:translateY(6px) scale(.92);opacity:.45}}
+</style>
+<style>
+/* pet care v3 polish: sore paw sits on the pet; outdoor scenery for the walk */
+.cpet .sore{left:auto;top:auto;right:16%;bottom:10%;margin:0;width:15%;height:auto;aspect-ratio:1}
+.m-walk .wsky{overflow:hidden}
+.wsun{position:absolute;right:9%;top:10%;width:clamp(70px,10vw,110px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#FFF3A8,#FFD24D 70%);box-shadow:0 0 0 14px rgba(255,226,120,.28),0 0 0 30px rgba(255,226,120,.14)}
+.wcloud{position:absolute;height:clamp(34px,5vw,54px);border-radius:999px;background:#fff;opacity:.95;animation:wdrift 22s linear infinite alternate}
+.wcloud::before,.wcloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.wcloud::before{width:48%;aspect-ratio:1;left:14%;bottom:30%}.wcloud::after{width:36%;aspect-ratio:1;right:16%;bottom:36%}
+.wcloud.c1{left:12%;top:12%;width:clamp(110px,15vw,180px)}.wcloud.c2{left:48%;top:22%;width:clamp(90px,12vw,140px);animation-duration:28s;animation-direction:alternate-reverse}
+@keyframes wdrift{to{transform:translateX(60px)}}
+.whill{position:absolute;bottom:-12%;border-radius:50% 50% 0 0;background:linear-gradient(#A8E29C,#7FCF7A)}
+.whill.h1{left:-8%;width:62%;height:44%}.whill.h2{right:-10%;width:66%;height:36%;background:linear-gradient(#BDEBB0,#94D98B)}
+.wtree{position:absolute;bottom:14%;width:clamp(46px,6vw,70px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#A6EBA0,#5CBB6A 70%)}
+.wtree::after{content:'';position:absolute;left:50%;top:84%;width:18%;height:60%;margin-left:-9%;border-radius:6px;background:#B98149}
+.wtree.t1{left:8%}.wtree.t2{left:40%;bottom:18%;width:clamp(38px,5vw,58px)}.wtree.t3{right:14%;bottom:12%}
 </style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
@@ -3480,10 +3544,22 @@ const FRIENDS2 = {
   PIC_ORDER.length = 0; PIC_ORDER.push(...PIC_CATS.flatMap(c => c[1]));
   window.FRIENDS2_IDS = ids; window.f2 = f2;
 }
-/* ===== PET CARE v2: six things to do with her pet — feed, bath, brush, play, tricks, bedtime.
-   Each one gives a star per day; all six = a sticker. Pet reacts throughout (hearts, hops, licks, wags). ===== */
+/* ===== PET CARE v3: nine things to do with her pet — feed, bath, brush, play, tricks, check-up, walk, party, bedtime.
+   Each one gives a star per day; all nine = a sticker. Pet reacts throughout (hearts, hops, licks, wags). ===== */
 const FOODS = ['apple', 'banana', 'strawberry', 'icecream', 'fish', 'egg'];
-const CARE_MODES = [['eat', 'Eat'], ['bath', 'Bath'], ['brush', 'Brush'], ['play', 'Play'], ['trick', 'Tricks'], ['sleep', 'Sleep']];
+const CARE_MODES = [['eat', 'Eat'], ['bath', 'Bath'], ['brush', 'Brush'], ['play', 'Play'], ['trick', 'Tricks'], ['vet', 'Check-up'], ['walk', 'Walk'], ['party', 'Party'], ['sleep', 'Sleep']];
+const WALK_FINDS = [['ball', 'A bouncy ball!'], ['flower', 'A pretty flower!'], ['butterfly', 'A butterfly! Gentle now.'], ['star', 'A shiny star!']];
+const VET_SVG = {
+  scope: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M26 16 v26 a24 24 0 0 0 48 0 V16" fill="none" stroke="#8F86B4" stroke-width="7" stroke-linecap="round"/><circle cx="26" cy="12" r="7" fill="#FF8FAE" stroke="#3D3358" stroke-width="4"/><circle cx="74" cy="12" r="7" fill="#FF8FAE" stroke="#3D3358" stroke-width="4"/><circle cx="50" cy="74" r="17" fill="#CFEAFF" stroke="#3D3358" stroke-width="5"/><circle cx="50" cy="74" r="7" fill="#fff"/></svg>`,
+  temp: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="40" y="10" width="20" height="60" rx="10" fill="#fff" stroke="#3D3358" stroke-width="5"/><circle cx="50" cy="78" r="15" fill="#FF6B7A" stroke="#3D3358" stroke-width="5"/><rect x="45" y="40" width="10" height="34" rx="5" fill="#FF6B7A"/><path d="M64 24 h10 M64 36 h10 M64 48 h10" stroke="#8F86B4" stroke-width="4" stroke-linecap="round"/></svg>`,
+  plaster: `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="10" y="38" width="80" height="26" rx="13" fill="#FFD9BC" stroke="#3D3358" stroke-width="5" transform="rotate(-20 50 51)"/><g transform="rotate(-20 50 51)"><rect x="34" y="42" width="32" height="18" rx="9" fill="#FFEAD8"/><circle cx="42" cy="47" r="2.4" fill="#C99555"/><circle cx="52" cy="53" r="2.4" fill="#C99555"/><circle cx="60" cy="46" r="2.4" fill="#C99555"/></g></svg>`,
+};
+const CAKE_SVG = `<svg viewBox="0 0 240 190" aria-hidden="true"><ellipse cx="120" cy="176" rx="96" ry="12" fill="rgba(61,51,88,.18)"/>
+  <rect x="26" y="104" width="188" height="70" rx="18" fill="#FFC1D2" stroke="#3D3358" stroke-width="5"/>
+  <path d="M26 112 q22 22 44 0 q22 22 44 0 q22 22 44 0 q22 22 44 0 v-16 H26Z" fill="#fff" stroke="#3D3358" stroke-width="5" stroke-linejoin="round"/>
+  <rect x="44" y="72" width="152" height="34" rx="14" fill="#FFE29A" stroke="#3D3358" stroke-width="5"/>
+  <circle cx="72" cy="140" r="6" fill="#FF6B7A"/><circle cx="120" cy="150" r="6" fill="#4FB4F5"/><circle cx="168" cy="140" r="6" fill="#52CE86"/>
+  ${[80, 120, 160].map(x => `<rect x="${x - 6}" y="34" width="12" height="40" rx="6" fill="#8EDCC0" stroke="#3D3358" stroke-width="4"/>`).join('')}</svg>`;
 const careToday = () => { const d = new Date().toLocaleDateString('en-CA'); if (!S.care || S.care.d !== d) S.care = { d }; CARE_MODES.forEach(([k]) => { if (!S.care[k]) S.care[k] = 0; }); return S.care; };
 const careScore = () => { const c = careToday(); return CARE_MODES.reduce((n, [k]) => n + (c[k] ? 1 : 0), 0); };
 const CARE_ICON = {
@@ -3492,6 +3568,9 @@ const CARE_ICON = {
   brush: () => `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><rect x="22" y="14" width="30" height="46" rx="14" fill="#FF9DB8" stroke="#3D3358" stroke-width="4"/><rect x="30" y="52" width="14" height="36" rx="7" fill="#C99555" stroke="#3D3358" stroke-width="4"/><path d="M58 24 v10 M68 30 v10 M58 44 v10" stroke="#8F86B4" stroke-width="5" stroke-linecap="round"/></svg>`,
   play: () => `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><circle cx="50" cy="52" r="40" fill="#fff" stroke="#3D3358" stroke-width="4"/><path d="M50 12 A40 40 0 0 1 84 33 Q58 44 50 52Z" fill="#FF6B7A"/><path d="M84 33 A40 40 0 0 1 78 79 Q60 62 50 52Z" fill="#FFC93D"/><path d="M78 79 A40 40 0 0 1 28 84 Q44 62 50 52Z" fill="#52CE86"/><path d="M28 84 A40 40 0 0 1 16 33 Q40 46 50 52Z" fill="#4FB4F5"/><circle cx="50" cy="52" r="9" fill="#fff" stroke="#3D3358" stroke-width="3"/><circle cx="36" cy="32" r="6" fill="#fff" opacity=".55"/></svg>`,
   trick: () => art('star'),
+  vet: () => `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><rect x="12" y="30" width="76" height="56" rx="16" fill="#fff" stroke="#3D3358" stroke-width="4"/><rect x="36" y="16" width="28" height="16" rx="7" fill="#FF8FAE" stroke="#3D3358" stroke-width="4"/><path d="M50 44 v28 M36 58 h28" stroke="#FF6B7A" stroke-width="11" stroke-linecap="round"/></svg>`,
+  walk: () => `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><path d="M20 22 q32 12 22 36 q-8 20 28 20" fill="none" stroke="#B79BFF" stroke-width="8" stroke-linecap="round"/><circle cx="20" cy="22" r="9" fill="#FFD24D" stroke="#3D3358" stroke-width="4"/><ellipse cx="72" cy="82" rx="14" ry="10" fill="#FF9DB8" stroke="#3D3358" stroke-width="4"/><circle cx="60" cy="66" r="6" fill="#FF9DB8" stroke="#3D3358" stroke-width="3"/><circle cx="84" cy="66" r="6" fill="#FF9DB8" stroke="#3D3358" stroke-width="3"/></svg>`,
+  party: () => `<svg viewBox="0 0 100 100" class="art" aria-hidden="true"><rect x="16" y="50" width="68" height="34" rx="10" fill="#FFC1D2" stroke="#3D3358" stroke-width="4"/><rect x="16" y="46" width="68" height="14" rx="7" fill="#fff" stroke="#3D3358" stroke-width="4"/><rect x="45" y="22" width="10" height="24" rx="5" fill="#8EDCC0" stroke="#3D3358" stroke-width="3"/><path d="M50 22 q-9 -11 0 -20 q9 9 0 20z" fill="#FFD24D" stroke="#3D3358" stroke-width="3" stroke-linejoin="round"/></svg>`,
   sleep: () => art('moon'),
 };
 const SHOWER_SVG = `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M20 30 Q50 6 80 30Z" fill="#B79BFF" stroke="#3D3358" stroke-width="5" stroke-linejoin="round"/><path d="M30 44 V56 M50 44 V62 M70 44 V56 M40 68 V80 M60 72 V86" stroke="#5CB8FF" stroke-width="7" stroke-linecap="round"/></svg>`;
@@ -3642,6 +3721,85 @@ SCREENS.petcare = el => {
     });
   }
 
+  /* ---------------- CHECK-UP: listen to the heart, take the temperature, a plaster on the sore paw ---------------- */
+  function vet() {
+    stage.className = 'cstage m-vet'; const steps = new Set(); let busy = false;
+    const TOOLS = [['scope', 'Listen to the heart'], ['temp', 'Take the temperature'], ['plaster', 'Put on a plaster']];
+    stage.innerHTML = `<div class="cpet" id="cpet">${petSVG(kind)}<i class="sore" id="sore"></i></div>
+      <div class="vtools">${TOOLS.map(([k, l], i) => `<button class="vtool" data-v="${k}" style="--i:${i}" aria-label="${l}">${VET_SVG[k]}<i class="tchk">${tickIcon}</i></button>`).join('')}</div>`;
+    const cp = $('#cpet', stage), sore = $('#sore', stage);
+    later(() => say(`Let's check that ${petName()} is feeling well.`), 250);
+    const finish = k => {
+      steps.add(k); const b = $(`.vtool[data-v="${k}"]`, stage); if (b) b.classList.add('got'); busy = false;
+      if (steps.size === TOOLS.length) { done('vet'); later(() => { pose(cp, 'happy', 1200); sfx.yay(); cheer(...petAt(cp), 6); love(cp, 10); say(`${petName()} is all better. What a brave one!`); }, 400); }
+    };
+    const ACTS = {
+      scope: () => {                                                                  /* a heartbeat you can see and hear */
+        const [x, y] = petAt(cp); const h = document.createElement('i'); h.className = 'vbeat'; h.style.cssText = `left:${x}px;top:${y}px`; document.body.appendChild(h); onLeave(() => h.remove());
+        for (let i = 0; i < 5; i++) later(() => { sfx.dot(); h.classList.remove('go'); void h.offsetWidth; h.classList.add('go'); }, 200 + i * 520);
+        later(() => { h.remove(); love(cp, 5); say('Thump thump! A big happy heart.'); finish('scope'); }, 2900);
+      },
+      temp: () => { pose(cp, 'lean', 2000); later(() => sfx.boop(), 200); later(() => { sfx.star(); love(cp, 4); say('Just right. No fever today!'); finish('temp'); }, 2000); },
+      plaster: () => { sore.classList.add('fixed'); later(() => sfx.pop(), 150); pose(cp, 'sway', 900); later(() => { love(cp, 6); say('All better! The sore paw is mended.'); finish('plaster'); }, 1300); },
+    };
+    $$('.vtool', stage).forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.v; if (busy || steps.has(k)) return; busy = true; b.classList.add('go'); sfx.boop();
+      later(() => b.classList.remove('go'), 700); ACTS[k]();
+    }));
+  }
+
+  /* ---------------- WALK: stroll together — tap what the pet should go and sniff ---------------- */
+  function walk() {
+    stage.className = 'cstage m-walk'; let found = 0, busy = false, at = 0;
+    const finds = shuffle(WALK_FINDS.slice());
+    stage.innerHTML = `<div class="wsky"><i class="wsun"></i><i class="wcloud c1"></i><i class="wcloud c2"></i><i class="whill h1"></i><i class="whill h2"></i><i class="wtree t1"></i><i class="wtree t2"></i><i class="wtree t3"></i></div><div class="wpath"></div>
+      ${finds.map(([k], i) => `<button class="wfind" data-f="${k}" style="left:${16 + i * 22}%;--i:${i}" aria-label="${k}">${art(k)}</button>`).join('')}` + pet('walking');
+    const cp = $('#cpet', stage);
+    later(() => say(`Time for a walk! Tap what ${petName()} should sniff.`), 250);
+    $$('.wfind', stage).forEach(b => b.addEventListener('click', () => {
+      if (busy || b.classList.contains('gone')) return; busy = true; sfx.boop();
+      const br = b.getBoundingClientRect(), pr = cp.getBoundingClientRect(), dx = (br.left + br.width / 2) - (pr.left + pr.width / 2);
+      const to = at + dx, ms = Math.max(480, Math.abs(dx) * 2.4);
+      cp.classList.toggle('flip', dx < 0); cp.classList.add('trot');
+      track(cp, [{ transform: `translateX(${at}px)` }, { transform: `translateX(${to.toFixed(0)}px)` }], { duration: ms, easing: 'ease-in-out', fill: 'forwards' });
+      at = to;
+      later(() => {
+        cp.classList.remove('trot'); pose(cp, 'lean', 900); sfx.pop(); b.classList.add('gone'); found++;
+        say((finds.find(f => f[0] === b.dataset.f) || [, 'Look at that!'])[1]);
+        const r = b.getBoundingClientRect(); sparkBurst(r.left + r.width / 2, r.top + r.height / 2); busy = false;
+        if (found === finds.length) { done('walk'); later(() => { pose(cp, 'happy', 1200); sfx.yay(); cheer(...petAt(cp), 6); love(cp, 10); say(`What a lovely walk with ${petName()}!`); }, 500); }
+      }, ms + 100);
+    }));
+  }
+
+  /* ---------------- PARTY: light the candles, blow them out, then open the presents ---------------- */
+  function party() {
+    stage.className = 'cstage m-party'; let lit = 0, blown = 0, blowing = false;
+    stage.innerHTML = `<div class="cpet" id="cpet">${petSVG(kind, 'partyhat')}</div>` + `<div class="cake">${CAKE_SVG}<div class="flames">${[0, 1, 2].map(i => `<button class="flame" data-i="${i}" style="--i:${i}" aria-label="candle"></button>`).join('')}</div></div>
+      <div class="gifts">${[0, 1, 2].map(i => `<button class="gift" data-i="${i}" style="--i:${i}" aria-label="present"></button>`).join('')}</div>`;
+    const cp = $('#cpet', stage);
+    later(() => say(`It is ${petName()}'s birthday! Tap the candles to light them.`), 250);
+    $$('.flame', stage).forEach(b => b.addEventListener('click', () => {
+      if (!blowing) {
+        if (b.classList.contains('lit')) return;
+        b.classList.add('lit'); sfx.dot(); lit++;
+        if (lit === 3) { blowing = true; later(() => { say('Now blow them out! Tap each little flame.'); sfx.star(); }, 500); }
+        return;
+      }
+      if (!b.classList.contains('lit')) return;
+      b.classList.remove('lit'); sfx.whoosh(); blown++;
+      const r = b.getBoundingClientRect(); sparkBurst(r.left + r.width / 2, r.top + r.height / 2);
+      if (blown === 3) { pose(cp, 'happy', 1300); sfx.yay(); cheer(...petAt(cp), 8); love(cp, 8); later(() => say(`Happy birthday ${petName()}! Now open the presents.`), 300); }
+    }));
+    $$('.gift', stage).forEach(b => b.addEventListener('click', () => {
+      if (b.classList.contains('open')) return;
+      if (blown < 3) { sfx.oops(); say('Candles first!'); return; }
+      b.classList.add('open'); sfx.star(); const r = b.getBoundingClientRect(); sparkBurst(r.left + r.width / 2, r.top + r.height / 2);
+      pose(cp, 'happy', 800); say(pick(['A new squeaky ball!', 'A cosy blanket!', 'A shiny new collar!']));
+      if ($$('.gift.open', stage).length === 3) { done('party'); later(() => { sfx.yay(); cheer(...petAt(cp), 10); love(cp, 12); say(`The best party ever for ${petName()}!`); }, 400); }
+    }));
+  }
+
   /* ---------------- TRICKS: tap a card and the pet performs ---------------- */
   function trick() {
     stage.className = 'cstage m-trick'; let busy = false; const learned = new Set();
@@ -3683,7 +3841,7 @@ SCREENS.petcare = el => {
     cp.addEventListener('click', wake); zzz.addEventListener('click', wake);
   }
 
-  const MODES = { eat, bath, brush, play, trick, sleep };
+  const MODES = { eat, bath, brush, play, trick, vet, walk, party, sleep };
   $$('.cmode', el).forEach(b => b.addEventListener('click', () => { if (b.dataset.m === mode) return; anims.forEach(a => { try { a.cancel(); } catch (_) { } }); anims = []; mode = b.dataset.m; sfx.boop(); stars(); MODES[mode](); }));
   stars(); eat();
 };
