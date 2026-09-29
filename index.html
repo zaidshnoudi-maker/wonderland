@@ -944,6 +944,130 @@ body[data-screen=petcare] #petbox{display:none!important}
 .wtree::after{content:'';position:absolute;left:50%;top:84%;width:18%;height:60%;margin-left:-9%;border-radius:6px;background:#B98149}
 .wtree.t1{left:8%}.wtree.t2{left:40%;bottom:18%;width:clamp(38px,5vw,58px)}.wtree.t3{right:14%;bottom:12%}
 </style>
+<style>
+/* ===== COACH: pointing hand + glow (v1.46) ===== */
+.coach-hand{position:fixed;width:66px;height:76px;margin:-6px 0 0 -17px;z-index:80;pointer-events:none;filter:drop-shadow(0 6px 6px rgba(61,51,88,.22))}
+.coach-hand svg{width:100%;height:100%;display:block}
+.coach-hand.tap{animation:coachin .3s ease-out,coachtap .8s ease-in-out .3s 4}
+.coach-hand.tap::before{content:'';position:absolute;left:10px;top:0;width:22px;height:22px;margin:-4px 0 0 -4px;border-radius:50%;border:4px solid #FFD84D;opacity:0;animation:coachring .8s ease-out .3s 4}
+@keyframes coachin{from{opacity:0;transform:translate(24px,30px) scale(.8)}to{opacity:1;transform:none}}
+@keyframes coachtap{0%,100%{transform:translate(0,0)}45%{transform:translate(3px,7px) scale(.93)}}
+@keyframes coachring{0%{opacity:0;transform:scale(.4)}45%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(2.2)}}
+.coach-glow{animation:coachglow 1.05s ease-in-out 3}
+@keyframes coachglow{50%{filter:drop-shadow(0 0 14px #FFD84D) drop-shadow(0 0 4px #fff) brightness(1.08)}}
+@media (prefers-reduced-motion:reduce){.coach-hand.tap,.coach-hand.tap::before,.coach-glow{animation:none}}
+</style>
+<style>
+/* music play-along (v1.46) */
+.songtitle{position:absolute;left:50%;top:10px;translate:-50% 0;z-index:4;font:700 clamp(20px,2.8vw,30px) var(--display);color:var(--ink);background:rgba(255,255,255,.92);border:4px solid #fff;border-radius:999px;padding:4px 22px;box-shadow:0 5px 0 var(--shadow);white-space:nowrap}
+.songbtn[aria-pressed=true]{background:#FFE29A;box-shadow:0 0 0 4px #fff,0 0 18px 4px rgba(255,216,77,.9)}
+.key.next .kbar{animation:keyglow .6s ease-in-out infinite alternate}
+.key.next.hit .kbar{animation:keyhit .35s,keyglow .6s ease-in-out infinite alternate}
+.key.next .crit{filter:drop-shadow(0 0 10px #FFD84D)}
+@keyframes keyglow{from{box-shadow:inset 0 -10px 0 rgba(0,0,0,.08),0 8px 0 var(--shadow),0 0 0 0 #fff}to{box-shadow:inset 0 -10px 0 rgba(0,0,0,.08),0 8px 0 var(--shadow),0 0 0 6px #fff,0 0 30px 12px rgba(255,216,77,.95)}}
+.songmode .key:not(.next) .kbar{filter:saturate(.75) brightness(.97)}
+</style>
+<style>
+/* ===================== BIRTHDAY PARTY (v1.46) ===================== */
+.bday{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 50% 10%,#FFF6FB 0,#FFE3EE 55%,#F9D2E4 100%);border-radius:28px}
+.bday.today{background:radial-gradient(120% 90% at 50% 10%,#FFFBEA 0,#FFEFC2 55%,#FFDFA0 100%)}
+.bd-bunting{position:absolute;left:0;top:0;width:100%;height:13%;z-index:2;pointer-events:none}
+.bd-head{position:absolute;left:0;right:0;top:9%;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:3;pointer-events:none}
+.bd-banner{font:700 clamp(26px,4vw,48px) var(--display);color:#C0506A;background:#fff;border:5px solid #FFD3E0;border-radius:999px;padding:6px 30px;box-shadow:0 6px 0 rgba(192,80,106,.18);white-space:nowrap}
+.bd-banner b{color:#7B5CD6}
+.bd-count{display:flex;align-items:center;gap:10px;font:600 clamp(16px,2vw,22px) var(--display);color:#4B3F7A;background:rgba(255,255,255,.88);border-radius:999px;padding:5px 18px;box-shadow:0 4px 0 rgba(61,51,88,.12)}
+.bd-moons{display:flex;gap:4px}.bd-moons i{width:16px;height:16px;border-radius:50%;box-shadow:inset -5px -2px 0 0 #FFD24D;transform:rotate(-20deg)}
+/* balloons */
+.bd-bal{position:absolute;width:clamp(58px,7vw,86px);aspect-ratio:60/110;border:0;background:none;padding:0;z-index:2;cursor:pointer;animation:bdbob 3.2s ease-in-out infinite alternate}
+.bd-bal svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 4px rgba(61,51,88,.15))}
+.bd-bal.bl0{left:3%;top:16%}.bd-bal.bl1{left:9%;top:26%;animation-delay:-1.3s}.bd-bal.br0{right:3%;top:16%;animation-delay:-.7s}.bd-bal.br1{right:9%;top:26%;animation-delay:-2s}
+.bd-bal.popped{visibility:hidden;animation:none}
+@keyframes bdbob{from{transform:translateY(0) rotate(-4deg)}to{transform:translateY(-16px) rotate(4deg)}}
+/* guests stand behind the table */
+.bday .bd-guest{position:absolute;left:auto;top:auto;bottom:22%;z-index:3;transform:none;pointer-events:none}
+.bday .bd-guest svg{width:100%;height:100%;overflow:visible;display:block}
+.bday .g-me{left:25%;height:52%;width:auto;aspect-ratio:1/2}
+.bday .g-sama{left:9%;height:47%;width:auto;aspect-ratio:1/2}
+.bday .g-naya{right:17%;bottom:24%;height:26%;width:auto;aspect-ratio:1}
+.bday .g-pet{right:3%;bottom:23%;height:24%;aspect-ratio:120/134}.bday .g-pet .gp{width:100%;height:100%}
+.bday .g-sama .flip,.bday .g-naya .nsv{width:100%;height:100%}
+.bday .bd-guest.sing{animation:bdsing .65s ease-in-out infinite alternate}
+.bday .bd-guest.hop{animation:bdhop .5s ease-in-out 3}
+@keyframes bdsing{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-8px) rotate(2deg)}}
+@keyframes bdhop{50%{transform:translateY(-22px)}}
+/* table + cake */
+.bd-table{position:absolute;left:-2%;right:-2%;bottom:0;height:26%;z-index:4;border-radius:48px 48px 0 0;border-top:10px solid #fff;background:radial-gradient(circle at 20px 0,#FFC1D6 12px,transparent 13px) 0 6px/40px 40px repeat-x,linear-gradient(#FFE3EE,#FFC7DA);box-shadow:0 -8px 0 rgba(192,80,106,.08)}
+.bd-cake{position:absolute;left:50%;bottom:9%;height:46%;aspect-ratio:300/270;translate:-50% 0;z-index:5;cursor:pointer}
+.bd-cake>svg:last-child{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 8px 6px rgba(61,51,88,.14))}
+.bd-cake .tp svg{overflow:visible}.bd-cake .tp.pop{animation:bdpop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes bdpop{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:none}}
+.bd-cake .cslot>circle{opacity:0;transition:opacity .3s}.bd-cake.slots .cslot:not(.on)>circle{opacity:.85;animation:bdslot 1s ease-in-out infinite alternate}
+@keyframes bdslot{to{opacity:.35}}
+.bd-cake .cndl{opacity:0;transform:translateY(-40px);transition:opacity .25s,transform .35s cubic-bezier(.3,1.5,.5,1)}
+.bd-cake .cslot.on .cndl{opacity:1;transform:none}
+.bd-cake .flame{opacity:0;transform:scale(.3);transition:opacity .2s,transform .25s}
+.bd-cake .cslot.lit .flame{opacity:1;transform:scale(1);animation:bdflick .5s ease-in-out infinite alternate}
+@keyframes bdflick{from{transform:scale(1) rotate(-5deg)}to{transform:scale(1.12,1.2) rotate(5deg)}}
+.bd-cake.ready{animation:bdready 1s ease-in-out infinite alternate}
+@keyframes bdready{to{filter:drop-shadow(0 0 22px rgba(255,200,60,.9))}}
+/* tray */
+.bd-tray{position:absolute;left:0;right:0;bottom:2.5%;z-index:6;display:flex;justify-content:center;align-items:flex-end;gap:clamp(8px,1.6vw,18px);pointer-events:none}
+.bd-tray>*{pointer-events:auto}
+.bd-top{width:clamp(66px,8.4vw,96px);aspect-ratio:1;border:5px solid #fff;border-radius:26px;background:#FFF6E2;box-shadow:0 6px 0 rgba(61,51,88,.14);padding:10px;cursor:pointer;animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*60ms)}
+.bd-top .art,.bd-top svg{width:100%;height:100%;display:block}
+.bd-top.used{opacity:.25;transform:scale(.85);pointer-events:none;transition:.3s}
+.bd-fly{position:fixed;width:84px;height:84px;z-index:70;pointer-events:none}.bd-fly svg{width:100%;height:100%}
+.bd-gift{position:relative;width:clamp(96px,12vw,140px);aspect-ratio:1;border:0;background:none;padding:0;cursor:pointer;animation:tilein .5s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*90ms)}
+.bd-gift .box{position:absolute;left:6%;right:6%;bottom:14%;height:62%;border-radius:16px;background:var(--c);border:5px solid #fff;box-shadow:0 6px 0 rgba(61,51,88,.15)}
+.bd-gift .box::before{content:"";position:absolute;left:42%;width:16%;top:0;bottom:0;background:#fff;opacity:.85}
+.bd-gift .lid{position:absolute;left:0;right:0;top:12%;height:20%;border-radius:12px;background:var(--c);border:5px solid #fff;z-index:2;transition:transform .5s cubic-bezier(.3,1.5,.5,1),opacity .5s}
+.bd-gift .lid::after{content:"";position:absolute;left:50%;top:-24px;width:46px;height:26px;margin-left:-23px;border-radius:50% 50% 35% 35%;background:#FFD24D;border:4px solid #fff}
+.bd-gift b{position:absolute;left:50%;bottom:-6px;translate:-50% 0;font:700 14px var(--display);color:#4B3F7A;background:#fff;border-radius:999px;padding:1px 10px;white-space:nowrap;box-shadow:0 3px 0 rgba(61,51,88,.12)}
+.bd-gift .inside{position:absolute;left:18%;right:18%;top:10%;aspect-ratio:1;opacity:0;transform:translateY(30px) scale(.4);transition:.55s cubic-bezier(.3,1.6,.5,1);z-index:1}
+.bd-gift .inside svg{width:100%;height:100%}
+.bd-gift.open .lid{transform:translate(18px,-58px) rotate(24deg);opacity:0}
+.bd-gift.open .inside{opacity:1;transform:translateY(-62px) scale(1.15)}
+/* karaoke + countdown */
+/* one line at a time, big, in the banner's place (a pre-reader follows the bouncing word; the full verse covered her face) */
+body[data-screen=birthday] #petbox{display:none}
+.bday.singing .bd-head{opacity:0;transition:opacity .3s}
+.bd-lyrics .ln{display:none}.bd-lyrics .ln.cur{display:block}
+.bd-lyrics{position:absolute;left:50%;top:9%;translate:-50% 0;z-index:7;background:rgba(255,255,255,.93);border:5px solid #fff;border-radius:30px;padding:12px 30px;box-shadow:0 8px 0 rgba(61,51,88,.12);text-align:center}
+.bd-lyrics .ln{font:700 clamp(28px,4vw,48px) var(--display);color:#B7AED0;line-height:1.35;transition:color .2s;white-space:nowrap}
+.bd-lyrics .ln.cur{color:#8F86B4}
+.bd-lyrics span{display:inline-block;transition:transform .15s,color .15s}
+.bd-lyrics span.sung{color:#C0506A}.bd-lyrics span.on{color:#FF4F86;transform:translateY(-4px) scale(1.12)}
+.bd-big{position:absolute;left:50%;top:44%;translate:-50% -50%;z-index:8;font:700 clamp(110px,18vw,210px) var(--display);color:#FF6B9A;-webkit-text-stroke:8px #fff;paint-order:stroke;opacity:0;pointer-events:none;text-shadow:0 10px 0 rgba(192,80,106,.25)}
+.bd-big.blowtxt{color:#7B5CD6;font-size:clamp(80px,12vw,150px)}
+.bd-big.go.z{animation:bdzoom 1s cubic-bezier(.3,1.4,.5,1) forwards}
+.bd-big.blowtxt.z{animation:bdzoom2 1.4s cubic-bezier(.3,1.4,.5,1) forwards}
+@keyframes bdzoom{0%{opacity:0;transform:scale(.3)}25%{opacity:1;transform:scale(1.1)}75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.4)}}
+@keyframes bdzoom2{0%{opacity:0;transform:scale(.3)}25%{opacity:1;transform:scale(1.1)}100%{opacity:1;transform:scale(1)}}
+/* step dots in the top bar */
+.bd-steps{display:flex;gap:8px;margin-right:10px}.bd-steps i{width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.7);border:3px solid #fff;box-shadow:0 2px 0 rgba(61,51,88,.12)}
+.bd-steps i.on{background:#FF8FB0;transform:scale(1.2)}.bd-steps i.done{background:#8EDCC0}
+@media (prefers-reduced-motion:reduce){.bd-bal,.bday .bd-guest.sing,.bd-cake .cslot.lit .flame{animation:none}}
+</style>
+<style>
+/* birthday party, portrait iPad: sized by height the guests got huge and hid behind the cake */
+@media (max-aspect-ratio:1/1){
+ .bday .g-me{left:23%;height:36%;bottom:27%}
+ .bday .g-sama{left:1%;height:33%;bottom:27%}
+ .bday .g-naya{right:17%;height:17%;bottom:28%}
+ .bday .g-pet{right:0;height:15%;bottom:27%}
+ .bd-table{height:30%}
+ .bd-cake{height:29%;bottom:13%}
+ .bd-bal.bl1,.bd-bal.br1{top:21%}
+ .bd-head{top:8%}
+}
+</style>
+<style>
+/* v1.46 home grid: 13 tiles. Half-width columns so the short row sits centred (7 over 6; portrait 5/4/4) instead of one lonely tile */
+.tiles.g10{grid-template-columns:repeat(14,1fr)}.tiles.g10>.tile{grid-column:span 2}.tiles.g10>.tile:nth-child(8){grid-column:2 / span 2}
+@media (max-width:1000px){.tiles.g10{grid-template-columns:repeat(10,1fr)}.tiles.g10>.tile:nth-child(8){grid-column:auto / span 2}.tiles.g10>.tile:nth-child(6),.tiles.g10>.tile:nth-child(10){grid-column:2 / span 2}}
+/* the random wiggle used to REPLACE the pop-in animation, so when it ended the pop-in replayed from invisible: a tile blinked out every few seconds. Keep tilePop first in the list so it never restarts. */
+.tiles .tile.wig2{animation:tilePop .6s cubic-bezier(.3,1.6,.5,1) backwards,wig2 .8s ease-in-out;animation-delay:calc(var(--i)*.07s),0s}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1428,6 +1552,75 @@ const accIcon = (kind, id) => kind === 'av'
   : `<svg viewBox="0 -8 120 120" class="art">${id === 'none' ? '<circle cx="60" cy="56" r="30" fill="none" stroke="#B9B0D6" stroke-width="5" stroke-dasharray="6 8"/>' : `<circle cx="60" cy="56" r="30" fill="#CDB8FF" opacity=".35"/>${PET_ACC[id]}`}</svg>`;
 const unlockedAt = i => i * 2;
 const isUnlocked = i => S.stickers.length >= unlockedAt(i);
+/* ===== COACH — the idle helper every good toddler app has (v1.46 benchmark: none of our games had one).
+   coach(line, target, opts) — call it whenever a game starts a new round:
+     line()   -> the words to say again when she stalls (or null: say nothing now)
+     target() -> the element to tap, or {from, to} for a drag, or null (nothing to show right now)
+   If she stalls: ~7s the instruction is said again and the target glows; ~13s a pointing hand shows what to do (a drag is acted out).
+   It repeats at most a few times, then waits quietly for her next touch — no nagging.
+   coach.miss(): a wrong answer; two in a row and the hand shows the right one straight away. coach.ok(): right answer, calm again.
+   One coach per screen; it cleans itself up when the screen changes. ===== */
+const coach = (() => {
+  let T = 0, cfg = null, misses = 0, reps = 0, hand = null, owner = -1, reg = -1;
+  const HAND = `<svg viewBox="0 0 64 74" aria-hidden="true"><ellipse cx="36" cy="70" rx="20" ry="4" fill="rgba(61,51,88,.18)"/>
+    <path d="M14 36 V9 a7 7 0 0 1 14 0 V30 l4 -2 a6.5 6.5 0 0 1 9.5 3 l4 -1.6 a6.5 6.5 0 0 1 9 4.2 l2 -.4 a6 6 0 0 1 7 5.8 V50 Q63.5 66 46 67 H30 Q18 66 12 55 L4 42 a6 6 0 0 1 9.4 -7Z" fill="#fff" stroke="#3D3358" stroke-width="3.2" stroke-linejoin="round"/>
+    <path d="M28 30 v10 M41.5 31 v9 M54.5 35 v6" stroke="#3D3358" stroke-width="2.6" stroke-linecap="round" opacity=".5"/><path d="M17 12 q4 -4 8 0" stroke="#FFB3C8" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+  const alive = () => !!cfg && owner === navId;
+  const ctr = e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  const ok = e => e && e.isConnected && e.getBoundingClientRect().width > 0;
+  const drop = () => { if (hand) { hand.remove(); hand = null; } };
+  const unglow = () => $$('.coach-glow').forEach(e => e.classList.remove('coach-glow'));
+  const tgt = () => { try { const t = cfg.target && cfg.target(); if (!t) return null; if (t.from) return ok(t.from) && ok(t.to) ? t : null; return ok(t) ? t : null; } catch (e) { return null; } };
+  function speak() { const l = cfg.line && cfg.line(); if (l) say(l); }
+  function glow() { const t = tgt(), e = t && (t.from || t); if (!e) return; unglow(); void e.offsetWidth; e.classList.add('coach-glow'); setTimeout(() => e.classList.remove('coach-glow'), 3200); }
+  function point() {
+    const t = tgt(); if (!t) return; drop();
+    hand = document.createElement('div'); hand.className = 'coach-hand'; hand.innerHTML = HAND; document.body.appendChild(hand);
+    const drag = !!t.from, [x0, y0] = ctr(drag ? t.from : t); hand.style.left = x0 + 'px'; hand.style.top = y0 + 'px';
+    if (drag) { const [x1, y1] = ctr(t.to), dx = x1 - x0, dy = y1 - y0;
+      hand.animate([{ transform: 'translate(0,0) scale(1)', opacity: 0 }, { transform: 'translate(0,0) scale(1)', opacity: 1, offset: .12 }, { transform: 'translate(0,0) scale(.9)', offset: .25 }, { transform: `translate(${dx}px,${dy}px) scale(.9)`, offset: .75 }, { transform: `translate(${dx}px,${dy}px) scale(1)`, opacity: 1, offset: .88 }, { transform: `translate(${dx}px,${dy}px) scale(1)`, opacity: 0 }], { duration: 1800, iterations: 2, easing: 'ease-in-out' }); }
+    else hand.classList.add('tap');
+    const h = hand; setTimeout(() => { if (hand === h) drop(); }, drag ? 3700 : 3300);
+  }
+  function arm() {
+    clearTimeout(T); if (!alive()) return;
+    const step = reps === 0 ? cfg.idle1 : reps === 1 ? cfg.idle2 - cfg.idle1 : 9000;
+    T = setTimeout(() => {
+      if (!alive()) return; reps++;
+      if (reps === 1) { speak(); glow(); } else { speak(); if (cfg.hands) point(); else glow(); }
+      if (reps < cfg.max) arm();
+    }, step);
+  }
+  document.addEventListener('pointerdown', () => { if (!alive()) return; drop(); unglow(); reps = 0; arm(); }, true);
+  function coach(line, target, o = {}) {
+    clearTimeout(T); drop(); cfg = { line, target, idle1: o.idle1 || 7000, idle2: o.idle2 || 13000, hands: o.hands !== false, max: o.max || 4 };
+    misses = 0; reps = 0; owner = navId; arm();
+    if (reg !== navId) { reg = navId; onLeave(() => { clearTimeout(T); drop(); unglow(); cfg = null; }); }
+  }
+  coach.miss = () => { if (!alive()) return; if (++misses >= 2) { misses = 0; glow(); if (cfg.hands) point(); } };
+  coach.ok = () => { misses = 0; drop(); unglow(); reps = 0; arm(); };
+  coach.off = () => { clearTimeout(T); drop(); unglow(); cfg = null; };
+  return coach;
+})();
+
+/* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
+   check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
+   Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
+const APP_V = 'lw-v46';
+async function getLatest(btn) {
+  const msg = t => { btn.textContent = t; };
+  if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
+  btn.disabled = true; msg('Getting the latest version...');
+  try {
+    const probe = await fetch('./sw.js?fresh=' + Date.now(), { cache: 'no-store' }); if (!probe.ok) throw new Error('offline');
+    const txt = await probe.text(), latest = (txt.match(/lw-v\d+/) || [APP_V])[0];
+    if (window.caches) { const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); }
+    await fetch('./index.html', { cache: 'reload' }).catch(() => { });
+    const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration(); if (reg) await reg.update().catch(() => { });
+    msg(latest === APP_V ? 'You already have the latest - restarting fresh...' : 'Updating to version ' + latest.replace('lw-v', '') + '...');
+    setTimeout(() => location.reload(), 900);
+  } catch (e) { btn.disabled = false; msg("Couldn't reach the internet - try again"); }
+}
 /* ===== screens: setup, home, stickers, wardrobe, gallery, parent ===== */
 const SCREENS = {};
 const sc = (id, s, x, y) => `<g transform="translate(${x} ${y}) scale(${s})">${ART[id]()}</g>`;
@@ -1456,6 +1649,7 @@ const TILE = {
   stamps: `<rect x="34" y="8" width="32" height="34" rx="14" fill="#B79BFF"/><rect x="24" y="40" width="52" height="14" rx="5" fill="#8B6FE0"/><rect x="12" y="54" width="76" height="12" rx="5" fill="#CDB8FF"/><path d="M12 72 H88" stroke="#3D3358" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 9"/>` + sc('star', .28, 60, 68),
   rain: `<path d="M24 52 Q6 52 8 38 Q10 26 26 28 Q30 10 50 14 Q66 4 78 20 Q96 20 94 36 Q94 52 78 52Z" fill="#DDE7FF" stroke="#B8C8F5" stroke-width="3"/>` + [[26, 62, '#FF6B81'], [42, 70, '#FFD84D'], [58, 62, '#5CD68A'], [74, 72, '#4DA3FF']].map(([x, y, c]) => `<path d="M${x} ${y} q-7 12 0 18 q7 -6 0 -18Z" fill="${c}"/>`).join(''),
 };
+TILE.birthday = `<path d="M12 90 H88" stroke="#E5DDF5" stroke-width="6" stroke-linecap="round"/><rect x="14" y="56" width="72" height="32" rx="10" fill="#FF9DB8"/><path d="M14 64 q6 10 12 0 q6 8 12 0 q6 10 12 0 q6 8 12 0 q6 10 12 0 q6 8 12 0 V58 H14Z" fill="#fff"/><rect x="26" y="34" width="48" height="24" rx="8" fill="#FFE29A"/><path d="M26 40 q6 8 12 0 q6 6 12 0 q6 8 12 0 q6 6 12 0 V36 H26Z" fill="#FFF6E2"/>${[38, 50, 62].map((x, i) => `<rect x="${x - 3}" y="16" width="6" height="20" rx="3" fill="${['#8EDCC0', '#B79BFF', '#7FC0FF'][i]}"/><path d="M${x} 16 q-5 -6 0 -12 q5 6 0 12z" fill="#FFB020"/>`).join('')}`;
 const tileIcon = id => `<svg viewBox="0 0 100 100" class="ticon" aria-hidden="true">${TILE[id]}</svg>`;
 const tileHTML = (id, label, tone, say, i, go, arg, extra = '') => `<button class="tile ${tone}" style="--i:${i}" data-go="${go}" ${arg ? `data-arg="${arg}"` : ''} data-say="${esc(say)}"><i class="glint"></i>${tileIcon(id)}<span class="pill">${label}${extra}</span></button>`;
 
@@ -1588,6 +1782,7 @@ function openParent() {
   o.innerHTML = `<div class="sheet"><h2>Grown-ups</h2>
   <div class="opt-row"><label>Child's name</label><input id="pn" class="field" maxlength="16" aria-label="Child's name"></div>
   <div class="opt-row"><label>Pet's name</label><input id="ppn" class="field" maxlength="16" aria-label="Pet's name"></div>
+  <div class="opt-row"><label>Birthday (for the party countdown and candles)</label><input id="pbd" class="field" type="date" aria-label="Birthday"></div>
   ${parentExtras()}
   <div class="opt-row"><label>Age (sets how hard the games are)</label>${[2, 3, 4].map(a => `<button class="chip" data-age="${a}" aria-pressed="${S.age === a}">${a} years</button>`).join('')}</div>
   <div class="opt-row"><button class="chip" id="pa">Edit avatar</button><button class="chip" id="pf">Change favorites</button><button class="chip" id="pp">Change pet</button></div>
@@ -1598,12 +1793,15 @@ function openParent() {
   <div class="opt-row"><label>Sound effects</label><button class="chip" data-sf="1" aria-pressed="${!S.sfxOff}">On</button><button class="chip" data-sf="0" aria-pressed="${!!S.sfxOff}">Off</button></div>
   <div class="opt-row"><label>Background music</label>${[['off', 'Off'], ['soft', 'Soft'], ['med', 'Medium']].map(([k, l]) => `<button class="chip" data-mu="${k}" aria-pressed="${k === 'off' ? S.music === false : S.music !== false && (S.mlevel || 'soft') === k}">${l}</button>`).join('')}</div>
   <p class="note">Keep her in the app: open Settings, then Accessibility, then Guided Access, and turn it on. Triple-click the side or home button inside the app to start it.</p>
+  <div class="opt-row"><label>App version: ${APP_V.replace('lw-v', '')}</label><button class="chip" id="pupd">Get the latest version</button></div>
   <div class="opt-row"><button class="chip" id="ps">Save pictures to Photos (${gallery.length})</button><button class="chip" id="pe">Erase pictures</button><button class="chip" id="pr">Start over</button></div>
   <button class="btn go big" id="pc">Close</button></div>`;
   document.body.appendChild(o);
   $('#pn', o).value = S.name; $('#ppn', o).value = S.petName || (S.pet ? petInfo().name : '');
   const close = () => { S.name = $('#pn', o).value.trim() || S.name; if (S.pet) S.petName = $('#ppn', o).value.trim(); save(); o.remove(); renderPet(); if (screen === 'home') go('home'); };
   $('#pc', o).onclick = close;
+  $('#pupd', o).onclick = e => getLatest(e.currentTarget);
+  $('#pbd', o).value = S.birth || ''; $('#pbd', o).onchange = e => { S.birth = e.target.value; save(); };
   $('#pa', o).onclick = () => { close(); go('setup1', 'edit'); };
   $('#pf', o).onclick = () => { close(); go('setup2', 'edit'); };
   $('#pp', o).onclick = () => { close(); go('setup3', 'edit'); };
@@ -1702,7 +1900,7 @@ SCREENS.world = el => {
       <linearGradient id="bark" x1="0" x2="1"><stop offset="0" stop-color="#C58E55"/><stop offset="1" stop-color="#8F5F32"/></linearGradient><linearGradient id="post" x1="0" x2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E6E1EE"/></linearGradient>
       <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
       <pattern id="mow" width="260" height="10" patternUnits="userSpaceOnUse"><rect width="130" height="10" fill="#fff" opacity=".08"/></pattern></defs>
-      <rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#gg)"/><rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#mow)"/><rect x="-400" y="300" width="${WW + 800}" height="70" fill="url(#haze)"/>${trees}${bushes}${fence}
+      <rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#gg)"/><rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#mow)"/><rect x="-400" y="300" width="${WW + 800}" height="70" fill="url(#haze)"/>${trees}${bushes}${samaHouse()}${fence}${samaArch()}
       <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${PLAY_MAT()}${softMat()}${samaMat()}${welcomeMat(WELCOME_X, 660)}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
     ${Array.from({ length: 0 }, (_, i) => `<button class="bfly" style="left:${rnd(150, WW - 150)}px;top:${rnd(380, 600)}px;z-index:1500;--a:${rnd(-160, 160)}px;--b:${rnd(-70, 40)}px;--c:${rnd(-200, 200)}px;--d:${rnd(-60, 60)}px;--t:${rnd(13, 22)}s;--h:${pick([330, 20, 50, 280, 190])}" aria-label="Butterfly"><svg viewBox="0 0 40 30"><g class="wl"><path d="M20 15 Q4 -2 6 12 Q6 24 20 17Z" fill="hsl(var(--h) 90% 70%)"/></g><g class="wr"><path d="M20 15 Q36 -2 34 12 Q34 24 20 17Z" fill="hsl(var(--h) 90% 76%)"/></g><rect x="19" y="8" width="2" height="14" rx="1" fill="#5b5478"/></svg></button>`).join('')}
     ${PGRAD}<div class="dzone" style="left:${ZONE_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(0, 'Playground')}</svg></div><div class="dzone" style="left:${ZONE2_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE2_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(`<g transform="translate(37 116)">${ICON_SOFT}</g>`, 'Baby Naya')}</svg></div><div class="dzone" style="left:${ZONE3_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE3_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(`<g transform="translate(37 116)">${ICON_SAMA}</g>`, 'Cousin Sama')}</svg></div><div class="dzone" style="left:${WELCOME_X - 230}px;top:258px;z-index:566" aria-hidden="true"><svg width="460" height="310" viewBox="0 0 460 310">${welcomeBoard(S.name)}</svg></div><div class="naya p-sit" id="naya" style="z-index:${SOFT_HOME[1]}" aria-label="Naya">${nayaSVG()}<b class="ntag">Naya</b></div><div class="sama p-stand" id="sama" style="z-index:${SAMA_HOME[1]}" aria-label="Sama">${samaSVG()}<b class="ntag">Sama</b></div>${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
@@ -1862,7 +2060,7 @@ const VIEW_ICON = {
 const HOME_GAMES = [
   ['studio', 'Draw', 't-pink', "Let's draw!"], ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!'], ['animals', 'Animals', 't-butter', 'Animal friends!'], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!"],
   ['spy', 'Find it!', 't-mint', 'Can you find it?'], ['count', 'Count', 't-peach', "Let's count!"], ['memory', 'Memory', 't-lilac', 'Find the pairs!'], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!'],
-  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'],
+  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'], ['birthday', 'Birthday', 't-pink', "It's party time!"],
   ['playarea', 'Play area', 't-peach', "Let's go to the play area!"], ['petcare', 'My pet', 't-pink', "Let's play with my pet!"],
 ];
 SCREENS.playarea = () => { S.view = 'world'; save(); go('home'); };
@@ -2349,9 +2547,9 @@ function softMat() {
      Poses toggled by class on the wrapper: p-sit | p-crawl | p-lie ---------------- */
 /* Liyana's doll face (avatarSVG) as a bare <g>, bust removed. The face centre is at (50,54) in its own coordinates. */
 const dollFace = (a, acc) => avatarSVG(a, '#fff', acc).replace(/<ellipse cx="50" cy="110"[^>]*\/>/, '').replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
-function nayaSVG() {
+function nayaSVG(acc = 'bow') {
   const sk = SKIN[S.avatar.skin] ? S.avatar.skin : 1, skin = SKIN[sk], ON = '#8FE0C4', ON2 = '#B8EEDB';
-  const face = dollFace({ skin: sk, hair: 2, style: 'short', eyes: S.avatar.eyes || 0 }, 'bow');
+  const face = dollFace({ skin: sk, hair: 2, style: 'short', eyes: S.avatar.eyes || 0 }, acc);
   const head = (x, y, rot = 0) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(.84) translate(-50 -54)">${face}</g>`;
   const sock = (x, y, r = 0) => `<g transform="translate(${x} ${y}) rotate(${r})"><ellipse rx="10.5" ry="6.8" fill="#FF9DB8"/><ellipse cx="-3" cy="-2.4" rx="4.4" ry="2.2" fill="#fff" opacity=".55"/><path d="M-7 3 h14" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/></g>`;
   const heart = (x, y, s = 1) => `<path transform="translate(${x} ${y}) scale(${s})" d="M0 5 C-7 0 -7 -6 -3 -7 C-1 -7.6 0 -6 0 -5 C0 -6 1 -7.6 3 -7 C7 -6 7 0 0 5Z" fill="#FF8FB0"/>`;
@@ -2516,10 +2714,20 @@ function teaBack() {
     <path d="M-14 -3 q0 15 14 15 q14 0 14 -15z" fill="#fff" stroke="${col}" stroke-width="2.5" stroke-linejoin="round"/><ellipse cx="0" cy="-3" rx="14" ry="4.4" fill="#C98A52"/>
     <path d="M14 1 q12 1 10 8 q-2 6 -10 4" fill="none" stroke="${col}" stroke-width="2.5"/></g></g>`;
   return `<g><defs><pattern id="tpCheck" width="36" height="36" patternUnits="userSpaceOnUse"><rect width="36" height="36" fill="#FFF6E2"/><rect width="18" height="18" fill="#FFD3E0"/><rect x="18" y="18" width="18" height="18" fill="#FFD3E0"/></pattern></defs>
-  ${shd(180, 224, 152, 14)}${chair(58, 'url(#pgPinkV)', '#C94870')}${chair(302, 'url(#pgLil)', '#7B5CD6')}
+  ${shd(180, 224, 152, 14)}${teaParasol()}${chair(58, 'url(#pgPinkV)', '#C94870')}${chair(302, 'url(#pgLil)', '#7B5CD6')}
   ${ln(180, 140, 180, 206, 20, 'url(#pgWoodH)')}<ellipse cx="180" cy="212" rx="50" ry="14" fill="url(#pgWoodD)"/><ellipse cx="180" cy="208" rx="50" ry="14" fill="url(#pgWoodH)"/>
   ${scallop}<ellipse cx="180" cy="136" rx="107" ry="41" fill="url(#tpCheck)"/><ellipse cx="180" cy="136" rx="107" ry="41" fill="none" stroke="#fff" stroke-width="5"/>
   ${cake}${pot}${cup(112, 0, '#4FA6EC')}${cup(250, 1, '#F4B435')}</g>`;
+}
+
+function teaParasol() {   /* pole behind the table, canopy high above the girls' heads (the decor svg overflows upward) */
+  const dome = 'M34 -30 C54 -122 306 -122 326 -30Z', wedge = (a, b) => `<path d="M180 -104 L${a} -30 L${b} -30Z" fill="#fff" opacity=".92"/>`;
+  return `<g><defs><clipPath id="tpUmb"><path d="${dome}"/></clipPath></defs>
+    ${ln(183, 150, 183, -96, 8, '#C9C1E2')}${ln(180, 150, 180, -96, 5, '#fff')}
+    <path d="${dome}" fill="#FF8FB0" stroke="#C94870" stroke-width="3" stroke-linejoin="round"/><g clip-path="url(#tpUmb)">${wedge(70, 110)}${wedge(158, 202)}${wedge(250, 290)}</g>
+    <path d="M40 -60 C80 -104 280 -104 320 -60" fill="none" stroke="#fff" stroke-width="4" opacity=".35"/>
+    ${Array.from({ length: 12 }, (_, i) => `<circle cx="${46 + i * 24.4}" cy="-30" r="12.5" fill="${i % 2 ? '#fff' : '#FF8FB0'}" stroke="#C94870" stroke-width="2.5"/>`).join('')}
+    <circle cx="180" cy="-112" r="9" fill="url(#pgYel)" stroke="#D99A1E" stroke-width="2.5"/></g>`;
 }
 
 /* ---------------- HOPSCOTCH: five chalked squares, counted out loud ---------------- */
@@ -2530,8 +2738,13 @@ function hopBack() {
     <path d="M${x - 34} ${y + 19} L${x - 27} ${y - 19} L${x + 27} ${y - 19} L${x + 34} ${y + 19}Z" fill="#FFFDF4" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
     <path d="M${x - 34} ${y + 19} L${x - 27} ${y - 19} L${x + 27} ${y - 19} L${x + 34} ${y + 19}Z" fill="${TONE[i]}" opacity=".85"/>
     <text x="${x}" y="${y + 12}" font-family="Fredoka,sans-serif" font-weight="700" font-size="30" fill="#7B5CD6" text-anchor="middle" opacity=".9">${i + 1}</text></g>`).join('');
-  const chalk = `<g opacity=".8"><ellipse cx="12" cy="196" rx="16" ry="7" fill="#FFF6D2"/><ellipse cx="12" cy="193" rx="16" ry="7" fill="#fff"/>
-    <path d="M370 150 q22 6 22 22" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="9 8"/></g>`;
+  const chalk = `<g opacity=".8"><ellipse cx="12" cy="196" rx="16" ry="7" fill="#FFF6D2"/><ellipse cx="12" cy="193" rx="16" ry="7" fill="#fff"/></g>
+    <g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" opacity=".9">
+      <circle cx="38" cy="122" r="12"/><path d="M38 100 v-8 M38 144 v8 M16 122 h-8 M60 122 h8 M22 106 l-6 -6 M54 106 l6 -6 M22 138 l-6 6 M54 138 l6 6"/>
+      <path d="M188 134 c-14 -12 -14 -24 -4 -26 c4 -1 4 2 4 4 c0 -2 0 -5 4 -4 c10 2 10 14 -4 26z" stroke="#FF8FB0"/>
+      ${[0, 72, 144, 216, 288].map(a => `<circle cx="${(330 + Math.cos(a * Math.PI / 180) * 10).toFixed(1)}" cy="${(120 + Math.sin(a * Math.PI / 180) * 10).toFixed(1)}" r="6" stroke="#FFD24D"/>`).join('')}
+      <path d="M368 158 Q412 158 412 177 Q412 196 368 196" stroke="#B79BFF" stroke-width="5"/></g>
+    <text x="390" y="182" font-family="Fredoka,sans-serif" font-weight="700" font-size="14" fill="#7B5CD6" text-anchor="middle">HOME</text>`;
   return `<g>${shd(190, 200, 180, 12, .55)}${sq}${chalk}
   <ellipse cx="190" cy="132" rx="150" ry="10" fill="#fff" opacity=".25"/></g>`;
 }
@@ -2548,10 +2761,12 @@ function dressBack() {
     <ellipse cx="0" cy="0" rx="46" ry="74" fill="url(#pgBlueS)" opacity=".45"/><path d="M-22 -48 q-11 30 3 72" stroke="#fff" stroke-width="11" fill="none" opacity=".5" stroke-linecap="round"/>
     ${Array.from({ length: 12 }, (_, i) => { const a = i / 12 * 6.2832; return `<circle cx="${(Math.cos(a) * 56).toFixed(1)}" cy="${(Math.sin(a) * 84).toFixed(1)}" r="5.5" fill="#FFE887" stroke="#D99A1E" stroke-width="1.6"/>`; }).join('')}
     <path d="M-11 82 h22 l9 44 h-40z" fill="url(#pgWoodH)"/><ellipse cx="0" cy="128" rx="36" ry="10" fill="url(#pgWoodD)"/></g>`;
-  return `<g>${shd(220, 266, 200, 14)}
+  const rug = `<ellipse cx="256" cy="266" rx="122" ry="25" fill="#FFD3E0"/><ellipse cx="256" cy="264" rx="122" ry="25" fill="#FFE8F0"/><ellipse cx="256" cy="264" rx="104" ry="18" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="3 10" stroke-linecap="round"/>${[[196, 262], [236, 272], [286, 258], [322, 268]].map(([x, y]) => `<path d="${star5(x, y, 7, 3)}" fill="#FFD24D"/>`).join('')}`;
+  const garland = [182, 206, 230, 254, 278].map((x, i) => `${ln(x, 82, x, 94 + (i % 2) * 8, 2, '#C9C1E2')}<path d="${star5(x, 102 + (i % 2) * 8, 8, 3.5)}" fill="${['#FFD24D', '#FF8FB0', '#8EDCC0', '#7FC0FF', '#B79BFF'][i]}"/>`).join('');
+  return `<g>${shd(220, 266, 200, 14)}${rug}
   ${ln(172, 250, 172, 78, 8, 'url(#pgMetal)')}${ln(300, 250, 300, 78, 8, 'url(#pgMetal)')}${ln(166, 80, 306, 80, 8, 'url(#pgMetal)')}
   <ellipse cx="172" cy="252" rx="22" ry="7" fill="rgba(61,51,88,.2)"/><ellipse cx="300" cy="252" rx="22" ry="7" fill="rgba(61,51,88,.2)"/>
-  ${hang(200, '#FF8FB0', '#D14D78')}${hang(236, '#8EDCC0', '#3FA58A')}${hang(272, '#FFD24D', '#D99A1E')}
+  ${hang(200, '#FF8FB0', '#D14D78')}${hang(236, '#8EDCC0', '#3FA58A')}${hang(272, '#FFD24D', '#D99A1E')}${garland}
   ${mirror}${trunkArt()}</g>`;
 }
 function trunkArt() {
@@ -2576,8 +2791,9 @@ function dressFront() {   /* the trunk's near side again (so it can cover a pass
 const ringArt = (x, y, c, d) => `<ellipse cx="${x}" cy="${y}" rx="36" ry="13" fill="none" stroke="${d}" stroke-width="11"/><ellipse cx="${x}" cy="${y}" rx="36" ry="13" fill="none" stroke="${c}" stroke-width="8"/><ellipse cx="${x}" cy="${y - 2}" rx="36" ry="13" fill="none" stroke="#fff" stroke-width="3" opacity=".45"/>`;
 function ringBack() {
   return `<g>${shd(268, 212, 96, 13)}
-  <ellipse cx="268" cy="205" rx="78" ry="22" fill="url(#pgWoodD)"/><ellipse cx="268" cy="198" rx="78" ry="22" fill="url(#pgWoodH)"/><ellipse cx="268" cy="198" rx="54" ry="15" fill="#fff" opacity=".22"/>
+  <ellipse cx="268" cy="205" rx="78" ry="22" fill="url(#pgWoodD)"/><ellipse cx="268" cy="198" rx="78" ry="22" fill="url(#pgWoodH)"/><ellipse cx="268" cy="198" rx="54" ry="15" fill="#fff" opacity=".22"/><ellipse cx="268" cy="201" rx="76" ry="21" fill="none" stroke="#FF8FB0" stroke-width="8" stroke-dasharray="15 15"/>
   ${ln(268, 198, 268, 88, 14, 'url(#pgWoodD)')}${ln(265, 198, 265, 88, 6, '#E0B583')}
+  ${ln(268, 84, 268, 40, 3, '#C9C1E2')}<path d="M268 40 L302 50 L268 60Z" fill="url(#pgYel)" stroke="#D99A1E" stroke-width="2.5" stroke-linejoin="round"/><path d="${star5(280, 50, 5, 2.2)}" fill="#fff"/>
   <circle cx="268" cy="84" r="12" fill="url(#pgRed)"/><circle cx="264" cy="80" r="4" fill="#fff" opacity=".6"/>
   <g class="rgA" opacity="0" style="transform-origin:268px 178px">${ringArt(268, 178, '#4FB4F5', '#2F7FCB')}</g>
   <g class="rgB" opacity="0" style="transform-origin:268px 154px">${ringArt(268, 154, '#FFC93D', '#D99A1E')}</g>
@@ -2587,10 +2803,12 @@ function ringBack() {
 }
 function ringFront() {   /* the near rim of the base, so the rings sit THROUGH the peg rather than in front of it */
   return `<g><path d="M190 198 A78 22 0 0 0 346 198 L322 197 A54 15 0 0 1 214 197Z" fill="url(#pgWoodH)"/>
-  <path d="M190 198 A78 22 0 0 0 346 198" fill="none" stroke="#E0B583" stroke-width="4" opacity=".8"/></g>`;
+  <path d="M190 198 A78 22 0 0 0 346 198" fill="none" stroke="#E0B583" stroke-width="4" opacity=".8"/><path d="M192 201 A76 21 0 0 0 344 201" fill="none" stroke="#FF8FB0" stroke-width="8" stroke-dasharray="15 15"/></g>`;
 }
 
 /* ---------------- TRAMPOLINE ---------------- */
+const TRAMP_RIM = 'M45 197 a125 38.5 0 1 0 250 0 a125 38.5 0 1 0 -250 0';
+const trampPads = (clip = '') => ['#FF8FB0', '#FFD24D', '#8EDCC0', '#7FC0FF'].map((c, i) => `<path d="${TRAMP_RIM}" pathLength="16" fill="none" stroke="${c}" stroke-width="22" stroke-dasharray="1 3" stroke-dashoffset="${-i}" ${clip}/>`).join('');
 const trampSpring = a => { const c = Math.cos(a), s = Math.sin(a); return ln(170 + c * 112, 194 + s * 33, 170 + c * 136, 198 + s * 43, 5, '#E3ECFA'); };
 function trampBack() {
   const back = Array.from({ length: 13 }, (_, i) => trampSpring(Math.PI + i / 12 * Math.PI)).join('');
@@ -2598,25 +2816,59 @@ function trampBack() {
   return `<g>${shd(170, 254, 150, 14)}
   ${ln(72, 212, 52, 252, 11, '#9990BE')}${ln(268, 212, 288, 252, 11, '#9990BE')}${ln(170, 230, 170, 254, 11, '#9990BE')}
   ${ln(44, 196, 38, 50, 9, 'url(#pgMetal)')}${ln(296, 196, 302, 50, 9, 'url(#pgMetal)')}<path d="M38 50 Q170 14 302 50" stroke="url(#pgMetal)" stroke-width="9" fill="none" stroke-linecap="round"/>${mesh}
-  <ellipse cx="170" cy="206" rx="138" ry="44" fill="#2F72C2"/><ellipse cx="170" cy="198" rx="138" ry="44" fill="url(#pgBlueW)"/><ellipse cx="170" cy="190" rx="138" ry="44" fill="none" stroke="#fff" stroke-width="3" opacity=".25"/>
+  <ellipse cx="170" cy="206" rx="138" ry="44" fill="#2F72C2"/><ellipse cx="170" cy="198" rx="138" ry="44" fill="url(#pgBlueW)"/>${trampPads()}<ellipse cx="170" cy="190" rx="138" ry="44" fill="none" stroke="#fff" stroke-width="3" opacity=".3"/>
   <ellipse cx="170" cy="196" rx="112" ry="33" fill="#1B3357"/>
   <g class="tmat" style="transform-origin:170px 192px"><ellipse cx="170" cy="192" rx="112" ry="33" fill="#41406E"/><ellipse cx="170" cy="192" rx="112" ry="33" fill="url(#pgLil)" opacity=".3"/>
-    ${[84, 56, 28].map(r => `<ellipse cx="170" cy="192" rx="${r}" ry="${(r * 33 / 112).toFixed(1)}" fill="none" stroke="#fff" stroke-width="2" opacity=".22"/>`).join('')}</g>${back}</g>`;
+    ${[84, 56, 28].map(r => `<ellipse cx="170" cy="192" rx="${r}" ry="${(r * 33 / 112).toFixed(1)}" fill="none" stroke="#fff" stroke-width="2" opacity=".22"/>`).join('')}${[[120, 186], [212, 184], [168, 200], [94, 198], [246, 198]].map(([x, y], i) => `<path d="${star5(x, y, i === 2 ? 9 : 6, i === 2 ? 4 : 2.6)}" fill="#fff" opacity=".45"/>`).join('')}</g>${back}</g>`;
 }
 function trampFront() {
   const front = Array.from({ length: 13 }, (_, i) => trampSpring(i / 12 * Math.PI)).join('');
-  return `<g><path d="M32 198 A138 44 0 0 0 308 198 L282 196 A112 33 0 0 1 58 196Z" fill="url(#pgBlueW)"/>
+  return `<g><defs><clipPath id="tfClip"><path d="M32 198 A138 44 0 0 0 308 198 L282 196 A112 33 0 0 1 58 196Z"/></clipPath></defs><path d="M32 198 A138 44 0 0 0 308 198 L282 196 A112 33 0 0 1 58 196Z" fill="url(#pgBlueW)"/>${trampPads('clip-path="url(#tfClip)"')}
   <path d="M32 198 A138 44 0 0 0 308 198" fill="none" stroke="#7FCBFF" stroke-width="4" opacity=".7"/>${front}</g>`;
 }
 
 /* ---------------- ZONE 3 sign + mat ---------------- */
 const ICON_SAMA = `<circle cx="60" cy="150" r="0"/><g transform="translate(14 10)"><ellipse cx="42" cy="44" rx="27" ry="17" fill="#fff" stroke="#8E5C30" stroke-width="3"/><path d="M15 44 Q42 16 69 44" fill="none" stroke="#C94870" stroke-width="4"/><circle cx="42" cy="28" r="6" fill="#FFD84D"/><path d="M69 38 q10 -2 12 -10" stroke="#C94870" stroke-width="4" fill="none" stroke-linecap="round"/></g>
 <g transform="translate(100 14)"><path d="M13 0 L28 40 H-2Z" fill="#FF8FB0" stroke="#D14D78" stroke-width="2.5" stroke-linejoin="round"/><path d="M4 26 h18" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="13" cy="-4" r="5" fill="#FFD24D"/></g>`;
+const SAMA_HOUSE_X = 6250;                          /* her house sits behind the fence in the middle of the yard */
 function samaMat() {
-  const x0 = ZONE3_X, x1 = ZONE3_END_X, y0 = 548, y1 = 720, P = `M${x0 + 16} ${y0} H${x1 - 16} Q${x1 + 6} ${y0} ${x1 + 14} ${y1} H${x0 - 14} Q${x0 - 6} ${y0} ${x0 + 16} ${y0}Z`;
-  return `<g><defs><pattern id="pgSama" width="54" height="54" patternUnits="userSpaceOnUse"><rect width="54" height="54" fill="#E7D9FF"/><rect x="2" y="2" width="50" height="50" rx="13" fill="#F3EAFF"/><circle cx="27" cy="27" r="7" fill="#FFD3E0" opacity=".9"/></pattern></defs>
-  <path d="${P}" fill="none" stroke="#7FDDBB" stroke-width="34" stroke-linejoin="round"/><path d="${P}" fill="none" stroke="#fff" stroke-width="20" stroke-linejoin="round"/><path d="${P}" fill="url(#pgSama)"/>
-  <path d="M${x0 + 30} ${y0 + 14} H${x1 - 30}" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/></g>`;
+  const x0 = ZONE3_X, x1 = ZONE3_END_X, y0 = 548, y1 = 720, P = `M${x0 + 16} ${y0} H${x1 - 16} Q${x1 + 6} ${y0} ${x1 + 14} ${y1} H${x0 - 14} Q${x0 - 6} ${y0} ${x0 + 16} ${y0}Z`, hx = SAMA_HOUSE_X;
+  const tulip = (x, y, c, k) => `<path d="M${x} ${y} q${k % 2 ? 3 : -3} -14 0 -26" stroke="#4DB86A" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M${x} ${y - 6} q-10 -4 -12 -14 q9 2 12 10z" fill="#5CC877"/><path d="M${x - 8} ${y - 36} q0 -14 8 -14 q8 0 8 14 q-4 6 -8 6 q-4 0 -8 -6z" fill="${c}"/><path d="M${x - 3} ${y - 44} l3 -6 3 6" stroke="#fff" stroke-width="2" fill="none" opacity=".6"/>`;
+  const bed = (xa, xb) => { let t = ''; for (let x = xa + 16, k = 0; x < xb - 10; x += 26, k++) t += tulip(x, 540 - (k % 2) * 6, ['#FF8FB0', '#FFD24D', '#B79BFF', '#FF6B7A'][k % 4], k); return `<rect x="${xa}" y="528" width="${xb - xa}" height="18" rx="9" fill="#B98149"/><rect x="${xa + 4}" y="528" width="${xb - xa - 8}" height="7" rx="3.5" fill="#D9A164"/>${t}`; };
+  const stones = [[0, 372], [-16, 404], [8, 438], [-12, 472], [6, 506]].map(([dx, y], i) => `<ellipse cx="${hx + dx}" cy="${y + 3}" rx="${22 + i * 2}" ry="${8 + i}" fill="rgba(61,51,88,.12)"/><ellipse cx="${hx + dx}" cy="${y}" rx="${22 + i * 2}" ry="${8 + i}" fill="#FFF3DD"/>`).join('');
+  const pole = x => `<rect x="${x - 4}" y="396" width="8" height="152" rx="4" fill="#fff"/><rect x="${x - 1}" y="396" width="3" height="152" fill="#E5DDF5"/><circle cx="${x}" cy="392" r="8" fill="url(#pgYel)"/>`;
+  const bunt = (xa, xb) => { let o = `<path d="M${xa} 400 Q${(xa + xb) / 2} 452 ${xb} 400" stroke="#C9975B" stroke-width="3" fill="none"/>`; const n = Math.round((xb - xa) / 46); for (let i = 1; i < n; i++) { const u = i / n, x = xa + u * (xb - xa), y = 400 + 52 * 2 * u * (1 - u) * .98; o += `<path d="M${x - 13} ${y} L${x + 13} ${y + 2} L${x} ${y + 26}Z" fill="${['#FF8FB0', '#FFD24D', '#8EDCC0', '#B79BFF', '#7FC0FF'][i % 5]}" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>`; } return o; };
+  const mailbox = `<g transform="translate(${hx + 126} 470)"><ellipse cx="0" cy="4" rx="20" ry="6" fill="rgba(61,51,88,.16)"/><rect x="-4" y="-56" width="8" height="60" rx="3" fill="#B98149"/><path d="M-26 -58 V-86 q0 -16 26 -16 q26 0 26 16 V-58Z" fill="#FF8FB0" stroke="#C94870" stroke-width="3"/><rect x="24" y="-96" width="4" height="26" fill="#C94870"/><path d="M28 -96 h14 v10 h-14z" fill="#FFD24D"/><text x="0" y="-68" font-family="Fredoka,sans-serif" font-weight="700" font-size="15" fill="#fff" text-anchor="middle">Sama</text></g>`;
+  return `<g><defs><pattern id="pgPave" width="64" height="44" patternUnits="userSpaceOnUse"><rect width="64" height="44" fill="#E7CFA6"/><rect x="2" y="2" width="60" height="18" rx="7" fill="#FFF3DD"/><rect x="-30" y="24" width="60" height="18" rx="7" fill="#FBEBCF"/><rect x="34" y="24" width="60" height="18" rx="7" fill="#FBEBCF"/><circle cx="16" cy="11" r="1.6" fill="#F0D9B2"/><circle cx="46" cy="33" r="1.6" fill="#F0D9B2"/></pattern></defs>
+  ${stones}${bed(x0 + 60, x0 + 420)}${bed(x1 - 470, x1 - 60)}${pole(x0 + 90)}${pole(hx - 250)}${pole(hx + 250)}${pole(x1 - 90)}${bunt(x0 + 90, hx - 250)}${bunt(hx + 250, x1 - 90)}${mailbox}
+  <path d="${P}" fill="none" stroke="#B98149" stroke-width="30" stroke-linejoin="round"/><path d="${P}" fill="none" stroke="#E9C995" stroke-width="16" stroke-linejoin="round"/><path d="${P}" fill="url(#pgPave)"/>
+  <path d="M${x0 + 30} ${y0 + 14} H${x1 - 30}" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".45"/></g>`;
+}
+/* ---------------- SAMA'S HOUSE: a pastel cottage behind the fence, with a rose arch at the gate ---------------- */
+function samaHouse() {
+  const cx = SAMA_HOUSE_X, win = x => `<g transform="translate(${x} 222)"><rect x="-30" y="0" width="60" height="58" rx="8" fill="#fff"/><path d="M-24 52 V20 a24 22 0 0 1 48 0 V52Z" fill="#BFE4FF"/><path d="M-10 12 q-6 16 0 34" stroke="#fff" stroke-width="5" fill="none" opacity=".6"/>
+    <path d="M-24 18 q10 16 0 34Z M24 18 q-10 16 0 34Z" fill="#FF9DB8"/><rect x="-34" y="56" width="68" height="12" rx="4" fill="#B98149"/>${[-24, -12, 0, 12, 24].map((d, i) => `<circle cx="${d}" cy="54" r="6" fill="${['#FF8FB0', '#FFD24D', '#B79BFF', '#FF8FB0', '#FFD24D'][i]}"/>`).join('')}</g>`;
+  const shingles = Array.from({ length: 4 }, (_, r) => { const y = 132 + r * 20, half = 60 + r * 38; let o = ''; for (let x = cx - half; x <= cx + half; x += 22) o += `<circle cx="${x}" cy="${y}" r="11" fill="${r % 2 ? '#A98BF2' : '#B79BFF'}"/>`; return o; }).join('');
+  return `<g><defs><clipPath id="shRoof"><path d="M${cx - 206} 206 L${cx} 92 L${cx + 206} 206Z"/></clipPath></defs>
+    <rect x="${cx + 90}" y="108" width="34" height="70" rx="6" fill="#E8A0B8" stroke="#C98AAE" stroke-width="3"/><rect x="${cx + 84}" y="102" width="46" height="14" rx="6" fill="#F4B8CC"/>
+    ${[[cx + 112, 86, 12], [cx + 126, 64, 16], [cx + 146, 38, 20]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity=".8"/>`).join('')}
+    <rect x="${cx - 176}" y="194" width="352" height="148" rx="10" fill="#FCE4EF" stroke="#D9A0BE" stroke-width="4"/>
+    ${[216, 240, 264, 288, 312].map(y => `<path d="M${cx - 172} ${y} H${cx + 172}" stroke="#F4CFE0" stroke-width="3"/>`).join('')}
+    <path d="M${cx - 206} 206 L${cx} 92 L${cx + 206} 206Z" fill="#9F7FF0"/><g clip-path="url(#shRoof)">${shingles}<rect x="${cx - 210}" y="200" width="420" height="10" fill="#8B6BE0"/></g>
+    <path d="M${cx - 214} 210 L${cx} 86 L${cx + 214} 210" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${cx}" cy="156" r="22" fill="#fff"/><circle cx="${cx}" cy="156" r="16" fill="#BFE4FF"/><path d="M${cx} 166 c-12 -9 -11 -19 -3 -19 c2 0 3 2 3 3 c0 -1 1 -3 3 -3 c8 0 9 10 -3 19z" fill="#FF8FB0"/>
+    ${win(cx - 118)}${win(cx + 118)}
+    <path d="M${cx - 34} 342 V270 a34 34 0 0 1 68 0 V342Z" fill="#FF8FB0" stroke="#C94870" stroke-width="4"/><path d="M${cx} 342 V252" stroke="#C94870" stroke-width="3" opacity=".5"/><circle cx="${cx + 20}" cy="300" r="4.5" fill="#FFD24D"/>
+    <path d="M${cx} 282 c-10 -8 -9 -16 -2 -16 c1 0 2 1 2 2 c0 -1 1 -2 2 -2 c7 0 8 8 -2 16z" fill="#fff" opacity=".85"/>
+    <rect x="${cx - 62}" y="204" width="124" height="28" rx="14" fill="#fff" stroke="#D9A0BE" stroke-width="3"/><text x="${cx}" y="224" font-family="Fredoka,sans-serif" font-weight="700" font-size="17" fill="#7B5CD6" text-anchor="middle">Sama's House</text></g>`;
+}
+function samaArch() {   /* drawn after the fence: a rose arch over the gate in front of her door */
+  const cx = SAMA_HOUSE_X, rose = (x, y, c) => `<circle cx="${x}" cy="${y}" r="7" fill="${c}"/><circle cx="${x}" cy="${y}" r="3" fill="#fff" opacity=".5"/>`;
+  const arc = t => { const a = Math.PI * (1 - t); return [cx + Math.cos(a) * 66, 276 - Math.sin(a) * 36]; };
+  let roses = ''; for (let i = 0; i <= 10; i++) { const [x, y] = arc(i / 10); roses += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="10" fill="#5CC877"/>` + rose(x + (i % 2 ? 4 : -4), y - 3, i % 3 ? '#FF8FB0' : '#FF6B7A'); }
+  for (const s of [-1, 1]) for (let y = 288; y <= 344; y += 18) roses += `<circle cx="${cx + s * 66}" cy="${y}" r="8" fill="#5CC877"/>` + (y % 36 ? rose(cx + s * 70, y, '#FF8FB0') : '');
+  return `<g><path d="M${cx - 66} 356 V276 A66 36 0 0 1 ${cx + 66} 276 V356" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"/>${roses}
+    <path d="M${cx - 60} 352 L${cx - 30} 348 V318 L${cx - 60} 314Z" fill="#fff" stroke="#E5DDF5" stroke-width="2"/><path d="M${cx + 60} 352 L${cx + 30} 348 V318 L${cx + 60} 314Z" fill="#fff" stroke="#E5DDF5" stroke-width="2"/></g>`;
 }
 
 /* ---------------- SAMA (cousin, 3-4yo). Her flower replaces Liyana's signature bow, so the two never look alike. Built from Liyana's own full-body doll (avatarFull) with her own look — dark pigtails,
@@ -2624,7 +2876,7 @@ function samaMat() {
      Same 112x224 box and feet-at-the-bottom metrics as Liyana's .avf. Poses by class on the wrapper: p-stand | p-sit | p-bounce, plus clap.
      (The first Sama had its own arms whose pivots were wrong: every clap flung her hands off her body.) ---------------- */
 const SAMA_AV = { skin: 2, hair: 0, style: 'pigtails', eyes: 1, glasses: false };
-function samaSVG() { return `<div class="flip">${avatarFull(SAMA_AV, '#B79BFF', 'flower').replace('aria-label="Me"', 'aria-label="Sama"').replace('<path d="M0 0 L-13 -8 Q-15 0 -13 8Z M0 0 L13 -8 Q15 0 13 8Z" fill="#FF5FA2"/>', '').replace('<circle r="4" fill="#FF8FC0"/>', '')}</div>`; }
+function samaSVG(acc = 'flower') { return `<div class="flip">${avatarFull(SAMA_AV, '#B79BFF', acc).replace('aria-label="Me"', 'aria-label="Sama"').replace('<path d="M0 0 L-13 -8 Q-15 0 -13 8Z M0 0 L13 -8 Q15 0 13 8Z" fill="#FF5FA2"/>', '').replace('<circle r="4" fill="#FF8FC0"/>', '')}</div>`; }
 
 /* ---------------- register Sama's props with the same machinery as the playground ---------------- */
 PLAY.teaparty   = { w: 360, h: 250, ax: 180, ay: 226, bk: teaBack,    fr: () => '',   walk: [-160, 0] };
@@ -3130,6 +3382,7 @@ SCREENS.puzzle = el => {
     pz.innerHTML = `<div class="pboard" style="grid-template-columns:repeat(${cols},${cWpx}px);grid-template-rows:repeat(${rows},${cell}px)">${cells.map(([cx, cy, i]) => `<div class="pslot" data-i="${i}">${svg(pic, cx * cw, cy * ch, cw, ch, 'class="ghost"')}</div>`).join('')}</div>
     <div class="ptray">${shuffle(cells).map(([cx, cy, i]) => `<div class="ppiece" data-i="${i}">${svg(pic, cx * cw, cy * ch, cw, ch)}</div>`).join('')}</div>`;
     later(() => say('Put the puzzle together!'), 200);
+    coach(() => 'Drag a piece to where it fits!', () => { const p = $$('.ppiece', pz).find(x => !x.classList.contains('placed')); return p ? { from: p, to: $(`.pslot[data-i="${p.dataset.i}"]`, pz) } : null; });
     $$('.ppiece', pz).forEach(p => {
       const slot = $(`.pslot[data-i="${p.dataset.i}"]`, pz);
       p.addEventListener('pointerdown', e => {
@@ -3147,7 +3400,7 @@ SCREENS.puzzle = el => {
           p.removeEventListener('pointermove', move); p.removeEventListener('pointerup', up); p.removeEventListener('pointercancel', up); p.classList.remove('drag');
           const pr = p.getBoundingClientRect(), sr = slot.getBoundingClientRect(); const d = Math.hypot(pr.left + pr.width / 2 - (sr.left + sr.width / 2), pr.top + pr.height / 2 - (sr.top + sr.height / 2));
           if (!moved) { sfx.pop(); setTimeout(place, 350); } else if (d < sr.width * .6) place();
-          else { p.classList.add('back'); p.style.transform = ''; sfx.oops(); say('Almost! Try again.'); }
+          else { p.classList.add('back'); p.style.transform = ''; sfx.oops(); say('Almost! Try again.'); coach.miss(); }
         };
         p.addEventListener('pointermove', move); p.addEventListener('pointerup', up); p.addEventListener('pointercancel', up);
       });
@@ -3600,7 +3853,7 @@ SCREENS.petcare = el => {
     stage.innerHTML = pet() + `<div class="bowl" id="bowl">${BOWL_SVG}<div class="bfill" id="bfill"></div></div><div class="foods" id="foods"></div>`;
     const foods = $('#foods', stage), cp = $('#cpet', stage), bowl = $('#bowl', stage), bfill = $('#bfill', stage);
     const fill = () => { eaten = 0; full = false; bfill.innerHTML = ''; bfill.style.opacity = 0; foods.innerHTML = shuffle(FOODS).slice(0, 3).map(f => `<button class="food" data-f="${f}" aria-label="${f}">${art(f)}</button>`).join(''); };
-    fill(); later(() => say(`${petName()} is hungry!`), 250);
+    fill(); later(() => say(`${petName()} is hungry!`), 250); coach(() => full ? null : `Drag some food into ${petName()}'s bowl!`, () => { const f = $$('.food', stage).find(x => !x.classList.contains('gone')); return f && !full ? { from: f, to: bowl } : null; });
     foods.addEventListener('pointerdown', e => {
       const b = e.target.closest('.food'); if (!b || b.classList.contains('gone') || full) return; try { b.setPointerCapture(e.pointerId); } catch (_) { }
       const sx = e.clientX, sy = e.clientY; let moved = false, cx = 0, cy = 0; b.classList.add('drag'); b.style.transition = 'none'; sfx.boop();
@@ -3640,7 +3893,7 @@ SCREENS.petcare = el => {
     stage.innerHTML = `<div class="tubwrap" id="tw">${pet()}<div class="muds" id="muds">${spots}</div>${TUB_SVG}<div class="foams" id="foams"></div></div>
       <button class="ctool" id="shower" aria-label="Shower" hidden>${SHOWER_SVG}</button><button class="ctool" id="towel" aria-label="Towel" hidden>${TOWEL_SVG}</button>`;
     const tw = $('#tw', stage), foams = $('#foams', stage), muds = $('#muds', stage), sh = $('#shower', stage), tow = $('#towel', stage), cp = $('#cpet', stage);
-    later(() => say(`${petName()} is all muddy! Rub rub rub!`), 250);
+    later(() => say(`${petName()} is all muddy! Rub rub rub!`), 250); coach(() => $('.mud:not(.off)', stage) ? 'Rub the mud off with your finger!' : null, () => $('.mud:not(.off)', stage));
     const scrub = e => {
       if (phase !== 'scrub') return; const r = tw.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
       if (Math.hypot(x - last.x, y - last.y) < 26) return; last = { x, y };
@@ -3668,7 +3921,7 @@ SCREENS.petcare = el => {
     const tufts = Array.from({ length: 9 }, (_, i) => `<i class="tuft" style="left:${TUFT_AT[i][0]}%;top:${TUFT_AT[i][1]}%;--r:${rnd(-45, 45).toFixed(0)}deg"><svg viewBox="0 0 40 40"><path d="M5 37 Q3 24 9 18 L7 6 L15 14 L20 2 L25 14 L33 6 L31 18 Q37 24 35 37Z" fill="#D8CEF2" stroke="#6E63A0" stroke-width="3.2" stroke-linejoin="round"/><path d="M14 30 Q12 22 16 16" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".85"/></svg></i>`).join('');
     stage.innerHTML = `<div class="brushwrap" id="bw">${pet()}<div class="tufts" id="tufts">${tufts}</div></div><div class="brushtool" id="brs">${BRUSH_SVG}</div>`;
     const bw = $('#bw', stage), tf = $('#tufts', stage), brs = $('#brs', stage), cp = $('#cpet', stage);
-    later(() => say(`${petName()} has messy fur! Brush brush!`), 250);
+    later(() => say(`${petName()} has messy fur! Brush brush!`), 250); coach(() => $('.tuft:not(.off)', stage) ? 'Brush the messy fur!' : null, () => $('.tuft:not(.off)', stage));
     const stroke = e => {
       const r = bw.getBoundingClientRect(); brs.style.left = (e.clientX - r.left) + 'px'; brs.style.top = (e.clientY - r.top) + 'px'; brs.classList.add('on');
       if (Math.hypot(e.clientX - last.x, e.clientY - last.y) < 22) return; last = { x: e.clientX, y: e.clientY };
@@ -3686,7 +3939,7 @@ SCREENS.petcare = el => {
     stage.className = 'cstage m-play'; let busy = false, fetched = 0;
     stage.innerHTML = pet() + `<button class="pball" id="pball" aria-label="Ball">${art('ball')}</button>`;
     const cp = $('#cpet', stage), ball = $('#pball', stage);
-    later(() => say('Throw the ball!'), 250);
+    later(() => say('Throw the ball!'), 250); coach(() => 'Tap the ball to throw it!', () => $('.pball', stage));
     ball.addEventListener('click', () => {
       if (busy) return; busy = true; sfx.whoosh(); ball.classList.add('flying');
       const r = stage.getBoundingClientRect(), dx = rnd(r.width * .22, r.width * .38) * (Math.random() < .5 ? -1 : 1), petDx = dx * .86;
@@ -3718,6 +3971,7 @@ SCREENS.petcare = el => {
       <div class="vtools">${TOOLS.map(([k, l], i) => `<button class="vtool" data-v="${k}" style="--i:${i}" aria-label="${l}">${VET_SVG[k]}<i class="tchk">${tickIcon}</i></button>`).join('')}</div>`;
     const cp = $('#cpet', stage), sore = $('#sore', stage);
     later(() => say(`Let's check that ${petName()} is feeling well.`), 250);
+    coach(() => busy ? null : 'Tap a doctor tool!', () => busy ? null : $('.vtool:not(.got)', stage));
     const finish = k => {
       steps.add(k); const b = $(`.vtool[data-v="${k}"]`, stage); if (b) b.classList.add('got'); busy = false;
       if (steps.size === TOOLS.length) { done('vet'); later(() => { pose(cp, 'happy', 1200); sfx.yay(); cheer(...petAt(cp), 6); love(cp, 10); say(`${petName()} is all better. What a brave one!`); }, 400); }
@@ -3745,6 +3999,7 @@ SCREENS.petcare = el => {
       ${finds.map(([k], i) => `<button class="wfind" data-f="${k}" style="left:${16 + i * 22}%;--i:${i}" aria-label="${k}">${art(k)}</button>`).join('')}` + pet('walking');
     const cp = $('#cpet', stage);
     later(() => say(`Time for a walk! Tap what ${petName()} should sniff.`), 250);
+    coach(() => busy ? null : `Tap something for ${petName()} to sniff!`, () => busy ? null : $('.wfind:not(.gone)', stage));
     $$('.wfind', stage).forEach(b => b.addEventListener('click', () => {
       if (busy || b.classList.contains('gone')) return; busy = true; sfx.boop();
       const br = b.getBoundingClientRect(), pr = cp.getBoundingClientRect(), dx = (br.left + br.width / 2) - (pr.left + pr.width / 2);
@@ -3768,6 +4023,7 @@ SCREENS.petcare = el => {
       <div class="gifts">${[0, 1, 2].map(i => `<button class="gift" data-i="${i}" style="--i:${i}" aria-label="present"></button>`).join('')}</div>`;
     const cp = $('#cpet', stage);
     later(() => say(`It is ${petName()}'s birthday! Tap the candles to light them.`), 250);
+    coach(() => !blowing ? 'Tap the candles to light them!' : blown < 3 ? 'Blow out the candles! Tap each flame.' : 'Open the presents!', () => !blowing ? $('.flame:not(.lit)', stage) : blown < 3 ? $('.flame.lit', stage) : $('.gift:not(.open)', stage));
     $$('.flame', stage).forEach(b => b.addEventListener('click', () => {
       if (!blowing) {
         if (b.classList.contains('lit')) return;
@@ -3795,6 +4051,7 @@ SCREENS.petcare = el => {
     stage.innerHTML = pet() + `<div class="tricks">${TRICKS.map(([k, l]) => `<button class="tcard" data-t="${k}" style="--i:${TRICKS.findIndex(t => t[0] === k)}" aria-label="${l}"><span class="tl">${l}</span><i class="tchk">${tickIcon}</i></button>`).join('')}</div>`;
     const cp = $('#cpet', stage);
     later(() => say(`Teach ${petName()} a trick!`), 250);
+    coach(() => busy ? null : 'Tap a trick card!', () => busy ? null : $('.tcard:not(.got)', stage));
     const MOVES = {
       sit: () => { pose(cp, 'sit', 1500); later(() => sfx.dot(), 200); },
       spin: () => { track(cp, [{ transform: 'rotate(0) scale(1)' }, { transform: 'rotate(180deg) scale(.92)', offset: .5 }, { transform: 'rotate(360deg) scale(1)' }], { duration: 1000, easing: 'ease-in-out' }); later(() => sfx.whoosh(), 60); },
@@ -3817,7 +4074,7 @@ SCREENS.petcare = el => {
     stage.innerHTML = `<div class="bedroom" id="bed">${WINDOW_SVG}${BED_SVG}${pet()}<button class="blanket" id="blk" aria-label="Blanket"><svg viewBox="0 0 100 100">${COVERS.blanket}</svg></button><div class="cstars" id="cstars"></div></div>
       <button class="lampbtn" id="lamp" aria-label="Light">${art('bulb')}</button><div class="dim" id="dim"></div><div class="zzz" id="zzz" hidden><b>z</b><b>z</b><b>Z</b></div>`;
     const cp = $('#cpet', stage), blk = $('#blk', stage), lamp = $('#lamp', stage), zzz = $('#zzz', stage), cs = $('#cstars', stage);
-    later(() => say(`${petName()} is sleepy. Time for bed!`), 250);
+    later(() => say(`${petName()} is sleepy. Time for bed!`), 250); coach(() => `${petName()} is sleepy. Time for bed!`, () => null, { hands: false, max: 2 });
     const check = () => {
       if (!tucked || !dark || asleep) return; asleep = true; cp.classList.add('asleep'); zzz.hidden = false;
       [0, 2, 4, 2, 0, 2].forEach((k, i) => note(PENTA[k] / 2, { dur: 1.6, vol: .08, kind: 'box', when: .3 + i * .75, force: true }));
@@ -3899,6 +4156,173 @@ function parentExtras() {
 function bindParentExtras(o) {
   $$('[data-tm]', o).forEach(b => b.onclick = () => { S.limit = +b.dataset.tm; save(); resetSession(); $$('[data-tm]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); sfx.pop(); });
 }
+/* ===== LIYANA'S BIRTHDAY PARTY (v1.46) =====
+   A party in her toy room with Sama, baby Naya and her pet, everyone in party hats:
+     1 decorate the cake (tap toppings)   2 candles — tap to light each one, counting out loud
+     3 sing Happy Birthday (music box + karaoke words with her name; public-domain song)
+     4 countdown 3-2-1 and BLOW the candles out   5 a present from each guest   6 sticker, balloons, party again.
+   The grown-up panel's birthday date adds a countdown ("5 more sleeps until your birthday!") and the right number of candles. ===== */
+MUSIC_NO.push('birthday');                            /* the party has its own song; keep the background tunes out of the way */
+
+const bdayInfo = () => {
+  const b = /^(\d{4})-(\d{2})-(\d{2})$/.exec(S.birth || ''); if (!b) return null;
+  const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let next = new Date(today.getFullYear(), +b[2] - 1, +b[3]); if (next < today) next = new Date(today.getFullYear() + 1, +b[2] - 1, +b[3]);
+  const days = Math.round((next - today) / 864e5);
+  return { days, turning: Math.max(1, next.getFullYear() - +b[1]), today: days === 0 };
+};
+const bdayLine = i => !i ? '' : i.today ? `Today is your birthday! You are ${NUMS[i.turning] || i.turning}!` : i.days === 1 ? 'One more sleep until your birthday!' : i.days <= 30 ? `${i.days} more sleeps until your birthday!` : `${i.days} days until your birthday!`;
+
+/* Happy Birthday: [midi, beats, word index] per line; 3/4 with a one-beat pickup. Chords per bar (bar 1 starts on beat 1). */
+const HB_TUNE = [
+  [[67, .75, 0], [67, .25, 0], [69, 1, 1], [67, 1, 1], [72, 1, 2], [71, 2, 3]],
+  [[67, .75, 0], [67, .25, 0], [69, 1, 1], [67, 1, 1], [74, 1, 2], [72, 2, 3]],
+  [[67, .75, 0], [67, .25, 0], [79, 1, 1], [76, 1, 1], [72, 1, 2], [71, 1, 3], [69, 1, 3]],
+  [[77, .75, 0], [77, .25, 0], [76, 1, 1], [72, 1, 1], [74, 1, 2], [72, 3, 3]],
+];
+const HB_CHORDS = [[1, 'C'], [4, 'G'], [7, 'G'], [10, 'C'], [13, 'C'], [16, 'F'], [19, 'C'], [21, 'G'], [22, 'C']];
+const HB_BPM = 92;
+const hbWords = name => [['Happy', 'birthday', 'to', 'you'], ['Happy', 'birthday', 'to', 'you'], ['Happy', 'birthday', 'dear', name], ['Happy', 'birthday', 'to', 'you']];
+
+/* the cake: two tiers on a plate; topping slots on the front, candle slots on top */
+const BD_SLOTS = [[150, 204], [82, 206], [218, 206], [110, 132], [190, 132], [150, 128]];
+const bdCandleX = n => Array.from({ length: n }, (_, i) => n === 1 ? 150 : 150 - Math.min(24, 118 / (n - 1)) * (n - 1) / 2 + Math.min(24, 118 / (n - 1)) * i);
+function bdCakeSVG(n) {
+  const drip = (x0, x1, y) => { let d = `M${x0} ${y}`; for (let x = x0; x < x1; x += 24) d += ` q6 ${x % 48 ? 16 : 26} 12 0 q6 -8 12 0`; return d + ` V${y - 8} H${x0}Z`; };
+  const candles = bdCandleX(n).map((x, i) => `<g class="cslot" data-i="${i}"><circle cx="${x}" cy="92" r="11" fill="#fff" opacity=".7" stroke="#FF8FB0" stroke-width="3" stroke-dasharray="4 4"/><rect x="${x - 13}" y="44" width="26" height="56" fill="transparent"/>
+      <g class="cndl"><rect x="${x - 6}" y="50" width="12" height="46" rx="5" fill="${['#8EDCC0', '#FF9DB8', '#B79BFF', '#FFD24D'][i % 4]}" stroke="#3D3358" stroke-width="2.4"/><path d="M${x - 6} 62 l12 -6 M${x - 6} 76 l12 -6 M${x - 6} 90 l12 -6" stroke="#fff" stroke-width="3" opacity=".7"/><path d="M${x} 50 v-5" stroke="#3D3358" stroke-width="2"/>
+      <g class="flame" style="transform-origin:${x}px 44px"><ellipse cx="${x}" cy="36" rx="7.5" ry="12" fill="#FFB020"/><ellipse cx="${x}" cy="39" rx="4" ry="7" fill="#FFF3A8"/></g></g></g>`).join('');
+  return `<svg viewBox="0 0 300 270" aria-hidden="true"><ellipse cx="150" cy="252" rx="138" ry="16" fill="rgba(61,51,88,.18)"/><ellipse cx="150" cy="244" rx="134" ry="18" fill="#fff" stroke="#E5DDF5" stroke-width="3"/>
+    <rect x="34" y="158" width="232" height="84" rx="22" fill="#FF9DB8" stroke="#3D3358" stroke-width="4"/><rect x="34" y="158" width="232" height="84" rx="22" fill="url(#bdsh)"/>
+    <path d="${drip(34, 266, 166)}" fill="#fff"/><path d="M40 226 H260" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 14"/>
+    <rect x="76" y="94" width="148" height="72" rx="20" fill="#FFE29A" stroke="#3D3358" stroke-width="4"/><rect x="76" y="94" width="148" height="72" rx="20" fill="url(#bdsh)"/>
+    <path d="${drip(76, 224, 102)}" fill="#FFF6E2"/><ellipse cx="150" cy="96" rx="72" ry="12" fill="#FFF6E2" stroke="#3D3358" stroke-width="3"/>
+    ${BD_SLOTS.map((_, i) => `<g class="tp" data-i="${i}"></g>`).join('')}${candles}</svg>`;
+}
+const BD_TOPS = ['strawberry', 'star', 'flower', 'apple', 'butterfly', 'icecream'];
+const BD_GIFTS = [['bear', 'A teddy bear'], ['unicorn', 'A unicorn'], ['ball', 'A bouncy ball'], ['crown', 'A sparkly crown'], ['rocket', 'A little rocket'], ['guitar', 'A guitar']];
+
+SCREENS.birthday = el => {
+  const info = bdayInfo(), nC = info ? Math.min(9, info.turning) : Math.max(2, Math.min(5, S.age || 3));
+  const name = S.name || 'Liyana', pn = S.pet ? petName() : null, line = bdayLine(info);
+  const moons = info && !info.today && info.days <= 14 ? `<span class="bd-moons">${Array.from({ length: info.days }, () => '<i></i>').join('')}</span>` : '';
+  const STEPS = ['cake', 'candles', 'song', 'blow', 'gifts'];
+  el.innerHTML = bar('Birthday party!', `<span class="bd-steps">${STEPS.map((s, i) => `<i data-s="${i}"></i>`).join('')}</span>`) + `<div class="play bday ${info && info.today ? 'today' : ''}" id="bd">
+    <svg class="bd-bunting" viewBox="0 0 1000 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 10 Q500 70 1000 10" stroke="#C9975B" stroke-width="4" fill="none"/>${Array.from({ length: 13 }, (_, i) => { const x = 20 + i * 76, y = 10 + 60 * (1 - Math.pow((x - 500) / 500, 2)) * .98; return `<path d="M${x - 22} ${y - 2} L${x + 22} ${y + 2} L${x} ${y + 42}Z" fill="${['#FF8FB0', '#FFD24D', '#8EDCC0', '#B79BFF', '#7FC0FF'][i % 5]}" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>`; }).join('')}</svg>
+    <div class="bd-head"><div class="bd-banner">Happy Birthday, <b>${esc(name)}</b>!</div>${line ? `<div class="bd-count">${moons}<span>${esc(line)}</span></div>` : ''}</div>
+    ${[['l', 0], ['l', 1], ['r', 0], ['r', 1]].map(([s, k], i) => `<button class="bd-bal b${s}${k}" data-i="${i}" aria-label="balloon"><svg viewBox="0 0 60 110"><path d="M30 70 q-6 14 4 22 q8 8 -2 18" stroke="#8F86B4" stroke-width="2" fill="none"/><path d="M30 4 C8 4 2 26 4 38 C8 58 22 68 30 70 C38 68 52 58 56 38 C58 26 52 4 30 4Z" fill="${['#FF8FB0', '#7FC0FF', '#FFD24D', '#8EDCC0'][i]}"/><ellipse cx="20" cy="24" rx="6" ry="10" fill="#fff" opacity=".45"/><path d="M26 70 l4 6 4 -6z" fill="${['#FF8FB0', '#7FC0FF', '#FFD24D', '#8EDCC0'][i]}"/></svg></button>`).join('')}
+    <div class="bd-guest g-sama sama p-stand">${samaSVG('partyhat')}</div>
+    <div class="bd-guest g-me avf">${avatarFull(S.avatar, accent(), 'partyhat')}</div>
+    <div class="bd-guest g-naya naya p-sit">${nayaSVG('partyhat')}</div>
+    ${S.pet ? `<div class="bd-guest g-pet"><div class="gp">${petSVG(S.pet, 'partyhat')}</div></div>` : ''}
+    <div class="bd-table"></div>
+    <div class="bd-cake" id="cake"><svg width="0" height="0" style="position:absolute"><defs><linearGradient id="bdsh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#3D3358" stop-opacity=".14"/></linearGradient></defs></svg>${bdCakeSVG(nC)}</div>
+    <div class="bd-tray" id="tray"></div>
+    <div class="bd-lyrics" id="lyr" hidden>${hbWords(name).map((l, li) => `<div class="ln" data-l="${li}">${l.map((w, wi) => `<span data-w="${wi}">${esc(w)}</span>`).join(' ')}</div>`).join('')}</div>
+    <div class="bd-big" id="big"></div></div>`;
+  const bd = $('#bd', el), cake = $('#cake', el), tray = $('#tray', el), lyr = $('#lyr', el), big = $('#big', el);
+  const guests = $$('.bd-guest', el), sama = $('.g-sama', el), naya = $('.g-naya', el), me = $('.g-me', el);
+  let step = -1, busy = false;
+  const setStep = i => { step = i; $$('.bd-steps i', el).forEach((d, k) => { d.classList.toggle('on', k === i); d.classList.toggle('done', k < i); }); };
+  const ctr = e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  const cheerAll = (ms = 1600) => { sama.classList.add('clap'); naya.classList.add('clap'); me.classList.add('wee'); guests.forEach(g => g.classList.add('hop'));
+    later(() => { sama.classList.remove('clap'); naya.classList.remove('clap'); me.classList.remove('wee'); guests.forEach(g => g.classList.remove('hop')); }, ms); };
+
+  /* balloons: pop any time, they float back */
+  $$('.bd-bal', el).forEach(b => b.addEventListener('click', () => { if (b.classList.contains('popped')) return; b.classList.add('popped'); sfx.pop(); sparkle(...ctr(b), 10); later(() => b.classList.remove('popped'), 5000); }));
+
+  /* ---- 0 intro ---- */
+  later(() => { say(`It's party time! Happy birthday ${name}!${line ? ' ' + line : ''}`); cheerAll(1800); }, 400);
+  later(decorate, line ? 5200 : 3200);
+
+  /* ---- 1 decorate the cake ---- */
+  function decorate() {
+    setStep(0); let put = 0; const need = S.age <= 2 ? 3 : 5;
+    tray.innerHTML = shuffle(BD_TOPS.slice()).map((t, i) => `<button class="bd-top" data-t="${t}" style="--i:${i}" aria-label="${t}">${art(t)}</button>`).join('');
+    say('Let\'s decorate your cake! Tap the yummy things.');
+    coach(() => 'Tap something yummy for the cake!', () => $('.bd-top:not(.used)', tray));
+    $$('.bd-top', tray).forEach(b => b.addEventListener('click', () => {
+      if (b.classList.contains('used') || put >= need) return; b.classList.add('used');
+      const slot = $(`.tp[data-i="${put}"]`, cake), [sx, sy] = BD_SLOTS[put]; put++;
+      const fly = document.createElement('div'); fly.className = 'bd-fly'; fly.innerHTML = art(b.dataset.t); document.body.appendChild(fly);
+      const [x0, y0] = ctr(b), cr = $('svg:last-of-type', cake).getBoundingClientRect(), x1 = cr.left + sx / 300 * cr.width, y1 = cr.top + sy / 270 * cr.height;
+      fly.style.cssText = `left:${x0}px;top:${y0}px`; sfx.boop();
+      fly.animate([{ transform: 'translate(-50%,-50%) scale(1)' }, { transform: `translate(calc(-50% + ${(x1 - x0) / 2}px),calc(-50% + ${(y1 - y0) / 2 - 120}px)) scale(1.2)`, offset: .5 }, { transform: `translate(calc(-50% + ${x1 - x0}px),calc(-50% + ${y1 - y0}px)) scale(.62)` }], { duration: 650, easing: 'ease-in-out' }).onfinish = () => {
+        fly.remove(); slot.innerHTML = art(b.dataset.t).replace('<svg ', `<svg x="${sx - 24}" y="${sy - 24}" width="48" height="48" `); slot.classList.add('pop'); sfx.pop(); sparkle(x1, y1, 6);
+        if (put === need) later(() => { say('Yummy! What a beautiful cake!'); sfx.yay(); cheerAll(); later(candles, 2200); }, 350);
+      };
+      onLeave(() => fly.remove());
+    }));
+  }
+
+  /* ---- 2 candles: count them in ---- */
+  function candles() {
+    setStep(1); tray.innerHTML = ''; let lit = 0; cake.classList.add('slots');
+    say(`Now the candles! You are ${info ? (NUMS[nC] || nC) : 'so big'}! Tap the cake to put them in.`);
+    coach(() => 'Tap the cake to put in a candle!', () => $('.cslot:not(.on)', cake));
+    const add = () => {
+      const s = $$('.cslot', cake)[lit]; if (!s) return; s.classList.add('on'); lit++; sfx.note(Math.min(7, lit - 1));
+      later(() => { s.classList.add('lit'); sfx.chime(); }, 260); say(`${(NUMS[lit] || String(lit)).replace(/^./, c => c.toUpperCase())}!`); sparkle(...ctr(s), 5, ['#FFE29A', '#FFB020', '#fff']);
+      if (lit === nC) { cake.classList.remove('slots'); later(() => { say(`${String(NUMS[nC] || nC).replace(/^./, c => c.toUpperCase())} candles! Now let's sing!`); later(song, 2600); }, 700); }
+    };
+    cake.onclick = () => { if (step === 1 && lit < nC) add(); };
+  }
+
+  /* ---- 3 sing Happy Birthday: music box tune + karaoke words ---- */
+  function song() {
+    setStep(2); cake.onclick = null; lyr.hidden = false; bd.classList.add('singing'); $('.ln', lyr).classList.add('cur'); guests.forEach(g => g.classList.add('sing')); coach.off();
+    const spb = 60 / HB_BPM, t0 = (ac ? ac.currentTime : 0) + .5, words = $$('.ln span', lyr), lines = $$('.ln', lyr); let beat = 0;
+    const at = (b, fn) => { const ms = (t0 - (ac ? ac.currentTime : 0) + b * spb) * 1000; later(fn, Math.max(0, ms)); };
+    const sound = ac && ac.state === 'running' && !S.sfxOff;
+    HB_TUNE.forEach((ln, li) => ln.forEach(([m, d, wi]) => {
+      const b = beat, idx = li * 4 + wi;                                     /* 4 words per line */
+      if (sound) { mbox(mtof(m), t0 + b * spb, Math.min(d * spb * 1.35 + .5, 2.6), .2); mbox(mtof(m + 12), t0 + b * spb, Math.min(d * spb + .3, 1.6), .035); }
+      at(b, () => { words.forEach((w, k) => { w.classList.toggle('on', k === idx); if (k < idx) w.classList.add('sung'); }); lines.forEach((l, k) => l.classList.toggle('cur', k === li)); });
+      beat += d;
+    }));
+    if (sound) HB_CHORDS.forEach(([b, c], i) => { const nb = (HB_CHORDS[i + 1] || [25])[0]; padChord(c, t0 + b * spb, (nb - b) * spb, .05); bassNote(CBASS[c], t0 + b * spb, spb * 1.8, .1); });
+    at(beat + 1.2, () => { words.forEach(w => { w.classList.remove('on'); w.classList.add('sung'); }); guests.forEach(g => g.classList.remove('sing')); sfx.yay(); cheerAll(); say(`Happy birthday, ${name}!`); });
+    at(beat + 4, () => { lyr.hidden = true; bd.classList.remove('singing'); blow(); });
+  }
+
+  /* ---- 4 countdown and blow ---- */
+  function blow() {
+    setStep(3); const nums = ['3', '2', '1'], spoken = ['Three!', 'Two!', 'One!'];
+    say('Get ready to blow out your candles!');
+    nums.forEach((n, i) => later(() => { big.textContent = n; big.className = 'bd-big go'; void big.offsetWidth; big.classList.add('z'); say(spoken[i]); sfx.boop(); }, 1800 + i * 1100));
+    later(() => { big.textContent = 'Blow!'; big.className = 'bd-big go blowtxt'; void big.offsetWidth; big.classList.add('z'); say('Blow! Tap the candles!'); busy = false;
+      cake.classList.add('ready'); coach(() => 'Tap the candles to blow them out!', () => $('.cslot.lit', cake)); }, 1800 + 3 * 1100);
+    cake.onclick = () => {
+      if (step !== 3 || busy || !cake.classList.contains('ready')) return; busy = true; cake.classList.remove('ready'); big.className = 'bd-big'; coach.off();
+      sfx.whoosh(); $$('.cslot.lit', cake).forEach((s, i) => later(() => { s.classList.remove('lit'); const [x, y] = ctr(s); sparkle(x, y - 20, 5, ['#E7E3F0', '#CFC6E6', '#fff']); }, i * 90));
+      later(() => { sfx.yay(); cheer(); cheerAll(2400); say(`Hooray! Happy birthday ${name}! Make a wish!`); }, 500);
+      later(gifts, 3600);
+    };
+  }
+
+  /* ---- 5 presents from each guest ---- */
+  function gifts() {
+    setStep(4); cake.onclick = null; const pickG = shuffle(BD_GIFTS.slice()); let opened = 0;
+    const from = [['Sama', '#B79BFF'], ['Naya', '#8EDCC0'], ...(S.pet ? [[pn, '#FFB3C8']] : [['Mummy and Daddy', '#FFD24D']])];
+    tray.innerHTML = from.map(([who, c], i) => `<button class="bd-gift" data-i="${i}" style="--c:${c};--i:${i}" aria-label="Present from ${esc(who)}"><i class="lid"></i><i class="box"></i><span class="inside">${art(pickG[i][0])}</span><b>${esc(who)}</b></button>`).join('');
+    say('Presents! Open them one by one.');
+    coach(() => 'Tap a present to open it!', () => $('.bd-gift:not(.open)', tray));
+    $$('.bd-gift', tray).forEach(b => b.addEventListener('click', () => {
+      if (b.classList.contains('open')) return; b.classList.add('open'); opened++; sfx.star(); sparkle(...ctr(b), 12);
+      const i = +b.dataset.i; say(`${pickG[i][1]} from ${from[i][0]}!`);
+      if (i === 0) { sama.classList.add('clap'); later(() => sama.classList.remove('clap'), 1400); } else if (i === 1) { naya.classList.add('clap'); later(() => naya.classList.remove('clap'), 1400); } else { const g = $('.g-pet', el); if (g) { g.classList.add('hop'); later(() => g.classList.remove('hop'), 1400); } }
+      if (opened === from.length) later(finale, 1800);
+    }));
+  }
+
+  /* ---- 6 finale ---- */
+  function finale() {
+    setStep(5); coach.off(); cheer(); cheerAll(2600); sfx.yay();
+    S.parties = (S.parties || 0) + 1; save();
+    later(() => reward(info && info.today ? `Happy birthday ${name}! You are ${NUMS[nC] || nC}!` : 'What a wonderful party!'), 900);
+    later(() => { tray.innerHTML = `<button class="btn go big bd-again" id="again">Party again!</button>`; $('#again', tray).onclick = () => go('birthday'); }, 2600);
+  }
+};
 /* ===== games ===== */
 const speakerIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
 const later = (fn, ms) => { const id = navId; setTimeout(() => { if (id === navId) fn(); }, ms); };
@@ -3918,6 +4342,7 @@ SCREENS.bubbles = el => {
   };
   for (let i = 0; i < 4; i++) setTimeout(spawn, i * 350);
   const iv = setInterval(spawn, 1000); onLeave(() => clearInterval(iv));
+  coach(() => 'Pop a bubble!', () => pick($$('.bubble', pl).filter(b => { const r = b.getBoundingClientRect(); return r.top > 80 && r.bottom < innerHeight - 10; })) || null, { max: 3 });
   pl.addEventListener('pointerdown', e => {
     const b = e.target.closest('.bubble'); if (!b) return;
     const r = b.getBoundingClientRect(); sparkBurst(r.left + r.width / 2, r.top + r.height / 2); sfx.pop(); say(b.dataset.n); b.remove(); pops++;
@@ -3929,6 +4354,8 @@ SCREENS.bubbles = el => {
 SCREENS.animals = el => {
   el.innerHTML = bar('Animal friends') + `<div class="play"><div class="animals">${ANIMALS.map(([id, n, s, c], i) => `<button class="acard" style="background:${c};--i:${i}" data-i="${i}"><span class="em">${art(id)}</span><span class="nm">${n}</span></button>`).join('')}</div></div>`;
   const m = meter(6, () => setTimeout(() => reward(`${pick(PRAISE)} You met so many animals!`), 900)); mountMeter(el, m);
+  later(() => say('Tap an animal to hear it say hello!'), 1300);
+  coach(() => 'Tap an animal to hear it!', () => pick($$('.acard', el)), { max: 3 });
   $$('.acard', el).forEach(b => b.addEventListener('click', () => {
     const [, n, s] = ANIMALS[b.dataset.i]; b.classList.remove('bounce'); void b.offsetWidth; b.classList.add('bounce'); sfx.boop(); say(`${n}! ${s}`);
     const t = document.createElement('span'); t.className = 'snd'; t.textContent = s.replace(/!.*/, '!'); b.appendChild(t); setTimeout(() => t.remove(), 1200);
@@ -3983,7 +4410,7 @@ SCREENS.shapes = el => {
     });
   }
   const fly = (p, t) => { const c0 = p.getBoundingClientRect(), r = t.getBoundingClientRect(); p.classList.add('back', 'placed'); const cur = /translate\(([-\d.]+)px,([-\d.]+)px\)/.exec(p.style.transform); const bx = cur ? +cur[1] : 0, by = cur ? +cur[2] : 0; p.style.transform = `translate(${bx + r.left + r.width / 2 - (c0.left + c0.width / 2)}px,${by + r.top + r.height / 2 - (c0.top + c0.height / 2)}px)`; sfx.pop(); return r; };
-  const back = (p, msg) => { p.classList.add('back'); p.style.transform = ''; sfx.oops(); say(msg || 'Almost! Try again.'); };
+  const back = (p, msg) => { p.classList.add('back'); p.style.transform = ''; sfx.oops(); say(msg || 'Almost! Try again.'); coach.miss(); };
 
   function next() {
     const id = ++gen, mode = MODES[round % 4]; sh.innerHTML = ''; ({ match, find, odd, sort })[mode](id);
@@ -3994,6 +4421,7 @@ SCREENS.shapes = el => {
     const ids = pool().slice(0, cnt()); let placed = 0;
     sh.innerHTML = `<div class="row" id="slots">${shuffle(ids).map(id => `<div class="slot" data-id="${id}">${shapeSVG(id, '#3D3358')}</div>`).join('')}</div><div class="row" id="pieces">${shuffle(ids).map(id => `<div class="piece" data-id="${id}">${shapeSVG(id, null, true)}</div>`).join('')}</div>`;
     later(() => say('Match the shapes!'), 150);
+    coach(() => 'Drag each shape to its shadow!', () => { const p = $$('.piece', sh).find(x => !x.classList.contains('placed')); return p ? { from: p, to: $(`.slot[data-id="${p.dataset.id}"]`, sh) } : null; });
     $$('.piece', sh).forEach(p => { const slot = $(`.slot[data-id="${p.dataset.id}"]`, sh);
       drag(p, () => $$('.slot:not(.done)', sh), (pc, t) => {
         if (t !== slot) return back(pc);
@@ -4007,10 +4435,11 @@ SCREENS.shapes = el => {
     const n = Math.min(5, cnt() + 1), ids = pool().slice(0, n), target = pick(ids); let locked = false;
     sh.innerHTML = `<div class="findq"><button class="btn round" id="rep" aria-label="Say it again">${speakerIcon}</button><span class="findt">Find the ${SHAPE_NAME(target)}!</span></div><div class="row finds">${ids.map((id, i) => `<button class="sq" data-id="${id}" style="--i:${i}" aria-label="${id}">${shapeSVG(id, pick(SHAPE_TINTS), true)}</button>`).join('')}</div>`;
     later(() => say(`Find the ${target}!`), 200); $('#rep', sh).onclick = () => say(`Find the ${target}!`);
+    coach(() => locked ? null : `Find the ${target}!`, () => locked ? null : $(`.sq[data-id="${target}"]`, sh));
     $$('.sq', sh).forEach(b => b.addEventListener('click', () => {
       if (locked) return;
       if (b.dataset.id === target) { locked = true; b.classList.add('found'); const r = b.getBoundingClientRect(); sparkle(r.left + r.width / 2, r.top + r.height / 2, 14); sfx.pop(); say(`Yes! ${SHAPE_NAME(target)}!`); $$('.sq', sh).forEach(x => { if (x !== b) x.classList.add('fade'); }); later(done, 900); }
-      else { b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle'); sfx.oops(); say(`That's a ${b.dataset.id}. Find the ${target}!`); }
+      else { b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle'); sfx.oops(); say(`That's a ${b.dataset.id}. Find the ${target}!`); coach.miss(); }
     }));
   }
 
@@ -4019,10 +4448,11 @@ SCREENS.shapes = el => {
     const [a, b2] = pool(), n = Math.min(5, cnt() + 2), tint = pick(SHAPE_TINTS), items = shuffle([...Array(n - 1).fill(a), b2]); let locked = false;
     sh.innerHTML = `<div class="findq"><span class="findt">Which one is different?</span></div><div class="row finds">${items.map((id, i) => `<button class="sq" data-id="${id}" data-odd="${id === b2 ? 1 : 0}" style="--i:${i}" aria-label="${id}">${shapeSVG(id, tint, true)}</button>`).join('')}</div>`;
     later(() => say('Which one is different?'), 200);
+    coach(() => locked ? null : 'Which one is different?', () => locked ? null : $('.sq[data-odd="1"]', sh));
     $$('.sq', sh).forEach(b => b.addEventListener('click', () => {
       if (locked) return;
       if (b.dataset.odd === '1') { locked = true; b.classList.add('found'); const r = b.getBoundingClientRect(); sparkle(r.left + r.width / 2, r.top + r.height / 2, 14); sfx.pop(); say(`Yes! That one is a ${b.dataset.id}!`); $$('.sq', sh).forEach(x => { if (x !== b) x.classList.add('fade'); }); later(done, 1000); }
-      else { b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle'); sfx.oops(); say('Look again! Which one is different?'); }
+      else { b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle'); sfx.oops(); say('Look again! Which one is different?'); coach.miss(); }
     }));
   }
 
@@ -4031,6 +4461,7 @@ SCREENS.shapes = el => {
     const [a, b2] = pool(), per = Math.min(3, Math.max(2, AGE().shapes - 1 + (round >= 4 ? 1 : 0))), items = shuffle([...Array(per).fill(a), ...Array(per).fill(b2)]); let left = items.length;
     sh.innerHTML = `<div class="row baskets">${[a, b2].map(id => `<div class="bskt" data-id="${id}"><div class="bl">${shapeSVG(id, '#3D3358')}</div><i></i></div>`).join('')}</div><div class="row" id="pieces">${items.map((id, i) => `<div class="piece small" data-id="${id}" data-n="${i}">${shapeSVG(id, null, true)}</div>`).join('')}</div>`;
     later(() => say('Sort the shapes into the baskets!'), 200);
+    coach(() => 'Put each shape in its basket!', () => { const p = $$('.piece', sh).find(x => !x.classList.contains('placed')); return p ? { from: p, to: $(`.bskt[data-id="${p.dataset.id}"]`, sh) } : null; });
     $$('.piece', sh).forEach(p => drag(p, () => $$('.bskt', sh), (pc, t) => {
       if (!t) return back(pc); if (t.dataset.id !== pc.dataset.id) { t.classList.remove('wiggle'); void t.offsetWidth; t.classList.add('wiggle'); return back(pc, `Not that basket! That's a ${pc.dataset.id}.`); }
       const r = fly(pc, t); later(() => { pc.style.visibility = 'hidden'; t.classList.add('joy'); setTimeout(() => t.classList.remove('joy'), 600); sparkle(r.left + r.width / 2, r.top + r.height / 2, 7); if (--left === 0) done(); }, 340);
@@ -4050,6 +4481,7 @@ SCREENS.spy = el => {
     const items = shuffle([target, ...others]);
     sp.innerHTML = items.map(([id, n], i) => `<button class="sp" data-n="${n}" aria-label="${n}" style="--i:${i};transform:rotate(${rnd(-6, 6)}deg)">${art(id)}</button>`).join('');
     later(() => say(`Find the ${target[1]}!`), 250);
+    coach(() => locked ? null : `Find the ${target[1]}!`, () => locked ? null : $$('.sp', sp).find(x => x.dataset.n === target[1]) || null);
   }
   $('#rep', el).onclick = () => say(`Find the ${target[1]}!`);
   sp.addEventListener('click', e => {
@@ -4057,7 +4489,7 @@ SCREENS.spy = el => {
     if (b.dataset.n === target[1]) {
       locked = true; b.classList.add('found'); const r = b.getBoundingClientRect(); sparkle(r.left + r.width / 2, r.top + r.height / 2, 16); sfx.pop(); petHappy(); m.add();
       say(`Yes! A ${target[1]}!`); later(next, 1700);
-    } else { b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle'); sfx.oops(); say(`That's a ${b.dataset.n}. Find the ${target[1]}!`); }
+    } else { b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle'); sfx.oops(); say(`That's a ${b.dataset.n}. Find the ${target[1]}!`); coach.miss(); }
   });
   next();
 };
@@ -4072,6 +4504,7 @@ SCREENS.count = el => {
     cn.innerHTML = '<span>?</span>'; cn.classList.remove('done');
     th.innerHTML = Array.from({ length: n }, (_, i) => `<button class="thing" style="--i:${i};transform:rotate(${rnd(-8, 8)}deg)" aria-label="item">${art(id)}</button>`).join('');
     later(() => say(`Let's count! Tap each one.`), 200);
+    coach(() => 'Tap each one to count it!', () => $$('.thing', th).find(t => !t.classList.contains('gone')) || null);
     $$('.thing', th).forEach(t => t.addEventListener('click', () => {
       if (t.classList.contains('gone')) return; t.classList.add('gone'); popped++; sfx.note(popped - 1);
       cn.innerHTML = `<span>${popped}</span>`; cn.classList.remove('bump'); void cn.offsetWidth; cn.classList.add('bump'); say(NUMS[popped]);
@@ -4094,6 +4527,7 @@ SCREENS.memory = el => {
     cd.style.setProperty('--cols', pairs <= 2 ? 4 : pairs === 3 ? 3 : 4);
     cd.innerHTML = cards.map((id, i) => `<button class="card" style="--i:${i}" data-id="${id}" aria-label="card"><span class="in"><span class="face front"><svg viewBox="0 0 100 100"><path d="${star5(50, 52, 26, 12)}" fill="#FFE29A" stroke="#FFE29A" stroke-width="6" stroke-linejoin="round"/></svg></span><span class="face back">${art(id)}</span></span></button>`).join('');
     later(() => say('Find the matching pairs!'), 200);
+    coach(() => lock ? null : first ? 'Where is the one that matches?' : 'Tap a card to turn it over!', () => { if (lock) return null; if (first) return $$('.card', cd).find(c => c !== first && c.dataset.id === first.dataset.id && !c.classList.contains('ok')) || null; return $$('.card', cd).find(c => !c.classList.contains('flip') && !c.classList.contains('ok')) || null; });
     $$('.card', cd).forEach(c => c.addEventListener('click', () => {
       if (lock || c.classList.contains('flip') || c.classList.contains('ok')) return; c.classList.add('flip'); sfx.pop();
       const it = allItems().find(x => x[0] === c.dataset.id); if (it) say(it[1]);
@@ -4128,6 +4562,7 @@ SCREENS.peek = el => {
     const old = $('.pk-actor', pk); if (old) old.remove();
     pk.insertAdjacentHTML('afterbegin', `<div class="pk-actor">${art_}</div>`); const actor = $('.pk-actor', pk);
     later(() => say(`Watch ${who} hide!`), 250);
+    coach(() => active ? `Where is ${who}? Tap to look!` : null, () => null, { hands: false, idle1: 9000, max: 2 });
     later(() => { sfx.boop(); actor.classList.add('wave'); }, 700);
     later(() => {                                   /* friend hops behind the chosen hiding place */
       const tg = $$('.pkh', row)[target]; if (!tg) return; const a = actor.getBoundingClientRect(), t = tg.getBoundingClientRect();
@@ -4148,22 +4583,39 @@ SCREENS.peek = el => {
   next();
 };
 
-/* -- Music maker -- */
+/* -- Music maker: free play, or "play a song" — the next key shines and each tap plays the next note of a real tune.
+      (benchmark v1.46: toddler music apps teach a first song this way; ours was free play only). Age 2: any key plays the right note. -- */
+const MAJ = [72, 74, 76, 77, 79, 81, 83, 84];   /* the 8 keys as C major from C5, for songs */
+const PLAY_ALONG = [
+  ['Twinkle Twinkle', [0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0, 4, 4, 3, 3, 2, 2, 1, 4, 4, 3, 3, 2, 2, 1, 0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0]],
+  ['Mary Had a Little Lamb', [2, 1, 0, 1, 2, 2, 2, 1, 1, 1, 2, 4, 4, 2, 1, 0, 1, 2, 2, 2, 2, 1, 1, 2, 1, 0]],
+  ['Frere Jacques', [0, 1, 2, 0, 0, 1, 2, 0, 2, 3, 4, 2, 3, 4]],
+];
 SCREENS.music = el => {
-  el.innerHTML = bar('Make music!') + `<div class="play"><div class="keys" id="ks"></div></div>`;
-  const ks = $('#ks', el); let notes = 0, lastKey = -1;
+  el.innerHTML = bar('Make music!', `<button class="btn round songbtn" id="sng" aria-label="Play a song" aria-pressed="false">${art('note')}</button>`) + `<div class="play"><div class="songtitle" id="stt" hidden></div><div class="keys" id="ks"></div></div>`;
+  const ks = $('#ks', el), stt = $('#stt', el), sng = $('#sng', el); let notes = 0, lastKey = -1, song = null, pos = 0, songIx = 0, lock = false;
   const m = meter(5, () => reward(`${pick(PRAISE)} What a song!`)); mountMeter(el, m);
   const cols = ['#FF6B81', '#FFA24C', '#FFD84D', '#5CD68A', '#4DA3FF', '#9B7BFF', '#FF8FC7', '#7FD6E8'], ids = shuffle(pool().map(p => p[0]));
   ks.innerHTML = cols.map((c, i) => `<button class="key" data-i="${i}" style="--c:${c};--h:${92 - i * 6}%" aria-label="note ${i + 1}"><span class="crit">${art(ids[i % ids.length])}</span><span class="kbar" style="background:${c}"></span></button>`).join('');
-  const hit = k => {
-    const i = +k.dataset.i; if (i === lastKey) return; lastKey = i; sfx.note(i); k.classList.remove('hit'); void k.offsetWidth; k.classList.add('hit');
-    const r = k.getBoundingClientRect(), n = document.createElement('div'); n.className = 'floatnote'; n.style.cssText = `left:${r.left + r.width / 2 - 20}px;top:${r.top}px;color:${cols[i]}`; n.innerHTML = art('note'); document.body.appendChild(n); setTimeout(() => n.remove(), 1400);
-    notes++; if (notes % 4 === 0) petHappy(); if (notes % 6 === 0) m.add();
+  const keys = $$('.key', ks);
+  const flash = k => { k.classList.remove('hit'); void k.offsetWidth; k.classList.add('hit'); };
+  const floatNote = (k, i) => { const r = k.getBoundingClientRect(), n = document.createElement('div'); n.className = 'floatnote'; n.style.cssText = `left:${r.left + r.width / 2 - 20}px;top:${r.top}px;color:${cols[i]}`; n.innerHTML = art('note'); document.body.appendChild(n); setTimeout(() => n.remove(), 1400); };
+  const mark = () => { keys.forEach(k => k.classList.remove('next')); if (song && !lock && pos < song[1].length) keys[song[1][pos]].classList.add('next'); };
+  const startSong = () => { song = PLAY_ALONG[songIx++ % PLAY_ALONG.length]; pos = 0; lock = false; stt.hidden = false; stt.textContent = song[0]; el.classList.add('songmode'); sng.setAttribute('aria-pressed', 'true'); say(`Let's play ${song[0]}! Tap the shining key.`); mark(); };
+  const stopSong = () => { song = null; lock = false; stt.hidden = true; el.classList.remove('songmode'); sng.setAttribute('aria-pressed', 'false'); mark(); say('Free play! Tap any key.'); };
+  sng.onclick = () => { sfx.boop(); song ? stopSong() : startSong(); };
+  const hitFree = k => { const i = +k.dataset.i; if (i === lastKey) return; lastKey = i; sfx.note(i); flash(k); floatNote(k, i); notes++; if (notes % 4 === 0) petHappy(); if (notes % 6 === 0) m.add(); };
+  const hitSong = k => {
+    if (lock) return; const want = song[1][pos], i = +k.dataset.i;
+    if (i !== want && S.age > 2) { note(mtof(MAJ[i]), { dur: .45, vol: .07, kind: 'box' }); flash(k); coach.miss(); return; }   /* gentle "not that one", never a penalty */
+    const kk = keys[want]; note(mtof(MAJ[want]), { dur: 1.1, vol: .2, kind: 'box' }); flash(kk); floatNote(kk, want); pos++; notes++; mark();
+    if (pos === song[1].length) { lock = true; mark(); later(() => { sfx.yay(); cheer(); say(`You played ${song[0]}!`); m.add(); m.add(); }, 500); later(() => { if (song) startSong(); }, 3800); }
   };
-  ks.addEventListener('pointerdown', e => { const k = e.target.closest('.key'); if (k) { lastKey = -1; hit(k); } });
-  ks.addEventListener('pointermove', e => { if (e.buttons !== 1) return; const t = document.elementFromPoint(e.clientX, e.clientY), k = t && t.closest && t.closest('.key'); if (k) hit(k); });
+  ks.addEventListener('pointerdown', e => { const k = e.target.closest('.key'); if (!k) return; lastKey = -1; song ? hitSong(k) : hitFree(k); });
+  ks.addEventListener('pointermove', e => { if (song || e.buttons !== 1) return; const t = document.elementFromPoint(e.clientX, e.clientY), k = t && t.closest && t.closest('.key'); if (k) hitFree(k); });
   ks.addEventListener('pointerup', () => { lastKey = -1; });
-  setTimeout(() => say('Tap the keys!'), 250);
+  later(() => say('Tap the keys! Or tap the music note to play a song.'), 250);
+  coach(() => song ? (lock ? null : 'Tap the shining key!') : 'Tap the keys to make music!', () => song ? $('.key.next', ks) : pick(keys), { max: 3 });
 };
 
 /* ===== boot ===== */
