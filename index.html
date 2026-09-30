@@ -246,7 +246,7 @@ body[data-screen=setup1] #petbox,body[data-screen=setup2] #petbox,body[data-scre
 .pet .tail{transform-box:fill-box;transform-origin:0% 100%;animation:wag 1.5s ease-in-out infinite}
 @keyframes wag{50%{transform:rotate(14deg)}}
 .pp{transition:transform .12s ease-out}
-.bl{transform-box:fill-box;transform-origin:center;animation:blink 5s infinite}
+.bl{transform-box:fill-box;transform-origin:center;transition:transform .07s}body.blinking .bl{transform:scaleY(.08)}
 @keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
 #gear{position:fixed;left:calc(10px + env(safe-area-inset-left,0px));bottom:calc(8px + env(safe-area-inset-bottom,0px));width:46px;height:46px;z-index:30;border:0;border-radius:50%;background:rgba(255,255,255,.55);display:grid;place-items:center;padding:0;opacity:.7}
 #gear svg{width:100%;height:100%;position:absolute;inset:0;transform:rotate(-90deg)}
@@ -1068,6 +1068,31 @@ body[data-screen=birthday] #petbox{display:none}
 /* the random wiggle used to REPLACE the pop-in animation, so when it ended the pop-in replayed from invisible: a tile blinked out every few seconds. Keep tilePop first in the list so it never restarts. */
 .tiles .tile.wig2{animation:tilePop .6s cubic-bezier(.3,1.6,.5,1) backwards,wig2 .8s ease-in-out;animation-delay:calc(var(--i)*.07s),0s}
 </style>
+<style>
+/* ===== v1.47: outdoor sky + performance ===== */
+/* outdoors there is no toy room: no wallpaper, bunting or ceiling lamp over the grass (and nothing hidden behind the world to keep repainting) */
+body[data-screen=home]:not([data-view=grid]) #room{display:none}
+.town{background:linear-gradient(#6EC2FF 0%,#9ED6FF 30%,#CDEBFF 52%,#EAF7FF 64%)}
+.tsky{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.tsun{position:absolute;right:11%;top:12%;width:clamp(74px,9vw,112px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#FFF9CF 0 42%,#FFE066 72%);box-shadow:0 0 0 16px rgba(255,236,140,.34),0 0 0 36px rgba(255,236,140,.15)}
+.tcl{position:absolute;height:clamp(34px,4.6vw,58px);border-radius:999px;background:#fff;opacity:.94;will-change:transform;animation:tcloud linear infinite}
+.tcl::before,.tcl::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.tcl::before{width:48%;aspect-ratio:1;left:14%;bottom:32%}.tcl::after{width:36%;aspect-ratio:1;right:15%;bottom:38%}
+.tcl.c1{left:5%;top:15%;width:clamp(120px,15vw,196px);animation-duration:64s}
+.tcl.c2{left:33%;top:25%;width:clamp(86px,11vw,140px);animation-duration:84s;animation-delay:-30s;opacity:.85}
+.tcl.c3{left:57%;top:10%;width:clamp(104px,13vw,166px);animation-duration:74s;animation-delay:-50s}
+.tcl.c4{left:78%;top:31%;width:clamp(70px,9vw,112px);animation-duration:58s;animation-delay:-20s;opacity:.8}
+.tcl.c5{left:18%;top:36%;width:clamp(60px,7vw,92px);animation-duration:92s;animation-delay:-60s;opacity:.7}
+@keyframes tcloud{0%,100%{transform:translateX(-50px)}50%{transform:translateX(70px)}}
+/* the tufts swayed forever INSIDE the one giant ground drawing, which made the browser redraw the whole ground every frame */
+.sway,.sway.s2{animation:none}
+/* characters move every frame: give them their own layers so the scenery never has to be redrawn around them */
+/* (tried: will-change on the characters - measured MORE repaints while walking, so left off) */
+@media (prefers-reduced-motion:reduce){.tcl{animation:none}}
+</style>
+<style>/* with the room hidden outdoors, the strip under the play area showed the page colour - make it grass */
+body[data-screen=home]:not([data-view=grid]){background:#57B85E}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1142,8 +1167,12 @@ const accent = () => favThemes()[0].c;
 const AGE = () => AGES[S.age] || AGES[3];
 
 /* ---------- audio + voice ---------- */
-let ac, bus, master, mbus, noiseBuf;
+let ac, bus, master, mbus, noiseBuf, unlockT = 0;
+/* v1.47 perf: only make sound nodes while the audio is actually running. When iOS pauses/interrupts audio, the clock stops,
+   so every started note never ends and never gets freed — they piled up and made the whole app slower the longer she played. */
+const audioOk = () => !!ac && (ac.state === 'running' || (ac.state === 'suspended' && performance.now() - unlockT < 800));
 function unlock() {
+  unlockT = performance.now();
   if (!ac) {
     try {
       ac = new (window.AudioContext || window.webkitAudioContext)();
@@ -1161,7 +1190,7 @@ function unlock() {
 ['pointerdown', 'touchstart', 'click'].forEach(ev => document.addEventListener(ev, unlock, { passive: true }));
 const PARTIALS = { bell: [[1, 1], [2.76, .22], [5.4, .07]], box: [[1, 1], [3, .28], [6, .08]], marimba: [[1, 1], [4, .16]], soft: [[1, 1], [2, .12]] };
 function note(f, { dur = .5, vol = .14, kind = 'box', when = 0, wet = true, out = null, force = false } = {}) {
-  if (!ac || (S.sfxOff && !force)) return; const t = ac.currentTime + when + .005;
+  if (!audioOk() || (S.sfxOff && !force)) return; const t = ac.currentTime + when + .005;
   PARTIALS[kind].forEach(([m, gn]) => {
     const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = f * m;
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol * gn, t + .008); g.gain.exponentialRampToValueAtTime(.0001, t + dur / (m > 1 ? 1 + (m - 1) * .25 : 1));
@@ -1169,7 +1198,7 @@ function note(f, { dur = .5, vol = .14, kind = 'box', when = 0, wet = true, out 
   });
 }
 function glide(f0, f1, dur, vol, when = 0) {
-  if (!ac || S.sfxOff) return; const t = ac.currentTime + when, o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur * .7);
+  if (!audioOk() || S.sfxOff) return; const t = ac.currentTime + when, o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur * .7);
   g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + .03);
 }
 function tone(f, d = .12, type = 'sine', v = .16, when = 0) { note(f, { dur: d + .1, vol: v * .7, kind: 'soft', when }); }
@@ -1185,7 +1214,7 @@ const sfx = {
   star() { note(1567.98, { dur: .4, vol: .08, kind: 'bell' }); note(2093, { dur: .5, vol: .07, kind: 'bell', when: .08 }); },
   note(i) { const f = PENTA[i % PENTA.length]; note(f, { dur: 1.3, vol: .2, kind: 'box' }); },
   chime() { note(pick(PENTA), { dur: .6, vol: .07, kind: 'bell' }); },
-  whoosh() { if (!ac || S.sfxOff || !noiseBuf) return; const t = ac.currentTime, s = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; bp.type = 'bandpass'; bp.Q.value = 1.2; bp.frequency.setValueAtTime(400, t); bp.frequency.exponentialRampToValueAtTime(2200, t + .3); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.07, t + .06); g.gain.exponentialRampToValueAtTime(.0001, t + .34); s.connect(bp); bp.connect(g); g.connect(master); s.start(t); s.stop(t + .4); },
+  whoosh() { if (!audioOk() || S.sfxOff || !noiseBuf) return; const t = ac.currentTime, s = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; bp.type = 'bandpass'; bp.Q.value = 1.2; bp.frequency.setValueAtTime(400, t); bp.frequency.exponentialRampToValueAtTime(2200, t + .3); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.07, t + .06); g.gain.exponentialRampToValueAtTime(.0001, t + .34); s.connect(bp); bp.connect(g); g.connect(master); s.start(t); s.stop(t + .4); },
 };
 /* ===== background music v2: real songs (public-domain nursery tunes + two originals), music-box lead, warm pad, soft bass, reverb.
    Everything is synthesised with Web Audio (works offline). Songs are lists of "midi:beats" so they are easy to add/change. ===== */
@@ -1215,11 +1244,12 @@ const SONGS = {
     ch: MC('F:3 F:3 Dm:3 C:3 F:3 F:3 Bb:3 C:3 Dm:3 Bb:3 F:3 C:3 F:3 Dm:3 C:3 F:3') },
 };
 const MOOD_SONGS = { home: ['twinkle', 'frere', 'sunny', 'mary'], play: ['sunny', 'mary', 'ode', 'frere'], calm: ['moon', 'twinkle'] };
-let mLead, mPadF, mBassF;
+let mLead, mPadF, mBassF, mShakeF;
 function buildMusicGraph() {   /* called once from buildAudio(): instrument filters + a real (convolution) reverb */
   mLead = ac.createBiquadFilter(); mLead.type = 'lowpass'; mLead.frequency.value = 5200; mLead.Q.value = .4; mLead.connect(mbus);
   mPadF = ac.createBiquadFilter(); mPadF.type = 'lowpass'; mPadF.frequency.value = 950; mPadF.Q.value = .3; mPadF.connect(mbus);
   mBassF = ac.createBiquadFilter(); mBassF.type = 'lowpass'; mBassF.frequency.value = 520; mBassF.connect(mbus);
+  mShakeF = ac.createBiquadFilter(); mShakeF.type = 'highpass'; mShakeF.frequency.value = 6500; mShakeF.connect(mLead);   /* one shared filter, not one per shaker hit */
   const rev = ac.createConvolver(), len = Math.floor(ac.sampleRate * 2.4), ir = ac.createBuffer(2, len, ac.sampleRate);
   for (let c = 0; c < 2; c++) { const d = ir.getChannelData(c); let y = 0; for (let i = 0; i < len; i++) { const x = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.7); y += .4 * (x - y); d[i] = y; } }
   rev.buffer = ir; const rg = ac.createGain(); rg.gain.value = .34; mbus.connect(rev); rev.connect(rg); rg.connect(master);
@@ -1242,8 +1272,8 @@ function bassNote(m, t, dur, vol) {                 /* soft plucked bass */
   const v = vol * musicLevel(); [['sine', 1, 1], ['triangle', 1, .35]].forEach(([ty, mul, gn]) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = ty; o.frequency.value = mtof(m) * mul; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v * gn, t + .012); g.gain.exponentialRampToValueAtTime(.0001, t + dur); o.connect(g); g.connect(mBassF); o.start(t); o.stop(t + dur + .05); });
 }
 function shaker(t, vol) {
-  if (!noiseBuf) return; const s = ac.createBufferSource(), hp = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf; hp.type = 'highpass'; hp.frequency.value = 6500; const v = vol * musicLevel();
-  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .006); g.gain.exponentialRampToValueAtTime(.0001, t + .06); s.connect(hp); hp.connect(g); g.connect(mLead); s.start(t, Math.random() * .5); s.stop(t + .08);
+  if (!noiseBuf) return; const s = ac.createBufferSource(), g = ac.createGain(); s.buffer = noiseBuf; const v = vol * musicLevel();
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .006); g.gain.exponentialRampToValueAtTime(.0001, t + .06); s.connect(g); g.connect(mShakeF); s.start(t, Math.random() * .5); s.stop(t + .08);
 }
 function expandSong(sg, mood) {                     /* melody + chords -> a flat, time-ordered list of events (times in beats) */
   const ev = [], calm = mood === 'calm'; let b = 0; sg.mel.forEach(([m, d]) => { if (m != null) ev.push({ b, k: 'm', f: mtof(m), d }); b += d; }); const total = b; let cb = 0;
@@ -1606,7 +1636,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v46';
+const APP_V = 'lw-v47';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -1621,6 +1651,10 @@ async function getLatest(btn) {
     setTimeout(() => location.reload(), 900);
   } catch (e) { btn.disabled = false; msg("Couldn't reach the internet - try again"); }
 }
+
+/* ===== BLINKING (v1.47 perf): every face used to run a 5s CSS blink animation forever — on the main thread, every frame,
+   for every face on screen. Now all eyes blink together, a class on <body> for 150ms every few seconds. ===== */
+(function blinker() { setTimeout(() => { if (!document.hidden && !document.body.classList.contains('lite')) { document.body.classList.add('blinking'); setTimeout(() => document.body.classList.remove('blinking'), 150); } blinker(); }, 3600 + Math.random() * 2800); })();
 /* ===== screens: setup, home, stickers, wardrobe, gallery, parent ===== */
 const SCREENS = {};
 const sc = (id, s, x, y) => `<g transform="translate(${x} ${y}) scale(${s})">${ART[id]()}</g>`;
@@ -1892,7 +1926,7 @@ SCREENS.world = el => {
   const trees = Array.from({ length: Math.round(WW / 330) }, (_, i) => tree(60 + i * 330 + rnd(-30, 30), 300, rnd(.8, 1.1))).join('');
   el.innerHTML = `<div class="town" id="town" data-tod="${todNow()}"><svg width="0" height="0" style="position:absolute"><defs><filter id="puff" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur in="SourceAlpha" stdDeviation="2.6" result="b"/><feSpecularLighting in="b" surfaceScale="5" specularConstant=".8" specularExponent="16" lighting-color="#fff" result="sp"><feDistantLight azimuth="235" elevation="52"/></feSpecularLighting><feComposite in="sp" in2="SourceAlpha" operator="in" result="sp2"/><feComposite in="SourceGraphic" in2="sp2" operator="arithmetic" k1="0" k2="1" k3=".26" k4="0"/></filter></defs></svg>
   <div class="nightfx" aria-hidden="true">${Array.from({ length: 0 }, () => `<i class="star" style="left:${rnd(0, 100)}%;top:${rnd(0, 42)}%;--s:${rnd(2, 5)}px;animation-delay:${rnd(0, 3)}s"></i>`).join('')}<svg class="moon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="34" fill="#FFF6D2"/><circle cx="40" cy="44" r="6" fill="#F0E4B0"/><circle cx="58" cy="62" r="8" fill="#F0E4B0"/><circle cx="30" cy="64" r="4" fill="#F0E4B0"/></svg>${Array.from({ length: 0 }, () => `<i class="ffly" style="left:${rnd(4, 96)}%;top:${rnd(48, 88)}%;--x:${rnd(-60, 60)}px;--y:${rnd(-40, 40)}px;animation-duration:${rnd(6, 11)}s;animation-delay:${rnd(0, 5)}s"></i>`).join('')}</div>
-  <div class="sunglow" aria-hidden="true"></div>
+  <div class="tsky" aria-hidden="true"><i class="tsun"></i><i class="tcl c1"></i><i class="tcl c2"></i><i class="tcl c3"></i><i class="tcl c4"></i><i class="tcl c5"></i></div><div class="sunglow" aria-hidden="true"></div>
   <svg class="birds" viewBox="0 0 200 40" aria-hidden="true"><g stroke="#5b5478" stroke-width="2.4" fill="none" stroke-linecap="round"><path class="bw" d="M10 20 q6 -8 12 0 q6 -8 12 0"/><path class="bw" style="animation-delay:.2s" d="M60 10 q5 -7 10 0 q5 -7 10 0"/><path class="bw" style="animation-delay:.1s" d="M110 24 q5 -7 10 0 q5 -7 10 0"/></g></svg><svg class="tmid" id="tmid" viewBox="0 0 3000 300" preserveAspectRatio="none"><path d="M0 300 V200 Q200 120 420 200 T900 190 T1400 205 T1900 165 T2400 200 T3000 175 V300Z" fill="#8FD08A" opacity=".75"/></svg><svg class="tfar" id="tfar" viewBox="0 0 3000 300" preserveAspectRatio="none"><path d="M0 300 V190 Q250 100 500 190 T1000 170 T1500 200 T2000 150 T2500 190 T3000 160 V300Z" fill="#B8E6B0" opacity=".8"/><path d="M0 300 V230 Q300 160 600 230 T1200 220 T1800 235 T2400 210 T3000 230 V300Z" fill="#9AD98F"/></svg>
   <div class="tstage" id="ts">
     <svg class="tground" style="left:-400px" viewBox="-400 0 ${WW + 800} ${WH}" width="${WW + 800}" height="${WH}"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BE38C"/><stop offset=".5" stop-color="#7DD173"/><stop offset="1" stop-color="#57B85E"/></linearGradient>
