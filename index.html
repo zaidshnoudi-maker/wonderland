@@ -1093,6 +1093,15 @@ body[data-screen=home]:not([data-view=grid]) #room{display:none}
 <style>/* with the room hidden outdoors, the strip under the play area showed the page colour - make it grass */
 body[data-screen=home]:not([data-view=grid]){background:#57B85E}
 </style>
+<style>
+/* ===== v1.48 art studio: show time, scratch hint ===== */
+.showtime{position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(61,51,88,.55);animation:stin .3s ease-out;cursor:pointer}
+.stframe{padding:clamp(12px,2vw,20px);background:linear-gradient(135deg,#FFE9A8,#F4B435 45%,#FFE29A 70%,#D99A1E);border-radius:28px;box-shadow:0 0 0 8px #fff,0 16px 30px rgba(0,0,0,.25);transform:rotate(-2deg);animation:stpop .65s cubic-bezier(.3,1.5,.5,1)}
+.stframe img{display:block;width:min(70vw,660px);max-height:62vh;object-fit:contain;border-radius:14px;background:#fff}
+.stname{font:700 clamp(24px,3.2vw,34px) var(--display);color:#fff;text-shadow:0 3px 0 rgba(61,51,88,.4)}
+@keyframes stin{from{opacity:0}}@keyframes stpop{from{transform:scale(.4) rotate(-14deg);opacity:0}}
+.schint{font:700 clamp(16px,2vw,22px) var(--display);color:#fff;background:#2A2346;border-radius:999px;padding:6px 16px;white-space:nowrap}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1636,7 +1645,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v47';
+const APP_V = 'lw-v48';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -3119,6 +3128,21 @@ const PAL = ['#FF5C5C', '#FFA24C', '#FFD84D', '#5CD68A', '#4DA3FF', '#9B7BFF', '
 const PAL_X = ['#22C7C7', '#FFB3D9', '#8A8AA8', '#FFFFFF'];
 const PALN_X = ['teal', 'light pink', 'grey', 'white'];
 const PALN = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown'];
+/* v1.48: special fills for coloring pages (every leading kids' coloring app has them) */
+const PATC = ['url(#pf-rainbow)', 'url(#pf-glitter)', 'url(#pf-dots)'], PATN = ['rainbow', 'glitter', 'polka dots'];
+const PATBG = ['linear-gradient(135deg,#FF5C5C,#FFD84D,#5CD68A,#4DA3FF,#9B7BFF)', 'radial-gradient(circle at 30% 30%,#fff 0 12%,transparent 14%),radial-gradient(circle at 70% 66%,#FFF6C2 0 10%,transparent 12%),#FFC93D', 'radial-gradient(circle,#fff 0 24%,transparent 26%) 0 0/13px 13px,#FF9DC8'];
+const PAT_DEFS = `<defs><linearGradient id="pf-rainbow" x1="0" y1="0" x2="1" y2="1">${['#FF5C5C', '#FFA24C', '#FFD84D', '#5CD68A', '#4DA3FF', '#9B7BFF'].map((c, i) => `<stop offset="${i / 5}" stop-color="${c}"/>`).join('')}</linearGradient>
+  <pattern id="pf-glitter" width="22" height="22" patternUnits="userSpaceOnUse"><rect width="22" height="22" fill="#FFC93D"/><path d="M6 3 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="#fff"/><circle cx="16" cy="15" r="2.2" fill="#FFF6C2"/><circle cx="17" cy="5" r="1.2" fill="#fff"/></pattern>
+  <pattern id="pf-dots" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#FF9DC8"/><circle cx="5" cy="5" r="3.4" fill="#fff"/><circle cx="15" cy="15" r="3.4" fill="#fff"/></pattern></defs>`;
+const colorName = c => c === 'rainbow' ? 'rainbow' : PALN.concat(PALN_X, PATN)[PAL.concat(PAL_X, PATC).indexOf(c)] || null;
+/* "show time": her finished picture in a gold frame, and the voice says the colors she used */
+function showTime(url, used) {
+  const n = [...used].filter(Boolean), line = n.length ? `Wow! I see ${n.length > 1 ? n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1] : n[0]}!` : 'Wow, what a picture!';
+  const o = document.createElement('div'); o.className = 'showtime'; o.innerHTML = `<div class="stframe"><img src="${url}" alt="Your picture"></div><div class="stname">By ${esc(S.name)}</div>`;
+  document.body.appendChild(o); sfx.yay(); cheer(); say(line + ' ' + pick(['Beautiful!', 'I love it!', 'So pretty!']));
+  let gone = false; const end = () => { if (gone) return; gone = true; o.remove(); reward('Your picture is saved in My pictures!'); go('studio'); };
+  setTimeout(end, 3400); o.onclick = end;
+}
 const rgba = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
 const ICON = {
   undo: '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4.5 11.5 9 16"/><path d="M5 11.5h9.5a5 5 0 0 1 0 10H11" transform="translate(0 -3)"/></svg>',
@@ -3127,12 +3151,15 @@ const ICON = {
   prev: backIcon,
 };
 ICON.erase = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4.5l5 5L10 19H6l-2.5-2.5a1.5 1.5 0 0 1 0-2z" fill="#FFB3C7"/><path d="M8 11l5 5M9 19h11"/></svg>';
+ICON.fill = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11.5 11 5l6.5 6.5L11 18z" fill="#9FD8FF"/><path d="M4.5 11.5h13"/><path d="M11 5 8.5 2.5"/><path d="M20.5 14.5c0 1.6 1 2.6 1 3.6a1 1 0 0 1-2 0c0-1 1-2 1-3.6z" fill="#4DA3FF"/></svg>';
 ICON.grid = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg>';
 TILE.crayon = `<rect x="34" y="10" width="32" height="70" rx="6" fill="#FF6B81"/><path d="M34 80 L50 96 L66 80Z" fill="#FF6B81"/><rect x="34" y="26" width="32" height="14" fill="#fff" opacity=".6"/><rect x="34" y="52" width="32" height="6" fill="#fff" opacity=".4"/><path d="M12 92 q10 -8 20 0 t20 0 t20 0 t20 0" stroke="#FFA24C" stroke-width="5" fill="none" stroke-linecap="round"/>`;
 TILE.mirror = `<path d="M50 6 V94" stroke="#fff" stroke-width="3" stroke-dasharray="5 5"/><path d="M16 74 Q24 24 44 46 Q48 54 46 68" stroke="#FF6B81" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M84 74 Q76 24 56 46 Q52 54 54 68" stroke="#4DA3FF" stroke-width="9" fill="none" stroke-linecap="round"/><circle cx="50" cy="20" r="6" fill="#FFD84D"/>`;
+TILE.sparkle = `<path d="M10 80 Q34 40 54 62 T92 26" stroke="#FFD84D" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/><path d="${star5(22, 70, 12, 5)}" fill="#FF6B81"/><path d="${star5(52, 58, 15, 6)}" fill="#FFD84D"/><path d="M78 44 c-9 -7 -9 -15 -3 -15 c2 0 3 2 3 3 c0 -1 1 -3 3 -3 c6 0 6 8 -3 15z" fill="#9B7BFF"/><path d="${star5(86, 22, 9, 4)}" fill="#4DA3FF"/>`;
+TILE.scratch = `<rect x="6" y="10" width="88" height="80" rx="14" fill="#2A2346"/><circle cx="24" cy="26" r="2" fill="#fff" opacity=".4"/><circle cx="78" cy="72" r="2" fill="#fff" opacity=".4"/><defs><linearGradient id="tlsc" x1="0" x2="1"><stop offset="0" stop-color="#FF5C5C"/><stop offset=".3" stop-color="#FFD84D"/><stop offset=".6" stop-color="#5CD68A"/><stop offset="1" stop-color="#9B7BFF"/></linearGradient></defs><path d="M18 70 Q34 26 50 50 T84 30" stroke="url(#tlsc)" stroke-width="12" fill="none" stroke-linecap="round"/>`;
 TILE.trace = `<path d="M14 70 Q26 14 50 44 T88 30" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="1 14"/><path d="M14 70 Q26 14 50 44" stroke="#5CD68A" stroke-width="9" fill="none" stroke-linecap="round"/><circle cx="14" cy="70" r="8" fill="#FFD84D"/><path d="${star5(84, 28, 12, 6)}" fill="#FFD84D"/>`;
 const MODES = [
-  ['finger', 'Finger paint', 't-pink', 'Finger paint'], ['water', 'Watercolor', 't-sky', 'Watercolor'], ['dots', 'Dot painting', 't-butter', 'Dot painting'],
+  ['finger', 'Finger paint', 't-pink', 'Finger paint'], ['sparkle', 'Sparkle brush', 't-lilac', 'Sparkle brush'], ['scratch', 'Magic scratch', 't-sky', 'Magic scratch'], ['water', 'Watercolor', 't-sky', 'Watercolor'], ['dots', 'Dot painting', 't-butter', 'Dot painting'],
   ['color', 'Color it in', 't-mint', 'Color it in'], ['glow', 'Glow pen', 't-lilac', 'Glow pen'], ['stamps', 'Stamps', 't-peach', 'Stamps'], ['rain', 'Color rain', 't-sky', 'Color rain'], ['crayon', 'Crayons', 't-butter', 'Crayons'], ['mirror', 'Magic mirror', 't-lilac', 'Magic mirror'], ['trace', 'Trace it', 't-mint', 'Trace it'],
 ];
 
@@ -3165,18 +3192,19 @@ const PICS = [
 
 SCREENS.draw = (el, mode) => {
   let picStart = 0; if (String(mode).startsWith('color:')) { picStart = +String(mode).split(':')[1]; mode = 'color'; }
-  const canvasMode = mode !== 'color', rainbowOK = ['finger', 'glow', 'rain', 'crayon', 'mirror', 'trace'].includes(mode);
-  let color = PAL[4], sizeIdx = 1, hue = 0, guideIdx = 0, strokes = 0, picIdx = picStart;
-  const SZ = { finger: [12, 26, 46], water: [22, 40, 70], dots: [14, 24, 38], glow: [8, 16, 28], stamps: [80, 130, 190], rain: [26, 42, 62], crayon: [12, 22, 38], mirror: [10, 18, 32], trace: [14, 22, 34] }[mode] || [0, 0, 0];
+  const canvasMode = mode !== 'color', rainbowOK = ['finger', 'glow', 'rain', 'crayon', 'mirror', 'trace', 'sparkle'].includes(mode), FILLOK = ['finger', 'crayon', 'mirror', 'glow', 'sparkle'].includes(mode), used = new Set();
+  let color = mode === 'sparkle' ? 'rainbow' : PAL[4], sizeIdx = 1, hue = 0, guideIdx = 0, strokes = 0, picIdx = picStart;
+  const SZ = { finger: [12, 26, 46], water: [22, 40, 70], dots: [14, 24, 38], glow: [8, 16, 28], stamps: [80, 130, 190], rain: [26, 42, 62], crayon: [12, 22, 38], mirror: [10, 18, 32], trace: [14, 22, 34], sparkle: [16, 26, 40], scratch: [14, 26, 46] }[mode] || [0, 0, 0];
   const sizeDots = [10, 18, 28];
   const stampIds = [...new Set(pool().map(p => p[0]))].slice(0, 8); let stampId = stampIds[0];
   if (mode === 'stamps') stampIds.forEach(artImg);
   el.classList.add('draw');
   const palette = mode === 'stamps'
     ? stampIds.map((id, i) => `<button class="stampbtn" data-stamp="${id}" aria-pressed="${i === 0}" aria-label="${id}">${art(id)}</button>`).join('')
-    : (mode === 'color' ? PAL.concat(PAL_X) : PAL).map((c, i) => `<button class="sw" data-c="${c}" data-n="${(mode === 'color' ? PALN.concat(PALN_X) : PALN)[i]}" style="background:${c}" aria-pressed="${c === color}" aria-label="${(mode === 'color' ? PALN.concat(PALN_X) : PALN)[i]}"></button>`).join('') + (rainbowOK ? `<button class="sw rainbow" data-c="rainbow" data-n="rainbow" aria-pressed="false" aria-label="rainbow"></button>` : '');
+    : mode === 'scratch' ? '<span class="schint">Scratch to find the rainbow!</span>'
+    : (mode === 'color' ? PAL.concat(PAL_X, PATC) : PAL).map((c, i) => `<button class="sw" data-c="${c}" data-n="${(mode === 'color' ? PALN.concat(PALN_X, PATN) : PALN)[i]}" style="background:${c.startsWith('url') ? PATBG[PATC.indexOf(c)] : c}" aria-pressed="${c === color}" aria-label="${(mode === 'color' ? PALN.concat(PALN_X, PATN) : PALN)[i]}"></button>`).join('') + (rainbowOK ? `<button class="sw rainbow" data-c="rainbow" data-n="rainbow" aria-pressed="${color === 'rainbow'}" aria-label="rainbow"></button>` : '');
   el.innerHTML = `<div class="bar">${homeBtn}<button class="btn round" data-go="studio" aria-label="Back to studio">${ICON.prev}</button><span class="sep"></span>${palette}
-    ${canvasMode ? `<span class="sep"></span>${sizeDots.map((d, i) => `<button class="size" data-s="${i}" aria-pressed="${i === sizeIdx}" aria-label="Size ${i + 1}"><i style="width:${d}px;height:${d}px"></i></button>`).join('')}<span class="sep"></span><button class="btn round" id="undo" aria-label="Undo">${ICON.undo}</button><button class="btn round" id="clear" aria-label="Clear">${ICON.clear}</button>${['dots', 'trace', 'stamps'].includes(mode) && mode !== 'stamps' ? '' : `<button class="btn round" id="erase" aria-pressed="false" aria-label="Eraser">${ICON.erase}</button>`}${mode === 'dots' || mode === 'trace' ? `<button class="btn round" id="guide" aria-label="Next shape">${ICON.next}</button>` : ''}` : ''}
+    ${canvasMode ? `<span class="sep"></span>${sizeDots.map((d, i) => `<button class="size" data-s="${i}" aria-pressed="${i === sizeIdx}" aria-label="Size ${i + 1}"><i style="width:${d}px;height:${d}px"></i></button>`).join('')}<span class="sep"></span><button class="btn round" id="undo" aria-label="Undo">${ICON.undo}</button><button class="btn round" id="clear" aria-label="Clear">${ICON.clear}</button>${['dots', 'trace', 'scratch'].includes(mode) ? '' : `<button class="btn round" id="erase" aria-pressed="false" aria-label="Eraser">${ICON.erase}</button>`}${FILLOK ? `<button class="btn round" id="fill" aria-pressed="false" aria-label="Paint bucket">${ICON.fill}</button>` : ''}${mode === 'dots' || mode === 'trace' ? `<button class="btn round" id="guide" aria-label="Next shape">${ICON.next}</button>` : ''}` : ''}
     ${canvasMode ? '' : `<span class="sep"></span><button class="btn round" id="pick" aria-label="Choose picture">${ICON.grid}</button><button class="btn round" id="reset" aria-label="Start again">${ICON.clear}</button>`}
     <span class="spacer"></span><button class="btn go round" id="done" aria-label="Done">${tickIcon}</button></div>
     <div class="stage ${mode === 'glow' ? 'dark' : ''}" id="st">${canvasMode ? '<canvas id="g"></canvas><canvas id="cv"></canvas>' : `<svg class="pic" id="pic" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet"></svg><button class="btn round arrow l" id="pp" aria-label="Previous picture">${ICON.prev}</button><button class="btn round arrow r" id="pn" aria-label="Next picture">${ICON.next}</button>`}</div>`;
@@ -3185,17 +3213,17 @@ SCREENS.draw = (el, mode) => {
   const baseColor = () => color === 'rainbow' ? `hsl(${hue} 88% 60%)` : color;
   $$('.sw', bar).forEach(b => b.addEventListener('click', () => { color = b.dataset.c; $$('.sw', bar).forEach(x => x.setAttribute('aria-pressed', x === b)); sfx.pop(); say(b.dataset.n); }));
   $$('.stampbtn', bar).forEach(b => b.addEventListener('click', () => { stampId = b.dataset.stamp; $$('.stampbtn', bar).forEach(x => x.setAttribute('aria-pressed', x === b)); sfx.pop(); const it = allItems().find(x => x[0] === stampId); if (it) say(it[1]); }));
-  setTimeout(() => say({ finger: "Let's paint!", water: 'Splash some color!', dots: 'Dot, dot, dot!', color: 'Tap to color!', glow: 'Draw with light!', stamps: 'Pick a stamp!', rain: 'Make it rain colors!', crayon: 'Crayons!', mirror: 'Draw and see the magic!', trace: 'Follow the line!' }[mode]), 200);
+  setTimeout(() => say({ finger: "Let's paint!", water: 'Splash some color!', dots: 'Dot, dot, dot!', color: 'Tap to color!', glow: 'Draw with light!', stamps: 'Pick a stamp!', rain: 'Make it rain colors!', sparkle: 'Draw with sparkles!', scratch: 'Scratch to find the rainbow!', crayon: 'Crayons!', mirror: 'Draw and see the magic!', trace: 'Follow the line!' }[mode]), 200);
 
   /* ---- color by touch ---- */
   if (!canvasMode) {
     const pic = $('#pic', el);
     const show = () => {
-      pic.innerHTML = PICS[picIdx]();
+      pic.innerHTML = PAT_DEFS + PICS[picIdx]();
       $$('.r', pic).forEach(r => { r.setAttribute('fill', '#FFFFFF'); r.setAttribute('stroke', '#3D3358'); r.setAttribute('stroke-width', r.classList.contains('s') ? '2.6' : '5'); r.setAttribute('stroke-linejoin', 'round'); });
     };
     const fillR = r => {
-      if (!r || !r.classList || !r.classList.contains('r') || r.getAttribute('fill') === color) return; r.setAttribute('fill', color); r.dataset.c = 1; sfx.pop(); r.classList.remove('pulse'); void r.getBoundingClientRect(); r.classList.add('pulse'); const b = r.getBoundingClientRect(); sparkle(b.left + b.width / 2, b.top + b.height / 2, 4, [color]);
+      if (!r || !r.classList || !r.classList.contains('r') || r.getAttribute('fill') === color) return; r.setAttribute('fill', color); r.dataset.c = 1; used.add(colorName(color)); sfx.pop(); r.classList.remove('pulse'); void r.getBoundingClientRect(); r.classList.add('pulse'); const b = r.getBoundingClientRect(); sparkle(b.left + b.width / 2, b.top + b.height / 2, 4, [color]);
       const rs = $$('.r', pic); if (rs.filter(x => x.dataset.c).length >= Math.ceil(rs.length * (PICS[picIdx].scene ? .6 : .88)) && !finished) { finished = true; markDone(); reward('You colored the whole picture!'); setTimeout(() => { picIdx = picStep(picIdx, 1); show(); finished = false; }, 2400); }
     };
     let finished = false, painting = false;
@@ -3213,7 +3241,7 @@ SCREENS.draw = (el, mode) => {
     $('#done', el).onclick = () => {
       if (!$$('.r', pic).some(r => r.dataset.c)) { sfx.oops(); say('Color something first!'); return; }
       const x = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600"><rect width="400" height="300" fill="#FFFDFA"/>${pic.innerHTML}</svg>`, im = new Image();
-      im.onload = () => { const t = document.createElement('canvas'); t.width = 520; t.height = 390; t.getContext('2d').drawImage(im, 0, 0, 520, 390); gallery.unshift(t.toDataURL('image/jpeg', .76)); gallery = gallery.slice(0, 30); saveGallery(); S.coloredPics = [...new Set([...(S.coloredPics || []), picIdx])]; save(); reward('Beautiful! Your picture is saved.'); go('studio'); };
+      im.onload = () => { const t = document.createElement('canvas'); t.width = 520; t.height = 390; t.getContext('2d').drawImage(im, 0, 0, 520, 390); const url = t.toDataURL('image/jpeg', .76); gallery.unshift(url); gallery = gallery.slice(0, 30); saveGallery(); S.coloredPics = [...new Set([...(S.coloredPics || []), picIdx])]; save(); showTime(url, used); };
       im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(x);
     };
     $('#pn', el).onclick = () => { picIdx = picStep(picIdx, 1); sfx.boop(); show(); };
@@ -3237,15 +3265,17 @@ SCREENS.draw = (el, mode) => {
     gctx.setTransform(dpr, 0, 0, dpr, 0, 0); gctx.clearRect(0, 0, W, H);
     if (mode === 'trace') { if (!tPath) return; gctx.save(); gctx.setTransform(dpr * tk, 0, 0, dpr * tk, dpr * tox, dpr * toy); gctx.lineCap = gctx.lineJoin = 'round'; gctx.strokeStyle = 'rgba(61,51,88,.12)'; gctx.lineWidth = 46 / tk; gctx.stroke(tPath); gctx.setLineDash([2 / tk, 26 / tk]); gctx.strokeStyle = 'rgba(61,51,88,.45)'; gctx.lineWidth = 8 / tk; gctx.stroke(tPath); gctx.restore();
       gctx.setTransform(dpr, 0, 0, dpr, 0, 0); tpts.forEach(([x, y], i) => { if (tdone[i]) { gctx.fillStyle = 'rgba(92,214,138,.55)'; gctx.beginPath(); gctx.arc(x, y, 20, 0, 7); gctx.fill(); } }); if (tpts[0]) { gctx.fillStyle = '#5CD68A'; gctx.beginPath(); gctx.arc(tpts[0][0], tpts[0][1], 16, 0, 7); gctx.fill(); gctx.fillStyle = '#fff'; gctx.beginPath(); gctx.moveTo(tpts[0][0] - 5, tpts[0][1] - 8); gctx.lineTo(tpts[0][0] + 9, tpts[0][1]); gctx.lineTo(tpts[0][0] - 5, tpts[0][1] + 8); gctx.fill(); } return; }
+    if (mode === 'scratch') { scratchRainbow(); return; }
     if (mode !== 'dots') return;
     gpts = guidePts(GUIDES[guideIdx]); gctx.fillStyle = 'rgba(61,51,88,.14)';
     gpts.forEach(([x, y]) => { gctx.beginPath(); gctx.arc(x, y, SZ[sizeIdx], 0, 7); gctx.fill(); });
   }
   function fit() {
-    const r = st.getBoundingClientRect(); const nw = Math.round(r.width), nh = Math.round(r.height); if (!nw || !nh || (nw === W && nh === H)) return;
+    /* layout size, NOT getBoundingClientRect: that is shrunk by the page's zoom-in animation, and the canvas kept the wrong size for good (strokes landed off her finger) */ const nw = cv.clientWidth || st.clientWidth, nh = cv.clientHeight || st.clientHeight; if (!nw || !nh || (nw === W && nh === H)) return;
     let keep = null; if (W && cv.width) { keep = document.createElement('canvas'); keep.width = cv.width; keep.height = cv.height; keep.getContext('2d').drawImage(cv, 0, 0); }
     W = nw; H = nh; [cv, g].forEach(c => { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); });
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); if (keep) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(keep, 0, 0); ctx.restore(); }
+    if (mode === 'scratch' && !keep) scratchCover();
     if (mode === 'trace') setTrace(); else drawGuide();
   }
   requestAnimationFrame(fit); const ro = new ResizeObserver(fit); ro.observe(st); onLeave(() => ro.disconnect());
@@ -3254,7 +3284,44 @@ SCREENS.draw = (el, mode) => {
   const pushUndo = () => { const s = snap(); if (s) { undo.push(s); if (undo.length > 6) undo.shift(); } };
   const wipe = () => { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.restore(); };
   $('#undo', el).onclick = () => { const s = undo.pop(); if (!s) { sfx.oops(); return; } ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.putImageData(s.img, 0, 0); ctx.restore(); filled = new Set(s.f); sfx.boop(); };
-  $('#clear', el).onclick = () => { pushUndo(); wipe(); filled.clear(); strokes = 0; sfx.whoosh(); };
+  $('#clear', el).onclick = () => { pushUndo(); wipe(); if (mode === 'scratch') scratchCover(); filled.clear(); strokes = 0; used.clear(); sfx.whoosh(); };
+  /* ---- v1.48: Magic scratch (dark layer on cv, rainbow on g), Sparkle brush, Paint bucket ---- */
+  function scratchCover() { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = '#2A2346'; ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = 'rgba(255,255,255,.16)'; for (let i = 0; i < 170; i++) { ctx.beginPath(); ctx.arc(Math.random() * cv.width, Math.random() * cv.height, (Math.random() * 1.8 + .5) * dpr, 0, 7); ctx.fill(); } ctx.restore(); }
+  function scratchRainbow() { const gr = gctx.createLinearGradient(0, 0, W, H); ['#FF5C5C', '#FFA24C', '#FFD84D', '#5CD68A', '#4DA3FF', '#9B7BFF', '#FF8FC7'].forEach((c, i, a) => gr.addColorStop(i / (a.length - 1), c)); gctx.fillStyle = gr; gctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 60; i++) { const x = Math.random() * W, y = Math.random() * H, r = Math.random() * 5 + 2; gctx.fillStyle = 'rgba(255,255,255,.75)'; gctx.beginPath(); for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4, q = k % 2 ? r * .35 : r; gctx.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q); } gctx.fill(); } }
+  const scratchSeg = (a, b) => { ctx.globalCompositeOperation = 'destination-out'; ctx.lineCap = ctx.lineJoin = 'round'; ctx.lineWidth = SZ[sizeIdx]; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.globalCompositeOperation = 'source-over'; };
+  const charm = (x, y, r, rot, col, heart) => { ctx.save(); ctx.globalCompositeOperation = 'source-over'; ctx.translate(x, y); ctx.rotate(rot); ctx.fillStyle = col; ctx.beginPath();
+    if (heart) { ctx.moveTo(0, r * .9); ctx.bezierCurveTo(-r * 1.5, -r * .15, -r * .6, -r * 1.2, 0, -r * .35); ctx.bezierCurveTo(r * .6, -r * 1.2, r * 1.5, -r * .15, 0, r * .9); }
+    else for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, q = i % 2 ? r * .45 : r; ctx.lineTo(Math.cos(a) * q, Math.sin(a) * q); }
+    ctx.closePath(); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.arc(-r * .2, -r * .25, r * .18, 0, 7); ctx.fill(); ctx.restore(); };
+  let spAcc = 0, spN = 0;
+  const sparkleSeg = (a, b) => { const w = SZ[sizeIdx], d = Math.hypot(b.x - a.x, b.y - a.y); ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = .3; ctx.strokeStyle = baseColor(); ctx.lineWidth = w * .28; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.globalAlpha = 1;
+    spAcc += d; while (spAcc >= w * .8) { spAcc -= w * .8; const u = d ? 1 - spAcc / d : 1, x = a.x + (b.x - a.x) * Math.min(1, Math.max(0, u)), y = a.y + (b.y - a.y) * Math.min(1, Math.max(0, u)); spN++;
+      charm(x + rnd(-w * .3, w * .3), y + rnd(-w * .3, w * .3), w * rnd(.32, .55), rnd(-.5, .5), curColor(), spN % 4 === 0);
+      ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.beginPath(); ctx.arc(x + rnd(-w, w), y + rnd(-w, w), rnd(1.2, 2.6), 0, 7); ctx.fill(); if (spN % 7 === 0) sfx.star(); } };
+  let filling = false; const fb = $('#fill', el);
+  if (fb) fb.onclick = () => { filling = !filling; fb.setAttribute('aria-pressed', filling); if (filling) { erasing = false; const e2 = $('#erase', el); if (e2) e2.setAttribute('aria-pressed', 'false'); say('Paint bucket! Tap inside a shape.'); } sfx.pop(); };
+  function floodFill(p) {   /* scanline fill on 32-bit pixels, then a 1px grow so the soft edge of her line is covered; only the filled area is repainted */
+    const w = cv.width, h = cv.height, x0 = Math.floor(p.x * dpr), y0 = Math.floor(p.y * dpr); if (x0 < 0 || y0 < 0 || x0 >= w || y0 >= h) return false;
+    let img; try { img = ctx.getImageData(0, 0, w, h); } catch (e) { return false; }
+    const u = new Uint32Array(img.data.buffer), t0 = u[y0 * w + x0], ta = t0 >>> 24, tr = t0 & 255, tg = (t0 >> 8) & 255, tb = (t0 >> 16) & 255;
+    ctx.fillStyle = curColor(); const fc = ctx.fillStyle; let fr, fg, fbl; if (fc[0] === '#') { const n = parseInt(fc.slice(1), 16); fr = n >> 16; fg = (n >> 8) & 255; fbl = n & 255; } else { const m = fc.match(/[\d.]+/g); fr = +m[0]; fg = +m[1]; fbl = +m[2]; }
+    if (ta > 200 && Math.abs(tr - fr) + Math.abs(tg - fg) + Math.abs(tb - fbl) < 12) return false;
+    const FILL = ((255 << 24) | (fbl << 16) | (fg << 8) | fr) >>> 0, clear = ta < 70;
+    const same = j => { const v = u[j], al = v >>> 24; if (clear) return al < 70; if (al < 70) return false; const r = v & 255, g2 = (v >> 8) & 255, b2 = (v >> 16) & 255; return (r > tr ? r - tr : tr - r) + (g2 > tg ? g2 - tg : tg - g2) + (b2 > tb ? b2 - tb : tb - b2) < 70; };
+    const seen = new Uint8Array(w * h), stack = [x0, y0]; let minX = x0, maxX = x0, minY = y0, maxY = y0;
+    while (stack.length) { const y = stack.pop(); let x = stack.pop(), j = y * w + x;
+      while (x >= 0 && !seen[j] && same(j)) { x--; j--; } x++; j++; if (x < minX) minX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; let up = false, dn = false;
+      while (x < w && !seen[j] && same(j)) { seen[j] = 1;
+        if (y > 0) { const k = j - w; if (!seen[k] && same(k)) { if (!up) { stack.push(x, y - 1); up = true; } } else up = false; }
+        if (y < h - 1) { const k = j + w; if (!seen[k] && same(k)) { if (!dn) { stack.push(x, y + 1); dn = true; } } else dn = false; }
+        x++; j++; }
+      if (x - 1 > maxX) maxX = x - 1; }
+    const X1 = Math.max(0, minX - 1), X2 = Math.min(w - 1, maxX + 1), Y1 = Math.max(0, minY - 1), Y2 = Math.min(h - 1, maxY + 1);
+    for (let y = Y1; y <= Y2; y++) { const row = y * w; for (let x = X1; x <= X2; x++) { const j = row + x; if (seen[j] || (x > 0 && seen[j - 1]) || (x < w - 1 && seen[j + 1]) || (y > 0 && seen[j - w]) || (y < h - 1 && seen[j + w])) u[j] = FILL; } }
+    ctx.putImageData(img, 0, 0, X1, Y1, X2 - X1 + 1, Y2 - Y1 + 1); return true;
+  }
   $$('.size', el).forEach(b => b.addEventListener('click', () => { sizeIdx = +b.dataset.s; $$('.size', el).forEach(x => x.setAttribute('aria-pressed', x === b)); sfx.pop(); if (mode === 'dots') drawGuide(); }));
   const guideBtn = $('#guide', el); if (guideBtn) guideBtn.onclick = () => { if (mode === 'trace') { traceIdx = (traceIdx + 1) % TRACES.length; wipe(); setTrace(); sfx.boop(); return; } guideIdx = (guideIdx + 1) % GUIDES.length; filled.clear(); sfx.boop(); drawGuide(); };
   let erasing = false; const eb = $('#erase', el); if (eb) eb.onclick = () => { erasing = !erasing; eb.setAttribute('aria-pressed', erasing); sfx.pop(); if (erasing) say('Eraser'); };
@@ -3320,12 +3387,16 @@ SCREENS.draw = (el, mode) => {
   };
 
   let pid = null, last = null, path = [], lastStamp = null, tDone = false;
-  const pt = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  const pt = e => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left) * (W / (r.width || W)), y: (e.clientY - r.top) * (H / (r.height || H)) }; };
   cv.addEventListener('pointerdown', e => {
     if (pid !== null) return; pid = e.pointerId; try { cv.setPointerCapture(pid); } catch (_) { }
     pushUndo(); strokes++; last = pt(e); path = [last]; lastStamp = last;
     if (erasing) { eraseSeg(last, { x: last.x + .1, y: last.y }); return; }
-    if (mode === 'crayon') { crayon(last, { x: last.x + .1, y: last.y }); sfx.paint(); }
+    if (mode !== 'scratch') used.add(colorName(color));
+    if (filling) { if (floodFill(last)) { sfx.pop(); sparkle(e.clientX, e.clientY, 8); } else sfx.boop(); pid = null; return; }
+    if (mode === 'scratch') { scratchSeg(last, { x: last.x + .1, y: last.y }); sfx.paint(); }
+    else if (mode === 'sparkle') { spAcc = SZ[sizeIdx]; sparkleSeg(last, { x: last.x + .1, y: last.y }); sfx.chime(); }
+    else if (mode === 'crayon') { crayon(last, { x: last.x + .1, y: last.y }); sfx.paint(); }
     else if (mode === 'mirror') { mirrorSeg(last, { x: last.x + .1, y: last.y }); sfx.paint(); }
     else if (mode === 'trace') { ctx.fillStyle = curColor(); ctx.beginPath(); ctx.arc(last.x, last.y, SZ[sizeIdx] / 2, 0, 7); ctx.fill(); sfx.paint(); }
     else if (mode === 'finger') { fingerDot(last); sfx.paint(); }
@@ -3338,7 +3409,9 @@ SCREENS.draw = (el, mode) => {
   cv.addEventListener('pointermove', e => {
     if (e.pointerId !== pid) return; const p = pt(e), d = Math.hypot(p.x - last.x, p.y - last.y);
     if (erasing) { eraseSeg(last, p); last = p; return; }
-    if (mode === 'crayon') { crayon(last, p); if (d > 24) sfx.paint(); }
+    if (mode === 'scratch') { scratchSeg(last, p); if (d > 26) sfx.paint(); }
+    else if (mode === 'sparkle') sparkleSeg(last, p);
+    else if (mode === 'crayon') { crayon(last, p); if (d > 24) sfx.paint(); }
     else if (mode === 'mirror') { mirrorSeg(last, p); if (d > 22) sfx.paint(); }
     else if (mode === 'trace') {
       finger(last, p); if (d > 22) sfx.paint(); let hit = false; tpts.forEach(([x, y], i) => { if (!tdone[i] && Math.hypot(x - p.x, y - p.y) < 34) { tdone[i] = true; hit = true; } });
@@ -3361,9 +3434,9 @@ SCREENS.draw = (el, mode) => {
   $('#done', el).onclick = () => {
     if (!strokes) { sfx.oops(); say('Draw something first!'); return; }
     const t = document.createElement('canvas'), k = 520 / cv.width; t.width = 520; t.height = Math.max(1, Math.round(cv.height * k));
-    const c = t.getContext('2d'); c.fillStyle = mode === 'glow' ? '#1B1533' : '#FFFDFA'; c.fillRect(0, 0, t.width, t.height); c.drawImage(cv, 0, 0, t.width, t.height);
-    gallery.unshift(t.toDataURL('image/jpeg', .74)); gallery = gallery.slice(0, 30); saveGallery();
-    reward('Beautiful! Your picture is saved.'); go('studio');
+    const c = t.getContext('2d'); c.fillStyle = mode === 'glow' ? '#1B1533' : '#FFFDFA'; c.fillRect(0, 0, t.width, t.height); if (mode === 'scratch') c.drawImage(g, 0, 0, t.width, t.height); c.drawImage(cv, 0, 0, t.width, t.height);
+    const url = t.toDataURL('image/jpeg', .74); gallery.unshift(url); gallery = gallery.slice(0, 30); saveGallery();
+    showTime(url, mode === 'scratch' ? new Set(['rainbow']) : used);
   };
 };
 /* ===== Puzzles ===== */
