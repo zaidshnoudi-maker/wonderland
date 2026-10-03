@@ -1479,7 +1479,7 @@ document.addEventListener('visibilitychange', () => { if (!ac) return; if (docum
 let voice = null;
 const VOICE_PREF = ['Ava', 'Samantha', 'Allison', 'Nicky', 'Susan', 'Zoe', 'Serena', 'Kate', 'Tessa', 'Karen', 'Moira', 'Fiona', 'Google US English', 'Google UK English Female'];
 const VOICE_BAD = /Compact|Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Deranged|Good News|Hysterical|Jester|Organ|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Ralph|Kathy|Princess|Grandma|Grandpa|Eddy|Flo|Reed|Rocko|Sandy|Shelley|Superstar|Compact/i;
-const VOICE_STYLES = { sweet: { label: 'Soft', rate: .84, pitch: 1.06 }, gentle: { label: 'Calm', rate: .76, pitch: 1 }, bouncy: { label: 'Playful', rate: .92, pitch: 1.14 } };
+const VOICE_STYLES = { sweet: { label: 'Soft', rate: .84, pitch: 1.06, clip: 1 }, gentle: { label: 'Calm', rate: .76, pitch: 1, clip: .94 }, bouncy: { label: 'Playful', rate: .92, pitch: 1.14, clip: 1.07 } };
 const voiceScore = v => { let sc = 0; const i = VOICE_PREF.findIndex(n => v.name.indexOf(n) === 0 || v.name.indexOf(n) > -1); if (i >= 0) sc += 40 - i; if (/Siri/i.test(v.name)) sc += 60; if (/Premium|Enhanced|Neural|Natural/i.test(v.name)) sc += 45; if (/Compact/i.test(v.name)) sc -= 60; if (/^en[-_]US/i.test(v.lang)) sc += 6; else if (/^en[-_](GB|AU|IE|ZA)/i.test(v.lang)) sc += 2; if (v.localService) sc += 1; return sc; };
 function voiceChoices() { if (!('speechSynthesis' in window)) return []; const seen = new Set(); return speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang) && !VOICE_BAD.test(v.name)).sort((a, b) => voiceScore(b) - voiceScore(a)).filter(v => { const k = v.name.replace(/\s*\(.*\)/, ''); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 5); }
 function pickVoice() {
@@ -1487,13 +1487,52 @@ function pickVoice() {
   voice = (S.voiceName && vs.find(v => v.name === S.voiceName)) || voiceChoices()[0] || vs.find(v => /^en/i.test(v.lang)) || null;
 }
 if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+/* ===== v1.51 NATURAL VOICE. Phones/iPads never let a web app use Siri, and the built-in web voices sound robotic.
+   So every line the app says is pre-recorded with a natural neural voice (Kokoro "af_heart", Apache-2.0, made offline by the
+   voice tools - see CLAUDE.md) and shipped as ONE pack: voice.json { ids: { sentence: [offset, bytes, ms] } } + voice.bin (mp3s back to back).
+   say() plays the clips when EVERY sentence of the line is in the pack (two different voices in one line sounds odd);
+   anything else (e.g. a new name typed in the grown-up panel) falls back to the device voice. Works offline: the service worker caches the pack. ===== */
+const VOX = { idx: null, bin: null, cache: new Map(), cur: [], id: 0, miss: new Set(), g: null };
+const voxKey = s => String(s).replace(/[\u2018\u2019]/g, "'").replace(/\s+/g, ' ').trim().toLowerCase();
+function voxLoad() {
+  if (VOX.idx || VOX.loading || !window.fetch || location.protocol === 'file:') return; VOX.loading = true;   /* file:// = test pages: no pack, device voice */
+  Promise.all([fetch('voice.json').then(r => r.ok ? r.json() : Promise.reject(r.status)), fetch('voice.bin').then(r => r.ok ? r.arrayBuffer() : Promise.reject(r.status))])
+    .then(([j, b]) => { const m = new Map(); for (const k in j.ids) m.set(voxKey(k), j.ids[k]); VOX.bin = b; VOX.idx = m; })
+    .catch(() => { VOX.loading = false; });
+}
+/* same words with different end punctuation still count ("Three!" / "Three.") */
+const voxGet = p => { if (!VOX.idx) return null; const k = voxKey(p), b = k.replace(/[.!?]+$/, ''); return VOX.idx.get(k) || VOX.idx.get(b + '!') || VOX.idx.get(b + '.') || VOX.idx.get(b + '?') || VOX.idx.get(b) || null; };
+function voxBuf(e) {
+  if (VOX.cache.has(e[0])) return VOX.cache.get(e[0]);
+  const pr = new Promise((res, rej) => { try { const r = ac.decodeAudioData(VOX.bin.slice(e[0], e[0] + e[1]), res, rej); if (r && r.catch) r.catch(rej); } catch (err) { rej(err); } });
+  pr.catch(() => VOX.cache.delete(e[0])); VOX.cache.set(e[0], pr); if (VOX.cache.size > 40) VOX.cache.delete(VOX.cache.keys().next().value); return pr;
+}
+function voxStop() { VOX.id++; VOX.cur.forEach(x => { try { x.stop(); } catch (e) { } }); VOX.cur = []; }
+function voxPlay(ents, rate) {
+  voxStop(); const id = VOX.id; duck(ents.reduce((a, e) => a + e[2] / rate + 120, 400));
+  Promise.all(ents.map(voxBuf)).then(bufs => {
+    if (id !== VOX.id || !audioOk()) return;
+    if (!VOX.g) { VOX.g = ac.createGain(); VOX.g.gain.value = 1.05; VOX.g.connect(master); }
+    let t = ac.currentTime + .02;
+    bufs.forEach(b => { const x = ac.createBufferSource(); x.buffer = b; x.playbackRate.value = rate; x.connect(VOX.g); x.start(t); t += b.duration / rate + .06; VOX.cur.push(x); x.onended = () => { VOX.cur = VOX.cur.filter(y => y !== x); x.disconnect(); }; });
+  }).catch(() => { });
+}
+setTimeout(voxLoad, 600);
 const VOICE_FEATURE = true;   // Zaid asked for the voice back (v1.43), soft and natural rather than robotic
 function say(t, force) {
   if (!VOICE_FEATURE) return;
-  if ((!S.voice && !force) || !('speechSynthesis' in window)) return;
+  if (!S.voice && !force) return;
+  const st = VOICE_STYLES[S.vstyle] || VOICE_STYLES.sweet;
+  const parts = String(t).replace(/\s+/g, ' ').trim().match(/[^.!?]+[.!?]*/g) || [String(t)];
+  if (S.vnat !== false && VOX.idx && audioOk()) {
+    const ents = parts.map(p => p.trim()).filter(Boolean).map(voxGet);
+    if (ents.length && ents.every(Boolean)) { try { speechSynthesis.cancel(); } catch (e) { } voxPlay(ents, st.clip || 1); return; }
+    parts.forEach(p => { if (p.trim() && !voxGet(p)) VOX.miss.add(p.trim()); });
+  }
+  voxStop();
+  if (!('speechSynthesis' in window)) return;
   try {
-    duck(600 + String(t).length * 85); speechSynthesis.cancel(); const st = VOICE_STYLES[S.vstyle] || VOICE_STYLES.sweet;
-    const parts = String(t).replace(/\s+/g, ' ').trim().match(/[^.!?]+[.!?]*/g) || [String(t)];
+    duck(600 + String(t).length * 85); speechSynthesis.cancel();
     const single = parts.length === 1 && String(t).trim().split(' ').length <= 2;
     parts.forEach((p, i) => {
       p = p.trim(); if (!p) return; const u = new SpeechSynthesisUtterance(p); if (voice) u.voice = voice; u.lang = (voice && voice.lang) || 'en-US';
@@ -1797,7 +1836,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v50';
+const APP_V = 'lw-v51';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -1983,8 +2022,10 @@ function openParent() {
   <div class="opt-row"><button class="chip" id="pa">Edit avatar</button><button class="chip" id="pf">Change favorites</button><button class="chip" id="pp">Change pet</button></div>
   <div class="opt-row"><label>Home screen</label><button class="chip" data-hv="world" aria-pressed="${S.view !== 'grid'}">Playground</button><button class="chip" data-hv="grid" aria-pressed="${S.view === 'grid'}">All games</button></div>
   <div class="opt-row"><label>Talking voice</label><button class="chip" data-v="1" aria-pressed="${S.voice !== false}">On</button><button class="chip" data-v="0" aria-pressed="${S.voice === false}">Off</button></div>
+  <div class="opt-row"><label>Which voice</label><button class="chip" data-vnat="1" aria-pressed="${S.vnat !== false}">Natural (recommended)</button><button class="chip" data-vnat="0" aria-pressed="${S.vnat === false}">iPad's own voice</button></div>
   <div class="opt-row"><label>Voice style</label>${Object.entries(VOICE_STYLES).map(([k, v]) => `<button class="chip" data-vs="${k}" aria-pressed="${(S.vstyle || 'sweet') === k}">${v.label}</button>`).join('')}</div>
-  ${voiceChoices().length > 1 ? `<div class="opt-row"><label>Which voice</label>${voiceChoices().map(v => `<button class="chip" data-vn="${esc(v.name)}" aria-pressed="${(S.voiceName || (voiceChoices()[0] || {}).name) === v.name}">${esc(v.name.replace(/s*(.*)/, ''))}</button>`).join('')}</div>` : ''}
+  ${voiceChoices().length > 1 ? `<div class="opt-row"><label>iPad voice (for new words)</label>${voiceChoices().map(v => `<button class="chip" data-vn="${esc(v.name)}" aria-pressed="${(S.voiceName || (voiceChoices()[0] || {}).name) === v.name}">${esc(v.name.replace(/s*(.*)/, ''))}</button>`).join('')}</div>` : ''}
+  <p class="note">The natural voice works offline. A few lines (like a newly typed name) use the iPad's own voice. To make that one sound better too: iPad Settings, Accessibility, Spoken Content, Voices, English, then download an "Enhanced" or "Premium" voice such as Ava or Zoe.</p>
   <div class="opt-row"><label>Sound effects</label><button class="chip" data-sf="1" aria-pressed="${!S.sfxOff}">On</button><button class="chip" data-sf="0" aria-pressed="${!!S.sfxOff}">Off</button></div>
   <div class="opt-row"><label>Background music</label>${[['off', 'Off'], ['soft', 'Soft'], ['med', 'Medium']].map(([k, l]) => `<button class="chip" data-mu="${k}" aria-pressed="${k === 'off' ? S.music === false : S.music !== false && (S.mlevel || 'soft') === k}">${l}</button>`).join('')}</div>
   <p class="note">Keep her in the app: open Settings, then Accessibility, then Guided Access, and turn it on. Triple-click the side or home button inside the app to start it.</p>
@@ -2014,6 +2055,7 @@ function openParent() {
   $$('[data-mu]', o).forEach(b => b.onclick = () => { const k = b.dataset.mu; S.music = k !== 'off'; if (k !== 'off') S.mlevel = k; $$('[data-mu]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); if (S.music) { startMusic(); mNext = 0; } });
   const sample = () => say(`Hi ${S.name}! Let's play together!`, true);
   $$('[data-vs]', o).forEach(b => b.onclick = () => { S.vstyle = b.dataset.vs; $$('[data-vs]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); sample(); });
+  $$('[data-vnat]', o).forEach(b => b.onclick = () => { S.vnat = b.dataset.vnat === '1'; $$('[data-vnat]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); sample(); });
   $$('[data-vn]', o).forEach(b => b.onclick = () => { S.voiceName = b.dataset.vn; pickVoice(); $$('[data-vn]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); sample(); });
   bindParentExtras(o);
   let armE = false, armR = false;
