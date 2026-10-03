@@ -1255,6 +1255,44 @@ body[data-screen=potty] #petbox{display:none}
 @media (max-aspect-ratio:1/1){.pt-loo{height:32%;left:30%;bottom:8%}.pt-sink{height:42%}.pt-me{height:34%}.pt-pet{height:14%}.pt-floor{height:24%}.pt-hands{width:84%}}
 @media (prefers-reduced-motion:reduce){.pt-me.wiggle>svg,.pt-me.walk>svg,.potty g.glow{animation:none}}
 </style>
+<style>
+/* ===== v1.53 Liyana's house in the play area ===== */
+.lhouse{position:absolute;z-index:300;border:0;background:none;padding:0;cursor:pointer;border-radius:40px}
+.lhouse-art .lhw .glass{transition:fill .4s}
+.lhouse-art.lit .lhw .glass{fill:#FFE98A}
+.lhouse-art .lhsmoke circle{transform-box:fill-box;transform-origin:50% 50%}
+.lhouse-art.lit .lhsmoke circle{animation:lhpuff 1.6s ease-out 2}
+@keyframes lhpuff{0%{transform:scale(.6);opacity:.2}50%{transform:scale(1.25) translateY(-10px);opacity:.95}100%{transform:scale(1);opacity:.85}}
+.lhmenu{position:fixed;inset:0;z-index:80;display:grid;place-items:center;background:rgba(61,51,88,.35);animation:stin .25s ease-out;padding:16px}
+.lhmenu.out{opacity:0;transition:opacity .25s}
+.lhcard{position:relative;background:#FFF6FB;border:6px solid #fff;border-radius:34px;padding:18px 22px 24px;box-shadow:0 14px 30px rgba(0,0,0,.2);text-align:center;max-width:720px;width:100%;animation:stpop .5s cubic-bezier(.3,1.5,.5,1)}
+.lhcard h2{font:700 clamp(24px,3.4vw,34px) var(--display);color:#C0506A;margin:0 0 14px}
+.lhacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px}
+.lhact{position:relative;border:5px solid #fff;border-radius:28px;padding:12px 8px 40px;aspect-ratio:1;cursor:pointer;box-shadow:0 6px 0 rgba(61,51,88,.14);animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*70ms)}
+.lhact span{display:block;width:100%;height:100%}.lhact span svg{width:100%;height:100%}
+.lhact b{position:absolute;left:50%;bottom:8px;translate:-50% 0;font:700 17px var(--display);color:#4B3F7A;background:#fff;border-radius:999px;padding:2px 12px;white-space:nowrap}
+.lhx{position:absolute;right:10px;top:8px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;font:700 28px/40px var(--display);color:#8F86B4;cursor:pointer;box-shadow:0 3px 0 rgba(61,51,88,.12)}
+</style>
+<style>/* v1.53 coloring: an enlarged part keeps the same line thickness */
+.bighead .r.s{stroke-width:1.5}.bighead path:not(.r){stroke-width:1.4}</style>
+<style>/* v1.53 dress-up on a portrait iPad: the doll pushed the clothes list off screen. Stack them, and never let the stage widen its column */
+.ward>*{min-width:0}.stagebox{overflow:hidden}
+@media (max-aspect-ratio:1/1){.ward{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.wardrows{max-height:44vh}}</style>
+<style>
+/* ===== v1.53 family voice recorder ===== */
+.famrec{z-index:90}
+.frcard{background:#fff;border-radius:28px;width:min(720px,100%);max-height:calc(100vh - 32px);display:flex;flex-direction:column;box-shadow:0 14px 30px rgba(0,0,0,.2);overflow:hidden}
+.frhead{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 6px}.frhead h2{margin:0;font:700 26px var(--display);color:#C0506A}
+.frnote{margin:0 20px 8px;color:#4B3F7A;font-size:15px;line-height:1.4}
+.frlist{overflow:auto;padding:0 16px 18px}.frlist h3{margin:14px 4px 6px;font:700 15px var(--display);color:#8F86B4;text-transform:uppercase;letter-spacing:.04em}
+.frrow{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:14px}.frrow:nth-child(even){background:#FAF7FF}
+.frdot{width:12px;height:12px;border-radius:50%;background:#E4DDF2;flex:none}.frrow.on .frdot{background:#5CD68A}.frrow.live .frdot{background:#FF4F6D;animation:frblink .6s ease-in-out infinite alternate}
+@keyframes frblink{to{opacity:.3}}
+.frtxt{flex:1;font:600 17px var(--display);color:#3D3358}
+.frrow .chip{min-width:44px;padding:8px 12px}.frrow.live .frrec{background:#FF4F6D;color:#fff;border-color:#FF4F6D}
+.frrow .chip[disabled]{opacity:.35}
+</style>
+<style>body[data-screen=world] #petbox{display:none}</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1525,6 +1563,7 @@ function say(t, force) {
   if (!S.voice && !force) return;
   const st = VOICE_STYLES[S.vstyle] || VOICE_STYLES.sweet;
   const parts = String(t).replace(/\s+/g, ' ').trim().match(/[^.!?]+[.!?]*/g) || [String(t)];
+  if (S.famv !== false && typeof famPlay === 'function' && famPlay(parts, st.clip || 1)) return;   /* v1.53: Mummy's / Daddy's recordings first */
   if (S.vnat !== false && VOX.idx && audioOk()) {
     const ents = parts.map(p => p.trim()).filter(Boolean).map(voxGet);
     if (ents.length && ents.every(Boolean)) { try { speechSynthesis.cancel(); } catch (e) { } voxPlay(ents, st.clip || 1); return; }
@@ -1837,7 +1876,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v52';
+const APP_V = 'lw-v53';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -1856,6 +1895,95 @@ async function getLatest(btn) {
 /* ===== BLINKING (v1.47 perf): every face used to run a 5s CSS blink animation forever — on the main thread, every frame,
    for every face on screen. Now all eyes blink together, a class on <body> for 150ms every few seconds. ===== */
 (function blinker() { setTimeout(() => { if (!document.hidden && !document.body.classList.contains('lite')) { document.body.classList.add('blinking'); setTimeout(() => document.body.classList.remove('blinking'), 150); } blinker(); }, 3600 + Math.random() * 2800); })();
+/* ===== FAMILY VOICE (v1.53): a grown-up records common phrases with the iPad microphone; the app then says those lines in
+   Mummy's or Daddy's own voice. Recordings stay on the device (IndexedDB 'lw-famvoice', store 'clips', key = voxKey(sentence)).
+   say() uses them when EVERY sentence of a line is recorded (same no-mixing rule as the natural voice pack); otherwise the
+   natural voice / device voice speaks as before. Silence at the start/end of a recording is trimmed when it is played. ===== */
+const FAM_PHRASES = () => {
+  const n = (S.name || 'Liyana').trim() || 'Liyana';
+  return [
+    ['Cheering', ['Yay!', 'Great job!', 'Wow!', 'Hooray!', 'You did it!', 'Amazing!', 'Well done!', 'Good job!', 'Beautiful!', 'So pretty!', 'Lovely!', 'Yummy!', 'Wheee!']],
+    ['Hello', [`Hi ${n}!`, "Let's play!", 'Time for games!', 'Good morning!', 'Good night!', "Let's go!", 'Try again!', 'Look again!', 'Almost!']],
+    ['Numbers', ['One!', 'Two!', 'Three!', 'Four!', 'Five!', 'Six!', 'Seven!', 'Eight!', 'Nine!', 'Ten!']],
+    ['Games', ["Let's draw!", "Let's color!", "Let's count!", 'Pop the bubbles!', 'Animal friends!', 'Can you find it?', 'Find the pairs!', 'Peek a boo!', "Let's make music!", 'Puzzle time!', 'Potty time!', "It's party time!", `Happy birthday ${n}!`, 'Make a wish!', "Let's get dressed up!", 'My stickers!']],
+  ];
+};
+const FAM = { db: null, keys: new Set(), cache: new Map() };
+function famDB() {
+  return new Promise((res, rej) => {
+    if (FAM.db) return res(FAM.db); if (!window.indexedDB) return rej(new Error('no idb'));
+    const r = indexedDB.open('lw-famvoice', 1); r.onupgradeneeded = () => r.result.createObjectStore('clips');
+    r.onsuccess = () => { FAM.db = r.result; res(FAM.db); }; r.onerror = () => rej(r.error);
+  });
+}
+const famTx = (mode, fn) => famDB().then(db => new Promise((res, rej) => { const t = db.transaction('clips', mode), q = fn(t.objectStore('clips')); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }));
+famTx('readonly', st => st.getAllKeys()).then(ks => { (ks || []).forEach(k => FAM.keys.add(k)); }).catch(() => { });
+const famKey = p => { const k = voxKey(p), b = k.replace(/[.!?]+$/, ''); return [k, b + '!', b + '.', b + '?', b].find(x => FAM.keys.has(x)) || null; };
+/* decoded + trimmed buffer for a key: { b: AudioBuffer, t0, dur } */
+function famBuf(k) {
+  if (FAM.cache.has(k)) return FAM.cache.get(k);
+  const pr = famTx('readonly', st => st.get(k)).then(blob => blob.arrayBuffer()).then(ab => new Promise((res, rej) => { const r = ac.decodeAudioData(ab, res, rej); if (r && r.catch) r.catch(rej); }))
+    .then(b => { const d = b.getChannelData(0); let pk = 0; for (let i = 0; i < d.length; i++) pk = Math.max(pk, Math.abs(d[i])); const th = Math.max(.01, pk * .08);
+      let i0 = 0, i1 = d.length - 1; while (i0 < d.length && Math.abs(d[i0]) < th) i0++; while (i1 > i0 && Math.abs(d[i1]) < th) i1--;
+      const sr = b.sampleRate, t0 = Math.max(0, i0 / sr - .06), t1 = Math.min(b.duration, i1 / sr + .15); return { b, t0, dur: Math.max(.1, t1 - t0), gain: pk > 0 ? Math.min(3, .8 / pk) : 1 }; });
+  pr.catch(() => FAM.cache.delete(k)); FAM.cache.set(k, pr); if (FAM.cache.size > 40) FAM.cache.delete(FAM.cache.keys().next().value); return pr;
+}
+/* called by say(): true when the family voice took the line */
+function famPlay(parts, rate = 1) {
+  if (!FAM.keys.size || !audioOk()) return false;
+  const ks = parts.map(p => p.trim()).filter(Boolean).map(famKey); if (!ks.length || !ks.every(Boolean)) return false;
+  try { speechSynthesis.cancel(); } catch (e) { }
+  voxStop(); const id = VOX.id;
+  Promise.all(ks.map(famBuf)).then(cl => {
+    if (id !== VOX.id || !audioOk()) return; duck(cl.reduce((a, c) => a + c.dur * 1000 + 150, 400));
+    if (!VOX.g) { VOX.g = ac.createGain(); VOX.g.gain.value = 1.05; VOX.g.connect(master); }
+    let t = ac.currentTime + .02;
+    cl.forEach(c => { const x = ac.createBufferSource(), g = ac.createGain(); x.buffer = c.b; g.gain.value = c.gain; x.connect(g); g.connect(VOX.g); x.start(t, c.t0, c.dur); t += c.dur + .08; VOX.cur.push(x); x.onended = () => { VOX.cur = VOX.cur.filter(y => y !== x); x.disconnect(); g.disconnect(); }; });
+  }).catch(() => { });
+  return true;
+}
+
+/* ---------- the recorder (grown-up panel → "Record phrases") ---------- */
+function openFamRecorder() {
+  const o = document.createElement('div'); o.className = 'overlay famrec'; document.body.appendChild(o);
+  let rec = null, recKey = null, stopT = 0, stream = null;
+  const mic = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+  const draw = () => {
+    const total = FAM_PHRASES().reduce((a, g) => a + g[1].length, 0), have = FAM_PHRASES().reduce((a, g) => a + g[1].filter(p => FAM.keys.has(voxKey(p))).length, 0);
+    o.innerHTML = `<div class="frcard" role="dialog" aria-label="Family voice"><div class="frhead"><h2>Family voice</h2><button class="btn" id="frclose">Done</button></div>
+      <p class="frnote">${mic ? `Tap <b>Record</b>, say the phrase in a happy voice, then tap <b>Stop</b>. Recorded phrases are spoken in your voice. Everything stays on this iPad. <b>${have} of ${total}</b> recorded.` : 'This browser cannot record from the microphone.'}</p>
+      <div class="frlist">${FAM_PHRASES().map(([g, ps]) => `<h3>${g}</h3>` + ps.map(p => { const k = voxKey(p), on = FAM.keys.has(k), live = recKey === k;
+        return `<div class="frrow ${on ? 'on' : ''} ${live ? 'live' : ''}" data-k="${esc(k)}" data-p="${esc(p)}"><span class="frdot"></span><span class="frtxt">${esc(p)}</span>
+          <button class="chip frrec" ${mic ? '' : 'disabled'}>${live ? 'Stop' : on ? 'Redo' : 'Record'}</button><button class="chip frplay" ${on ? '' : 'disabled'} aria-label="Play">&#9654;</button><button class="chip frdel" ${on ? '' : 'disabled'} aria-label="Delete">&times;</button></div>`; }).join('')).join('')}</div></div>`;
+    $('#frclose', o).onclick = close;
+    $$('.frrow', o).forEach(r => {
+      const k = r.dataset.k;
+      $('.frrec', r).onclick = () => recKey === k ? stop() : start(k);
+      $('.frplay', r).onclick = () => { unlock(); FAM.cache.delete(k); setTimeout(() => famPlay([r.dataset.p]), 60); };
+      $('.frdel', r).onclick = () => famTx('readwrite', st => st.delete(k)).then(() => { FAM.keys.delete(k); FAM.cache.delete(k); draw(); });
+    });
+  };
+  const musicMute = on => { if (ac && mbus) mbus.gain.setTargetAtTime(on ? 0 : 1, ac.currentTime, .05); };
+  async function start(k) {
+    if (rec) stop(); unlock(); voxStop(); try { speechSynthesis.cancel(); } catch (e) { }
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+    catch (e) { $('.frnote', o).textContent = 'The microphone is blocked. Allow microphone access for this app in the iPad settings, then try again.'; return; }
+    const mime = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'].find(m => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || '';
+    const chunks = []; rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined); recKey = k; musicMute(true);
+    rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+    rec.onstop = () => {
+      const blob = new Blob(chunks, { type: rec.mimeType || mime || 'audio/webm' }), key = recKey; stream.getTracks().forEach(t => t.stop()); rec = null; recKey = null; musicMute(false);
+      if (blob.size < 800) { draw(); return; }
+      famTx('readwrite', st => st.put(blob, key)).then(() => { FAM.keys.add(key); FAM.cache.delete(key); draw(); sfx.star(); }).catch(() => draw());
+    };
+    rec.start(); clearTimeout(stopT); stopT = setTimeout(stop, 6000); draw();
+  }
+  function stop() { clearTimeout(stopT); if (rec && rec.state !== 'inactive') rec.stop(); }
+  function close() { stop(); musicMute(false); o.remove(); }
+  o.addEventListener('click', e => { if (e.target === o) close(); });
+  onLeave(close);
+  draw();
+}
 /* ===== screens: setup, home, stickers, wardrobe, gallery, parent ===== */
 const SCREENS = {};
 const sc = (id, s, x, y) => `<g transform="translate(${x} ${y}) scale(${s})">${ART[id]()}</g>`;
@@ -2024,6 +2152,7 @@ function openParent() {
   <div class="opt-row"><label>Home screen</label><button class="chip" data-hv="world" aria-pressed="${S.view !== 'grid'}">Playground</button><button class="chip" data-hv="grid" aria-pressed="${S.view === 'grid'}">All games</button></div>
   <div class="opt-row"><label>Talking voice</label><button class="chip" data-v="1" aria-pressed="${S.voice !== false}">On</button><button class="chip" data-v="0" aria-pressed="${S.voice === false}">Off</button></div>
   <div class="opt-row"><label>Which voice</label><button class="chip" data-vnat="1" aria-pressed="${S.vnat !== false}">Natural (recommended)</button><button class="chip" data-vnat="0" aria-pressed="${S.vnat === false}">iPad's own voice</button></div>
+  <div class="opt-row"><label>Family voice (your own recordings)</label><button class="chip" data-famv="1" aria-pressed="${S.famv !== false}">On</button><button class="chip" data-famv="0" aria-pressed="${S.famv === false}">Off</button><button class="chip" id="pfam">Record phrases${FAM.keys.size ? ' (' + FAM.keys.size + ')' : ''}</button></div>
   <div class="opt-row"><label>Voice style</label>${Object.entries(VOICE_STYLES).map(([k, v]) => `<button class="chip" data-vs="${k}" aria-pressed="${(S.vstyle || 'sweet') === k}">${v.label}</button>`).join('')}</div>
   ${voiceChoices().length > 1 ? `<div class="opt-row"><label>iPad voice (for new words)</label>${voiceChoices().map(v => `<button class="chip" data-vn="${esc(v.name)}" aria-pressed="${(S.voiceName || (voiceChoices()[0] || {}).name) === v.name}">${esc(v.name.replace(/s*(.*)/, ''))}</button>`).join('')}</div>` : ''}
   <p class="note">The natural voice works offline. A few lines (like a newly typed name) use the iPad's own voice. To make that one sound better too: iPad Settings, Accessibility, Spoken Content, Voices, English, then download an "Enhanced" or "Premium" voice such as Ava or Zoe.</p>
@@ -2056,6 +2185,8 @@ function openParent() {
   $$('[data-mu]', o).forEach(b => b.onclick = () => { const k = b.dataset.mu; S.music = k !== 'off'; if (k !== 'off') S.mlevel = k; $$('[data-mu]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); if (S.music) { startMusic(); mNext = 0; } });
   const sample = () => say(`Hi ${S.name}! Let's play together!`, true);
   $$('[data-vs]', o).forEach(b => b.onclick = () => { S.vstyle = b.dataset.vs; $$('[data-vs]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); sample(); });
+  $$('[data-famv]', o).forEach(b => b.onclick = () => { S.famv = b.dataset.famv === '1'; $$('[data-famv]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); sample(); });
+  $('#pfam', o).onclick = () => { openFamRecorder(); };
   $$('[data-vnat]', o).forEach(b => b.onclick = () => { S.vnat = b.dataset.vnat === '1'; $$('[data-vnat]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); sample(); });
   $$('[data-vn]', o).forEach(b => b.onclick = () => { S.voiceName = b.dataset.vn; pickVoice(); $$('[data-vn]', o).forEach(x => x.setAttribute('aria-pressed', x === b)); save(); sample(); });
   bindParentExtras(o);
@@ -2138,11 +2269,12 @@ SCREENS.world = el => {
       <linearGradient id="bark" x1="0" x2="1"><stop offset="0" stop-color="#C58E55"/><stop offset="1" stop-color="#8F5F32"/></linearGradient><linearGradient id="post" x1="0" x2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E6E1EE"/></linearGradient>
       <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
       <pattern id="mow" width="260" height="10" patternUnits="userSpaceOnUse"><rect width="130" height="10" fill="#fff" opacity=".08"/></pattern></defs>
-      <rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#gg)"/><rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#mow)"/><rect x="-400" y="300" width="${WW + 800}" height="70" fill="url(#haze)"/>${trees}${bushes}${samaHouse()}${fence}${samaArch()}
+      <rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#gg)"/><rect x="-400" y="300" width="${WW + 800}" height="${WH - 300}" fill="url(#mow)"/><rect x="-400" y="300" width="${WW + 800}" height="70" fill="url(#haze)"/>${trees}${bushes}${samaHouse()}${liyanaHouse()}${fence}${samaArch()}
       <g fill="none" stroke-linecap="round" opacity=".95"><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#E4CF9C" stroke-width="102"/><path d="M-300 640 Q500 560 900 620 T1700 600 T2600 630 T3600 610 T4600 625 T5700 610" stroke="#F5E6BF" stroke-width="90"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#E4CF9C" stroke-width="72" opacity=".7"/><path d="M-300 470 Q650 440 1300 470 T2600 460 T3600 470 T4600 470 T5700 470" stroke="#F5E6BF" stroke-width="60" opacity=".7"/></g>${pebbles}${PLAY_MAT()}${softMat()}${samaMat()}${welcomeMat(WELCOME_X, 660)}${flowers}<g class="sway s1">${tufts1}</g><g class="sway s2">${tufts2}</g></svg>
     ${Array.from({ length: 0 }, (_, i) => `<button class="bfly" style="left:${rnd(150, WW - 150)}px;top:${rnd(380, 600)}px;z-index:1500;--a:${rnd(-160, 160)}px;--b:${rnd(-70, 40)}px;--c:${rnd(-200, 200)}px;--d:${rnd(-60, 60)}px;--t:${rnd(13, 22)}s;--h:${pick([330, 20, 50, 280, 190])}" aria-label="Butterfly"><svg viewBox="0 0 40 30"><g class="wl"><path d="M20 15 Q4 -2 6 12 Q6 24 20 17Z" fill="hsl(var(--h) 90% 70%)"/></g><g class="wr"><path d="M20 15 Q36 -2 34 12 Q34 24 20 17Z" fill="hsl(var(--h) 90% 76%)"/></g><rect x="19" y="8" width="2" height="14" rx="1" fill="#5b5478"/></svg></button>`).join('')}
     ${PGRAD}<div class="dzone" style="left:${ZONE_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(0, 'Playground')}</svg></div><div class="dzone" style="left:${ZONE2_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE2_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(`<g transform="translate(37 116)">${ICON_SOFT}</g>`, 'Baby Naya')}</svg></div><div class="dzone" style="left:${ZONE3_X - 55}px;top:318px;z-index:520" aria-hidden="true"><svg width="110" height="190" viewBox="0 0 110 190">${zoneRope()}</svg></div><div class="dzone" style="left:${ZONE3_X - 110}px;top:372px;z-index:697" aria-hidden="true"><svg width="220" height="340" viewBox="0 0 220 340">${zoneGate(`<g transform="translate(37 116)">${ICON_SAMA}</g>`, 'Cousin Sama')}</svg></div><div class="dzone" style="left:${WELCOME_X - 230}px;top:258px;z-index:566" aria-hidden="true"><svg width="460" height="310" viewBox="0 0 460 310">${welcomeBoard(S.name)}</svg></div><div class="naya p-sit" id="naya" style="z-index:${SOFT_HOME[1]}" aria-label="Naya">${nayaSVG()}<b class="ntag">Naya</b></div><div class="sama p-stand" id="sama" style="z-index:${SAMA_HOME[1]}" aria-label="Sama">${samaSVG()}<b class="ntag">Sama</b></div>${DECOR_AT.map(([k, x, y], i) => { const d = PLAY[k], L = x - d.ax, T = y - d.ay; return `<button class="decor" data-k="${k}" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px;z-index:${y}" aria-label="${k}"><svg viewBox="0 0 ${d.w} ${d.h}">${d.bk()}</svg></button><div class="dfr" data-i="${i}" style="left:${L}px;top:${T}px;width:${d.w}px;height:${d.h}px"><svg viewBox="0 0 ${d.w} ${d.h}">${d.fr()}</svg></div>`; }).join('')}
     ${TOWN_SPOTS.map(([id, l, tone, s, x, y], i) => `<button class="spot" style="left:${x - 100}px;top:${y - 250}px;z-index:${y};--i:${i}" data-id="${id}" data-say="${esc(s)}" aria-label="${l}"><span class="plate ${tone}">${tileIcon(id)}</span><span class="sign">${l}</span><svg class="struct" viewBox="0 -10 200 160">${STRUCT[id]}</svg></button>`).join('')}
+    <button class="lhouse" id="lhouse" style="left:${LHOUSE_HIT.x}px;top:${LHOUSE_HIT.y}px;width:${LHOUSE_HIT.w}px;height:${LHOUSE_HIT.h}px" aria-label="My house"></button>
     <button class="ball" id="ball" style="left:1150px;top:620px" aria-label="Ball"><i></i></button>
     ${S.pet ? `<div class="tpet" id="tpet"><div class="flip">${petSVG(S.pet)}</div></div>` : ''}
     <div class="avf" id="tav"><div class="flip">${avatarFull(S.avatar, accent())}</div></div>
@@ -2207,7 +2339,7 @@ SCREENS.world = el => {
   let down = false;
   const mark = p => { const m = document.createElement('i'); m.className = 'tmark'; m.style.left = p.x + 'px'; m.style.top = p.y + 'px'; ts.appendChild(m); setTimeout(() => m.remove(), 750); };
   town.addEventListener('pointerdown', e => {
-    if (busy || e.target.closest('.spot,.avf,.tpet,.decor,.thud,.bfly,.naya,.sama')) return; down = true; pending = null; const l = toLogical(e), p = clampP(l.x, l.y); target = p; mark(p);
+    if (busy || e.target.closest('.spot,.avf,.tpet,.decor,.thud,.bfly,.naya,.sama,.lhouse')) return; down = true; pending = null; const l = toLogical(e), p = clampP(l.x, l.y); target = p; mark(p);
   });
   town.addEventListener('pointermove', e => { if (!down || busy) return; const l = toLogical(e); target = clampP(l.x, l.y); });
   const upd = () => { down = false; }; document.addEventListener('pointerup', upd); onLeave(() => document.removeEventListener('pointerup', upd));
@@ -2284,6 +2416,21 @@ SCREENS.world = el => {
       say(pick(['Kick!', 'Goal!', 'Wheee!'])); const r = ball.getBoundingClientRect(); sparkBurst(r.left + r.width / 2, r.top + r.height / 2);
       const t = setTimeout(() => { bp = { x: nx, y: ny }; ball.classList.remove('roll'); ball.style.left = nx - 24 + 'px'; ball.style.top = ny - 48 + 'px'; ball.style.zIndex = Math.round(ny); }, 1100); onLeave(() => clearTimeout(t)); };
     target = clampP(bx, bp.y + 20); mark(target);
+  });
+  /* v1.53 her house: walk up to the sign, lights on, smoke puffs, then the "My house" bubble */
+  const lh = $('#lhouse', el), lhArt = $('.lhouse-art', el);
+  lh.addEventListener('click', () => {
+    if (busy) return; target = clampP(LHOUSE_X + 40, 600); mark(target);
+    pending = () => {
+      face = -1; av.classList.remove('hop'); void av.offsetWidth; av.classList.add('hop'); sfx.boop(); petHappy();
+      lhArt.classList.remove('lit'); void lhArt.getBoundingClientRect(); lhArt.classList.add('lit'); const r = lh.getBoundingClientRect(); sparkBurst(r.left + r.width / 2, r.top + r.height * .45);
+      say(pick(['This is my house! What shall we do?', 'Home sweet home! What shall we play?']));
+      setTimeout(() => alive && houseMenu((b, id) => {
+        const br = b.getBoundingClientRect(), tone = HOME_ACTS.find(a => a[0] === id)[2], ir = document.createElement('div'); ir.className = 'iris'; ir.style.background = IRIS[tone] || '#B79BFF';
+        ir.style.setProperty('--x', (br.left + br.width / 2) + 'px'); ir.style.setProperty('--y', (br.top + br.height / 2) + 'px'); document.body.appendChild(ir); void ir.offsetWidth; ir.classList.add('go');
+        setTimeout(() => { if (alive) go(id); ir.classList.add('out'); setTimeout(() => ir.remove(), 600); }, 650);
+      }), 700);
+    };
   });
   av.addEventListener('click', () => { if (busy) return; sfx.boop(); av.classList.remove('hop'); void av.offsetWidth; av.classList.add('hop'); say(`Hi ${S.name}!`); });
   if (tp) tp.addEventListener('click', () => { sfx.boop(); petHappy(); say(`I'm ${petName()}! ${petInfo().say}`); });
@@ -3318,6 +3465,49 @@ Object.assign(PLAY_RIDE, {
     g.end = null; return TOT;
   },
 });
+/* ===== LIYANA'S HOUSE (v1.53): her own cottage behind the welcome sign, where she starts in the play area.
+   Same build as Sama's house (03g): drawn in the ground SVG behind the fence; the welcome board and its bunting sit in front like a garden gate.
+   Tap it: she walks up, the windows light up, smoke puffs, and a "My house" bubble offers the home games (potty, party, pet, dress up). ===== */
+const LHOUSE_X = WELCOME_X;
+function liyanaHouse() {
+  const cx = LHOUSE_X, nm = esc((S.name || 'Liyana').trim() || 'Liyana');
+  const win = x => `<g class="lhw" transform="translate(${x} 226)"><rect x="-30" y="0" width="60" height="56" rx="10" fill="#fff"/><rect class="glass" x="-24" y="6" width="48" height="44" rx="6" fill="#BFE4FF"/>
+    <path d="M0 6 V50 M-24 28 H24" stroke="#fff" stroke-width="5"/><path d="M-14 12 q-5 10 0 20" stroke="#fff" stroke-width="4" fill="none" opacity=".6"/>
+    <path d="M-30 -4 h60 l-6 10 h-48z" fill="#FF8FB0"/><path d="M-30 -4 h60" stroke="#fff" stroke-width="3" stroke-dasharray="6 6"/>
+    <rect x="-34" y="54" width="68" height="12" rx="4" fill="#B98149"/>${[-24, -12, 0, 12, 24].map((d, i) => `<circle cx="${d}" cy="52" r="6" fill="${['#FFD24D', '#FF8FB0', '#8EDCC0', '#FFD24D', '#FF8FB0'][i]}"/>`).join('')}</g>`;
+  const shingles = Array.from({ length: 4 }, (_, r) => { const y = 136 + r * 19, half = 52 + r * 36; let o = ''; for (let x = cx - half; x <= cx + half; x += 22) o += `<circle cx="${x}" cy="${y}" r="11" fill="${r % 2 ? '#FF7FA6' : '#FF8FB0'}"/>`; return o; }).join('');
+  const tx = cx + 196;   /* the princess tower on the right */
+  return `<g class="lhouse-art"><defs><clipPath id="lhRoof"><path d="M${cx - 196} 206 L${cx} 98 L${cx + 196} 206Z"/></clipPath>
+    <linearGradient id="lhWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4E8"/><stop offset="1" stop-color="#FFE3CF"/></linearGradient></defs>
+    <rect x="${cx - 132}" y="112" width="30" height="66" rx="6" fill="#F4B8CC" stroke="#E08AA8" stroke-width="3"/><rect x="${cx - 138}" y="106" width="42" height="14" rx="6" fill="#FFC9DA"/>
+    <g class="lhsmoke">${[[cx - 117, 88, 11], [cx - 128, 66, 15], [cx - 146, 40, 19]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity=".85"/>`).join('')}</g>
+    <rect x="${cx - 168}" y="194" width="336" height="148" rx="10" fill="url(#lhWall)" stroke="#E9B08F" stroke-width="4"/>
+    ${[222, 250, 278, 306].map(y => `<path d="M${cx - 164} ${y} H${cx + 164}" stroke="#FBDCC6" stroke-width="3"/>`).join('')}
+    <rect x="${tx - 40}" y="150" width="80" height="192" rx="12" fill="url(#lhWall)" stroke="#E9B08F" stroke-width="4"/>
+    <path d="M${tx - 52} 158 L${tx} 54 L${tx + 52} 158Z" fill="#B79BFF" stroke="#fff" stroke-width="6" stroke-linejoin="round"/><path d="M${tx} 54 V30" stroke="#C9975B" stroke-width="4"/><path d="M${tx} 30 L${tx + 26} 38 L${tx} 46Z" fill="#FF6B9A"/>
+    <path d="M${tx - 52} 158 Q${tx - 26} 146 ${tx} 158 Q${tx + 26} 146 ${tx + 52} 158" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+    <g class="lhw" transform="translate(${tx} 196)"><path d="M-17 34 V2 a17 17 0 0 1 34 0 V34Z" fill="#fff"/><path class="glass" d="M-12 30 V4 a12 12 0 0 1 24 0 V30Z" fill="#BFE4FF"/><path d="M-5 8 q-3 8 0 16" stroke="#fff" stroke-width="3" fill="none" opacity=".6"/></g>
+    <path d="M${tx} 268 c-10 -8 -9 -16 -2 -16 c1 0 2 1 2 2 c0 -1 1 -2 2 -2 c7 0 8 8 -2 16z" fill="#FF8FB0"/>
+    <path d="M${cx - 196} 206 L${cx} 98 L${cx + 196} 206Z" fill="#FF8FB0"/><g clip-path="url(#lhRoof)">${shingles}<rect x="${cx - 200}" y="200" width="400" height="10" fill="#F2709A"/></g>
+    <path d="M${cx - 204} 210 L${cx} 92 L${cx + 204} 210" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <g transform="translate(${cx} 92)"><path d="M0 0 L-30 -16 Q-36 0 -30 16Z M0 0 L30 -16 Q36 0 30 16Z" fill="#FF5FA2" stroke="#fff" stroke-width="4" stroke-linejoin="round"/><circle r="9" fill="#FF8FC0" stroke="#fff" stroke-width="3"/></g>
+    <g class="lhw" transform="translate(${cx} 160)"><circle r="21" fill="#fff"/><circle class="glass" r="15" fill="#BFE4FF"/><path d="M0 9 c-11 -8 -10 -18 -3 -18 c2 0 3 2 3 3 c0 -1 1 -3 3 -3 c7 0 8 10 -3 18z" fill="#FF8FB0"/></g>
+    ${win(cx - 108)}${win(cx + 108)}
+    <path d="M${cx - 34} 342 V272 a34 34 0 0 1 68 0 V342Z" fill="#8EDCC0" stroke="#4FB08F" stroke-width="4"/><path d="M${cx} 342 V254" stroke="#4FB08F" stroke-width="3" opacity=".5"/><circle cx="${cx + 20}" cy="302" r="4.5" fill="#FFD24D"/>
+    <path d="M${cx} 286 c-10 -8 -9 -16 -2 -16 c1 0 2 1 2 2 c0 -1 1 -2 2 -2 c7 0 8 8 -2 16z" fill="#fff" opacity=".9"/>
+    <rect x="${cx - 74}" y="200" width="148" height="28" rx="14" fill="#fff" stroke="#FFB3C8" stroke-width="3"/><text x="${cx}" y="220" font-family="Fredoka,sans-serif" font-weight="700" font-size="17" fill="#C0506A" text-anchor="middle">${nm}'s House</text></g>`;
+}
+/* the tappable part: the roof and upper floor above the welcome board (the board covers the rest, like a garden gate) */
+const LHOUSE_HIT = { x: LHOUSE_X - 210, y: 40, w: 470, h: 250 };
+const HOME_ACTS = [['potty', 'Potty', 't-sky', 'Potty time!'], ['birthday', 'Party', 't-pink', "It's party time!"], ['petcare', 'My pet', 't-peach', "Let's play with my pet!"], ['wardrobe', 'Dress up', 't-lilac', "Let's get dressed up!"]];
+function houseMenu(onGo) {
+  const o = document.createElement('div'); o.className = 'lhmenu'; o.innerHTML = `<div class="lhcard" role="dialog" aria-label="My house"><button class="lhx" aria-label="Close">&times;</button>
+    <h2>${esc((S.name || 'Liyana').trim() || 'Liyana')}'s House</h2><div class="lhacts">${HOME_ACTS.filter(([id]) => id !== 'petcare' || S.pet).map(([id, l, tone, s], i) => `<button class="lhact ${tone}" data-id="${id}" data-say="${esc(s)}" style="--i:${i}" aria-label="${l}"><span>${tileIcon(id)}</span><b>${l}</b></button>`).join('')}</div></div>`;
+  document.body.appendChild(o); onLeave(() => o.remove());
+  const close = () => { o.classList.add('out'); setTimeout(() => o.remove(), 250); };
+  o.addEventListener('click', e => { if (e.target === o || e.target.closest('.lhx')) { sfx.boop(); close(); } });
+  $$('.lhact', o).forEach(b => b.addEventListener('click', () => { sfx.boop(); say(b.dataset.say); o.remove(); onGo(b, b.dataset.id); }));
+}
 /* ===== Drawing Studio (7 modes) ===== */
 const PAL = ['#FF5C5C', '#FFA24C', '#FFD84D', '#5CD68A', '#4DA3FF', '#9B7BFF', '#FF8FC7', '#9B6B4A'];
 const PAL_X = ['#22C7C7', '#FFB3D9', '#8A8AA8', '#FFFFFF'];
@@ -3794,7 +3984,7 @@ const PIC_CATS = [['Animals', [4, 5, 22, 23, 24, 25, 33, 10, 13]], ['Ocean', [1,
     sp('M0 196 Q60 150 130 178 T260 172 T400 168 V210 H0Z') + sp('M0 200 Q200 184 400 200 V300 H0Z') +
     sp('M110 300 Q160 262 210 238 Q250 220 320 212 L340 222 Q270 236 250 262 Q244 284 262 300Z') +
     /* acacia */ sp('M52 205 L58 128 L66 128 L72 205Z') + sp('M14 132 Q6 112 34 108 Q40 92 66 98 Q96 94 104 114 Q118 130 90 138 Q60 146 14 132Z') +
-    /* giraffe */ legs([146, 158, 184, 196], 228, 40, 8) + se(172, 220, 44, 24) + sp('M150 208 L160 106 L180 110 L184 210Z') + se(174, 98, 21, 13, -18) + sc(163, 84, 5) + sc(178, 82, 5) + ln('M163 89 V82 M178 87 V80', 2.4) + se(156, 96, 8, 5, 30) + sc(180, 97, 2.4) + sc(160, 150, 6) + sc(170, 178, 7) + sc(154, 190, 5) + sc(174, 214, 6) + sc(192, 222, 5) + sc(158, 224, 5) + ln('M216 214 Q232 210 230 236', 3) +
+    /* giraffe */ legs([146, 158, 184, 196], 228, 40, 8) + se(172, 220, 44, 24) + sp('M150 208 L160 106 L180 110 L184 210Z') + '<g class="bighead" transform="translate(172 92) scale(1.75) translate(-172 -92)">' + se(156, 96, 8, 5, 30) + ln('M163 89 V82 M178 87 V80', 2.4) + sc(163, 80, 5) + sc(178, 78, 5) + se(174, 98, 21, 13, -18) + se(186, 102, 9, 6, -18) + sc(168, 94, 2.6) + sc(189, 101, 1.6) + '</g>' + sc(160, 150, 6) + sc(170, 178, 7) + sc(154, 190, 5) + sc(174, 214, 6) + sc(192, 222, 5) + sc(158, 224, 5) + ln('M216 214 Q232 210 230 236', 3) +
     /* elephant */ legs([292, 308, 336, 352], 236, 34, 12) + se(326, 214, 52, 36) + se(360, 190, 28, 26) + se(340, 196, 20, 28, 8) + sp('M378 200 Q398 220 388 254 Q384 260 379 254 Q386 226 370 214Z') + sc(366, 186, 3) + sp('M372 172 Q392 160 396 176 Q388 188 374 184Z') + ln('M274 206 Q262 212 268 236', 3) +
     /* jeep */ sb(6, 246, 118, 34, 12) + sp('M28 248 L44 226 H92 L106 248Z') + sp('M46 232 H66 V246 H38Z') + sp('M70 232 H90 L98 246 H70Z') + ln('M36 222 H98', 3) + sc(32, 282, 14) + sc(98, 282, 14) + sc(32, 282, 5) + sc(98, 282, 5) + sc(114, 258, 5) + sb(40, 214, 12, 8, 3) + sb(58, 214, 12, 8, 3) + sb(76, 214, 12, 8, 3) +
     /* lion */ sc(214, 266, 28) + sc(214, 268, 19) + sc(200, 244, 8) + sc(228, 244, 8) + se(214, 274, 6, 4) + sc(207, 262, 2.6) + sc(221, 262, 2.6) + ln('M214 274 V280 M208 282 Q214 288 220 282', 2.4) +
@@ -3814,7 +4004,7 @@ const PIC_CATS = [['Animals', [4, 5, 22, 23, 24, 25, 33, 10, 13]], ['Ocean', [1,
     /* hay */ se(146, 292, 26, 9) + tuft(20, 224) + tuft(180, 228);
 
   /* 3. Under the sea */
-  const sea = () => sp('M0 0 H400 V300 H0Z') + sp('M60 0 L110 0 L150 240 L40 240Z') + sp('M180 0 L220 0 L250 240 L160 240Z') + sp('M290 0 L330 0 L370 240 L270 240Z') +
+  const sea = () => sp('M0 0 H400 V300 H0Z') + /* soft light rays (were straight wedges that read as spikes) */ sp('M58 0 H108 Q118 90 138 176 Q112 196 86 190 Q62 184 50 170 Q56 80 58 0Z') + sp('M180 0 H220 Q228 100 240 168 Q218 186 196 182 Q176 178 166 164 Q176 84 180 0Z') + sp('M290 0 H332 Q344 92 362 172 Q338 192 312 186 Q290 180 280 166 Q286 84 290 0Z') +
     sp('M0 258 Q70 236 150 256 T290 250 T400 254 V300 H0Z') +
     /* coral */ sp('M40 262 Q36 232 46 220 Q52 232 54 246 Q60 226 74 220 Q72 240 66 264Z') + sp('M320 264 Q312 238 322 224 Q326 236 330 246 Q338 230 350 232 Q348 250 340 266Z') + sp('M96 264 Q90 244 100 232 Q108 244 106 264Z') +
     /* seaweed */ sp('M20 262 Q6 236 22 214 Q14 200 26 188 Q36 206 28 218 Q42 236 30 262Z') + sp('M372 264 Q384 238 368 216 Q378 202 366 190 Q354 206 362 220 Q348 238 360 264Z') +
