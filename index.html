@@ -1239,6 +1239,7 @@ body[data-screen=home]:not([data-view=grid]){background:#57B85E}
 @keyframes ptrinse{to{transform:translateY(140px);opacity:0}}
 .pt-sheetfly{width:50px;height:50px}
 body[data-screen=potty] #petbox{display:none}
+.potty.washing .pt-me{pointer-events:none}
 .pt-chart .ptc-card{background:#fff;border-radius:30px;padding:22px 26px;max-width:660px;width:100%;text-align:center;box-shadow:0 14px 30px rgba(0,0,0,.2)}
 .pt-chart h2{font:700 clamp(24px,3.4vw,34px) var(--display);color:#C0506A;margin:0}
 .ptc-week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:14px 0}
@@ -1836,7 +1837,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v51';
+const APP_V = 'lw-v52';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -4976,16 +4977,18 @@ SCREENS.potty = el => {
 
   /* ---- 7 wash hands: water, soap, scrub, rinse, dry ---- */
   function wash() {
-    setStep(6); let phase = 'water';
+    setStep(6); let phase = 'water', rinseAt = 0; pt.classList.add('washing');   /* she stands in front of the tap: let taps go through her */
     say('Turn on the water! Tap the tap.'); faucet.classList.add('glow');
     coach(() => ({ water: 'Tap the tap for water!', soap: 'Tap the soap!', scrub: 'Rub your hands! Scrub scrub scrub!', rinse: 'Tap the tap to rinse!', dry: 'Tap the towel to dry your hands!' })[phase] || null,
       () => ({ water: faucet, soap, scrub: hands, rinse: faucet, dry: towel })[phase] || null);
     const glowOnly = g => [faucet, soap, towel].forEach(x => x.classList.toggle('glow', x === g));
-    faucet.addEventListener('click', () => {
+    const tapWater = () => {
       if (phase === 'water') { phase = 'soap'; sink.classList.add('run'); sfx.whoosh(); say('Splash! Now some soap.'); glowOnly(soap); later(() => sink.classList.remove('run'), 1800); }
       else if (phase === 'rinse') { phase = 'dry'; sink.classList.add('run'); sfx.whoosh(); hands.classList.add('rinse'); say('Rinse rinse! Bubbles all gone.'); glowOnly(towel);
         later(() => { hands.hidden = true; hands.classList.remove('rinse'); $('.bub', hands).innerHTML = ''; sink.classList.remove('run'); say('Now dry your hands with the towel!'); }, 1900); }
-    });
+    };
+    faucet.addEventListener('click', tapWater); sink.addEventListener('click', e => { if (!e.target.closest('.soap,.towel,.faucet') && (phase === 'water' || phase === 'rinse')) tapWater(); });
+    hands.addEventListener('click', () => { if (phase === 'rinse' && performance.now() - rinseAt > 700) tapWater(); });   /* not the click that ends the scrub */
     soap.addEventListener('click', () => { if (phase !== 'soap') return; phase = 'scrub'; glowOnly(null); sfx.pop(); soap.classList.add('pump'); later(() => soap.classList.remove('pump'), 500); scrub(); });
     towel.addEventListener('click', () => { if (phase !== 'dry') return; phase = 'done'; glowOnly(null); coach.off(); $('.tw', towel).classList.add('rub'); sfx.boop(); say('Dry dry dry! Clean hands!'); later(finale, 1600); });
     function scrub() {
@@ -4996,7 +4999,7 @@ SCREENS.potty = el => {
         if (!last || phase !== 'scrub') return; const d = Math.hypot(e.clientX - last[0], e.clientY - last[1]); if (d < 3) return; last = [e.clientX, e.clientY]; rubbed += d;
         if (rubbed / 45 > nb) { const r = sv.getBoundingClientRect(); add(((e.clientX - r.left) / r.width * 320 + rnd(-20, 20)).toFixed(0), ((e.clientY - r.top) / r.height * 200 + rnd(-20, 20)).toFixed(0)); if (nb % 4 === 0) sfx.pop(); }
         if (nb === 10) say('Scrub scrub scrub!');
-        if (nb >= 24) { phase = 'rinse'; last = null; sfx.star(); say('So many bubbles! Now rinse. Tap the tap!'); glowOnly(faucet); }
+        if (nb >= 24) { phase = 'rinse'; rinseAt = performance.now(); last = null; sfx.star(); say('So many bubbles! Now rinse. Tap the tap!'); glowOnly(faucet); }
       };
       hands.onpointerup = hands.onpointercancel = () => { last = null; };
     }
