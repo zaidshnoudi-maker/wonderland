@@ -1,4 +1,4 @@
-const V='lw-v53';const FILES=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./icon-180.png','./voice.json','./voice.bin'];
+const V='lw-v54';const FILES=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./icon-180.png','./voice.json','./voice.bin','./fonts/fredoka.woff2','./fonts/nunito.woff2','./privacy.html'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 /* cache-first for instant, offline-safe launches; refreshes the cache in the background when online */

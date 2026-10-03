@@ -5,9 +5,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Wonderland">
 <meta name="theme-color" content="#F1ECFF"><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-180.png">
 <title>Liyana's Wonderland</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@500;700&display=swap" media="print" onload="this.media='all'">
+<style>/* v1.54: fonts ship with the app (SIL Open Font License) - the app makes no calls to Google or any other third party */
+@font-face{font-family:Fredoka;src:url(fonts/fredoka.woff2) format('woff2');font-weight:300 700;font-display:swap}
+@font-face{font-family:Nunito;src:url(fonts/nunito.woff2) format('woff2');font-weight:200 1000;font-display:swap}</style>
 <style>
 :root{
   --ground:#F1ECFF;--ground2:#E3F6F0;--ink:#3D3358;--soft:#6B5F8C;--text:#3D3358;--textsoft:#6B5F8C;
@@ -1293,6 +1293,19 @@ body[data-screen=potty] #petbox{display:none}
 .frrow .chip[disabled]{opacity:.35}
 </style>
 <style>body[data-screen=world] #petbox{display:none}</style>
+<style>
+/* ===== v1.54 grown-up gate + privacy policy ===== */
+.pgate{z-index:95}
+.pgcard{background:#fff;border-radius:28px;padding:22px 26px;width:min(440px,100%);text-align:center;box-shadow:0 14px 30px rgba(0,0,0,.2)}
+.pgcard.shake{animation:pgshake .4s ease-in-out}
+@keyframes pgshake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.pgcard h2{margin:0 0 4px;font:700 26px var(--display);color:#C0506A}.pgcard p{margin:0 0 10px;color:#4B3F7A}
+.pgq{font:700 44px var(--display);color:#3D3358;margin:6px 0 14px}
+.pgopts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}.pgopt{font:700 28px var(--display);padding:14px 0}
+.pprivacy{z-index:95}
+.ppcard{background:#fff;border-radius:24px;width:min(760px,100%);height:min(86vh,900px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.2)}
+.ppcard iframe{flex:1;border:0;width:100%}.ppcard .btn{margin:10px auto 14px}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1876,7 +1889,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v53';
+const APP_V = 'lw-v54';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -2135,10 +2148,32 @@ SCREENS.gallery = el => {
 
 /* ---------- parent gate (hold 2.5s) + panel ---------- */
 const gear = $('#gear'); let gt;
-gear.addEventListener('pointerdown', e => { e.preventDefault(); gear.classList.add('hold'); gt = setTimeout(() => { gear.classList.remove('hold'); openParent(); }, 2450); });
+gear.addEventListener('pointerdown', e => { e.preventDefault(); gear.classList.add('hold'); gt = setTimeout(() => { gear.classList.remove('hold'); parentGate(openParent); }, 2450); });
 ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => gear.addEventListener(ev, () => { clearTimeout(gt); gear.classList.remove('hold'); }));
 gear.addEventListener('contextmenu', e => e.preventDefault());
 
+/* v1.54 grown-up gate: a written multiplication with four answers. Never read aloud. Wrong answer = a new question. */
+function parentGate(onPass) {
+  if ($('#pgate') || $('#parent')) return;
+  const o = document.createElement('div'); o.className = 'overlay pgate'; o.id = 'pgate'; document.body.appendChild(o);
+  const ask = (shake) => {
+    const a = 3 + Math.floor(Math.random() * 7), b = 3 + Math.floor(Math.random() * 7), ans = a * b, opts = new Set([ans]);
+    while (opts.size < 4) { const d = ans + (Math.floor(Math.random() * 9) - 4) * (Math.random() < .5 ? 1 : a); if (d > 0 && d !== ans) opts.add(d); }
+    o.innerHTML = `<div class="pgcard${shake ? ' shake' : ''}" role="dialog" aria-label="Grown-ups only"><h2>Grown-ups only</h2><p>To open the settings, tap the answer:</p>
+      <div class="pgq">${a} &times; ${b} = ?</div><div class="pgopts">${[...opts].sort(() => Math.random() - .5).map(n => `<button class="btn pgopt" data-n="${n}">${n}</button>`).join('')}</div>
+      <button class="btn pgcancel" id="pgcancel">Cancel</button></div>`;
+    $$('.pgopt', o).forEach(x => x.onclick = () => { if (+x.dataset.n === ans) { o.remove(); onPass(); } else { sfx.oops(); ask(true); } });
+    $('#pgcancel', o).onclick = () => o.remove();
+  };
+  o.addEventListener('click', e => { if (e.target === o) o.remove(); });
+  ask(false);
+}
+/* the privacy policy, shown inside the app (works offline: the page is cached with the app) */
+function openPrivacy() {
+  const o = document.createElement('div'); o.className = 'overlay pprivacy';
+  o.innerHTML = '<div class="ppcard"><iframe src="privacy.html" title="Privacy policy"></iframe><button class="btn go" id="ppclose">Close</button></div>';
+  document.body.appendChild(o); $('#ppclose', o).onclick = () => o.remove();
+}
 function openParent() {
   if ($('#parent')) return;
   const o = document.createElement('div'); o.className = 'overlay'; o.id = 'parent';
@@ -2159,6 +2194,7 @@ function openParent() {
   <div class="opt-row"><label>Sound effects</label><button class="chip" data-sf="1" aria-pressed="${!S.sfxOff}">On</button><button class="chip" data-sf="0" aria-pressed="${!!S.sfxOff}">Off</button></div>
   <div class="opt-row"><label>Background music</label>${[['off', 'Off'], ['soft', 'Soft'], ['med', 'Medium']].map(([k, l]) => `<button class="chip" data-mu="${k}" aria-pressed="${k === 'off' ? S.music === false : S.music !== false && (S.mlevel || 'soft') === k}">${l}</button>`).join('')}</div>
   <p class="note">Keep her in the app: open Settings, then Accessibility, then Guided Access, and turn it on. Triple-click the side or home button inside the app to start it.</p>
+  <div class="opt-row"><label>Privacy: this app collects no information</label><button class="chip" id="ppriv">Privacy policy</button></div>
   <div class="opt-row"><label>App version: ${APP_V.replace('lw-v', '')}</label><button class="chip" id="pupd">Get the latest version</button></div>
   <div class="opt-row"><button class="chip" id="ps">Save pictures to Photos (${gallery.length})</button><button class="chip" id="pe">Erase pictures</button><button class="chip" id="pr">Start over</button></div>
   <button class="btn go big" id="pc">Close</button></div>`;
@@ -2167,6 +2203,7 @@ function openParent() {
   const close = () => { S.name = $('#pn', o).value.trim() || S.name; if (S.pet) S.petName = $('#ppn', o).value.trim(); save(); o.remove(); renderPet(); if (screen === 'home') go('home'); };
   $('#pc', o).onclick = close;
   $('#pupd', o).onclick = e => getLatest(e.currentTarget);
+  $('#ppriv', o).onclick = () => openPrivacy();
   $('#pbd', o).value = S.birth || ''; $('#pbd', o).onchange = e => { S.birth = e.target.value; save(); };
   $('#pa', o).onclick = () => { close(); go('setup1', 'edit'); };
   $('#pf', o).onclick = () => { close(); go('setup2', 'edit'); };
