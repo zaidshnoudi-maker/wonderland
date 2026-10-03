@@ -1115,6 +1115,145 @@ body[data-screen=home]:not([data-view=grid]){background:#57B85E}
 <style>/* v1.49: the free-draw bar gained a Pictures button - keep it on ONE row on iPad widths */
 @media (max-width:1300px){.draw .bar{gap:5px;padding:7px 10px}.draw .bar .sw{width:40px;height:40px;border-width:4px}.draw .bar .btn.round,.draw .bar .size{width:48px;height:48px}.draw .bar .btn.round svg{width:26px;height:26px}.draw .bar .sep{margin:0}}
 </style>
+<style>
+/* ===== v1.50 birthday: bake the cake, share it, party games ===== */
+.bday.baking .bd-cake{opacity:0;pointer-events:none}
+.bd-cake.fresh{animation:bdfresh .8s cubic-bezier(.3,1.5,.5,1)}
+@keyframes bdfresh{from{transform:scale(.4) translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.bd-kit{position:absolute;left:50%;bottom:9%;height:46%;aspect-ratio:300/270;translate:-50% 0;z-index:5;display:none;touch-action:none;cursor:pointer}
+.bd-kit.on{display:block}
+.bd-kit svg{width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 8px 6px rgba(61,51,88,.14))}
+.bd-kit .batter{transition:opacity .4s}
+.bd-kit.stir{animation:bdready 1s ease-in-out infinite alternate}
+.bd-kit .od{fill:#C9C1E2;stroke:#3D3358;stroke-width:3;transition:fill .2s}
+.bd-kit.t1 .od1,.bd-kit.t2 .od2,.bd-kit.t3 .od3{fill:#FFD24D}
+.bd-kit .oglow{animation:bdoven .8s ease-in-out infinite alternate}
+@keyframes bdoven{to{opacity:.95}}
+.bd-kit.ding{animation:bdding .45s ease-in-out 2}
+@keyframes bdding{50%{transform:rotate(-3deg) scale(1.06)}}
+.bd-flv,.bd-game{position:relative;width:clamp(86px,10.5vw,124px);aspect-ratio:1;border:5px solid #fff;border-radius:26px;background:#FFF6E2;box-shadow:0 6px 0 rgba(61,51,88,.14);padding:8px 8px 18px;cursor:pointer;animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*70ms)}
+.bd-flv svg,.bd-game svg{width:100%;height:100%;display:block}
+.bd-flv b,.bd-game b{position:absolute;left:50%;bottom:-12px;translate:-50% 0;font:700 15px var(--display);color:#4B3F7A;background:#fff;border-radius:999px;padding:2px 12px;white-space:nowrap;box-shadow:0 3px 0 rgba(61,51,88,.12)}
+.bd-flv.pick{transform:scale(1.15);border-color:#FF8FB0;transition:.25s}
+.bd-game{background:#F1ECFF}.bd-game.played{background:#E9FBF2}.bd-game.played::after{content:"";position:absolute;right:-8px;top:-8px;width:26px;height:26px;border-radius:50%;background:#5CD68A url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/70% no-repeat;border:3px solid #fff}
+.bd-game.end{background:#FFF6E2;padding:22px 22px 30px}
+.bd-plate{position:absolute;bottom:10%;width:clamp(80px,9vw,112px);aspect-ratio:100/70;translate:-50% 0;z-index:6;border:0;background:none;padding:0;cursor:pointer;animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*90ms)}
+.bd-plate::before{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;border-radius:50%;background:#fff;border:3px solid #E5DDF5;box-shadow:0 4px 0 rgba(61,51,88,.12)}
+.bd-plate:not(.full)::before{animation:bdplate 1s ease-in-out infinite alternate}
+@keyframes bdplate{to{box-shadow:0 0 0 6px rgba(255,143,176,.45),0 4px 0 rgba(61,51,88,.12)}}
+.bd-plate svg{position:relative;width:84%;margin:0 8% 8%;display:block;animation:bdpop .4s cubic-bezier(.3,1.6,.5,1)}
+.bd-cake.cutme{animation:bdready 1s ease-in-out infinite alternate}
+.bd-cake.cut{animation:bdcut .35s ease-out}
+@keyframes bdcut{50%{transform:scale(.96,1.03)}}
+.bday .bd-guest.munch{animation:bdmunch .28s ease-in-out 8 alternate}
+@keyframes bdmunch{to{transform:translateY(-5px) scaleY(.97)}}
+.bday.pinata .bd-cake,.bday.pinata .bd-head{opacity:0;transition:opacity .4s;pointer-events:none}
+.bd-pin{position:absolute;left:50%;top:0;height:56%;aspect-ratio:140/190;translate:-50% 0;z-index:7;border:0;background:none;padding:0;cursor:pointer;animation:bdpinin .8s cubic-bezier(.3,1.4,.5,1)}
+@keyframes bdpinin{from{transform:translateY(-100%)}}
+.bd-pin svg{width:100%;height:100%;overflow:visible;display:block}
+.bd-pin .pbody{animation:bdswing 2.2s ease-in-out infinite alternate}
+@keyframes bdswing{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+.bd-pin.burst{pointer-events:none}.bd-pin.burst svg{animation:bdburst .5s ease-out forwards}
+@keyframes bdburst{to{opacity:0;transform:scale(1.5)}}
+.bd-candy{position:absolute;width:clamp(58px,6.6vw,80px);aspect-ratio:2;border:0;background:none;padding:0;z-index:8;cursor:pointer;transform:translate(-50%,-50%)}
+.bd-candy svg{width:100%;height:100%;display:block;filter:drop-shadow(0 4px 2px rgba(61,51,88,.18))}
+.bd-candy.got{opacity:0;transform:translate(-50%,-50%) scale(.3);transition:.35s;pointer-events:none}
+.bd-bag{position:relative;width:clamp(84px,9.5vw,116px);aspect-ratio:1;animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards}
+.bd-bag svg{width:100%;height:100%;display:block}
+.bd-bag b{position:absolute;right:-6px;top:-6px;min-width:38px;height:38px;border-radius:19px;background:#FF6B9A;color:#fff;font:700 22px/32px var(--display);text-align:center;border:3px solid #fff}
+.bd-bag.bump{animation:bdbump .3s ease-out}
+@keyframes bdbump{50%{transform:scale(1.15)}}
+.bd-dance{position:relative;width:clamp(110px,13vw,150px);aspect-ratio:1;border:6px solid #fff;border-radius:50%;background:#B79BFF;box-shadow:0 7px 0 rgba(61,51,88,.18);padding:22px 22px 30px;cursor:pointer;animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards}
+.bd-dance svg{width:100%;height:100%;display:block}.bd-dance:active{transform:scale(.94)}
+.bd-dance b{position:absolute;left:50%;bottom:-12px;translate:-50% 0;font:700 17px var(--display);color:#4B3F7A;background:#fff;border-radius:999px;padding:2px 14px;box-shadow:0 3px 0 rgba(61,51,88,.12)}
+.bday .bd-guest.dancing{animation:bddance .42s ease-in-out infinite alternate}
+.bday .bd-guest.dancing:nth-child(even){animation-delay:-.21s}
+@keyframes bddance{from{transform:rotate(-6deg)}to{transform:rotate(6deg) translateY(-14px)}}
+.bday .g-me.d-spin svg{animation:bdspin .6s ease-in-out}.bday .g-me.d-jump svg{animation:bdhop .5s ease-in-out}.bday .g-me.d-wiggle svg,.bday .g-me.oops svg{animation:bdwig .5s ease-in-out}
+@keyframes bdspin{to{transform:rotateY(360deg)}}
+@keyframes bdwig{25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+.bd-flash{position:fixed;inset:0;background:#fff;z-index:95;pointer-events:none;animation:bdflash .7s ease-out forwards}
+@keyframes bdflash{to{opacity:0}}
+@media (max-aspect-ratio:1/1){.bd-kit{height:29%;bottom:13%}.bd-pin{height:40%}.bd-plate{bottom:14%}}
+@media (prefers-reduced-motion:reduce){.bd-pin .pbody,.bday .bd-guest.dancing,.bd-plate:not(.full)::before{animation:none}}
+</style>
+<style>
+/* v1.50 home grid: 14 tiles = two full rows of 7 (portrait 5/5/4 with the last row centred) */
+.tiles.g10>.tile:nth-child(8){grid-column:auto / span 2}
+@media (max-width:1000px){.tiles.g10>.tile:nth-child(6),.tiles.g10>.tile:nth-child(10){grid-column:auto / span 2}.tiles.g10>.tile:nth-child(11){grid-column:2 / span 2}}
+/* ===== v1.50 potty time ===== */
+.potty{position:relative;overflow:hidden;border-radius:28px;background:repeating-linear-gradient(90deg,transparent 0 58px,rgba(127,192,255,.22) 58px 61px),repeating-linear-gradient(0deg,transparent 0 58px,rgba(127,192,255,.22) 58px 61px),#EAF6FF}
+.pt-floor{position:absolute;left:0;right:0;bottom:0;height:27%;background:repeating-conic-gradient(#FFE3EE 0 25%,#fff 0 50%) 0 0/56px 56px;border-top:8px solid #fff;box-shadow:0 -6px 0 rgba(61,51,88,.06)}
+.pt-mat{position:absolute;left:35%;bottom:3%;width:26%;height:10%;border-radius:50%;background:#B8F0CB;border:5px dashed #fff}
+.pt-loo{position:absolute;left:38%;bottom:7%;height:50%;aspect-ratio:200/260;z-index:3;cursor:pointer}
+.pt-loo>svg,.pt-sink>svg,.pt-paper svg,.pt-stool svg,.pt-pet svg{width:100%;height:100%;display:block;overflow:visible}
+.pt-loo .lid-up,.pt-loo .pee,.pt-loo .swirl{opacity:0;transition:opacity .4s}
+.pt-loo.open .lid-up{opacity:1}.pt-loo.open .lid-down{opacity:0}
+.pt-loo.peed .pee{opacity:1}
+.pt-loo.flushing .swirl{opacity:1;animation:ptswirl .45s linear infinite}
+@keyframes ptswirl{to{transform:rotate(360deg)}}
+.pt-loo .handle.push{animation:ptpush .4s ease-in-out 2}
+@keyframes ptpush{50%{transform:rotate(-25deg)}}
+.pt-paper{position:absolute;left:-36%;top:18%;height:34%;aspect-ratio:80/150;cursor:pointer}
+.pt-paper .sheet{transform-box:fill-box;transform-origin:50% 0%;transform:scaleY(.3)}
+.pt-paper.pull .sheet{animation:ptpull .8s ease-out}
+@keyframes ptpull{40%{transform:scaleY(1)}100%{transform:scaleY(.3)}}
+.pt-sink{position:absolute;right:3%;bottom:8%;height:64%;aspect-ratio:260/360;z-index:2}
+.pt-sink .faucet,.pt-sink .soap,.pt-sink .towel{cursor:pointer}
+.pt-sink .stream{opacity:0;transition:opacity .2s}
+.pt-sink.run .stream{opacity:1;animation:ptflow .3s linear infinite}
+@keyframes ptflow{to{stroke-dashoffset:-18}}
+.pt-sink .soap.pump{animation:ptpump .4s ease-in-out}
+@keyframes ptpump{50%{transform:translateY(6px)}}
+.pt-sink .tw.rub{animation:ptrub .25s ease-in-out 6 alternate}
+@keyframes ptrub{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
+.pt-stool{position:absolute;left:18%;bottom:-12%;width:52%;aspect-ratio:120/50}
+.pt-pet{position:absolute;left:1%;bottom:5%;height:22%;aspect-ratio:120/134;z-index:3}
+.pt-pet.hop{animation:bdhop .5s ease-in-out 2}
+.pt-me{position:absolute;left:12%;bottom:6%;height:50%;aspect-ratio:1/2;z-index:4}
+.pt-me>svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 95%}
+.pt-me.wiggle>svg{animation:ptwig .3s ease-in-out infinite alternate}
+@keyframes ptwig{from{transform:rotate(-5deg)}to{transform:rotate(5deg) translateY(-3px)}}
+.pt-me.walk>svg{animation:ptbob .28s ease-in-out infinite alternate}
+@keyframes ptbob{to{transform:translateY(-5px)}}
+.pt-me.dance>svg{animation:bddance .38s ease-in-out infinite alternate}
+.pt-undies{position:absolute;left:33%;width:34%;top:80%;opacity:0;pointer-events:none;transition:top .6s ease-in,opacity .3s}
+.pt-undies svg{width:100%;display:block;filter:drop-shadow(0 3px 2px rgba(61,51,88,.2))}
+.pt-undies.show{opacity:1;pointer-events:auto;cursor:pointer}
+.pt-undies.down{top:90%}.pt-me.sit .pt-undies.down{top:84%}
+.potty .pt-loo.glow>svg,.potty .pt-paper.glow svg{animation:ptglow .9s ease-in-out infinite alternate}
+@keyframes ptglow{to{filter:drop-shadow(0 0 14px rgba(255,190,40,.95))}}
+.potty g.glow{transform-box:fill-box;transform-origin:50% 50%;animation:ptpulse .7s ease-in-out infinite alternate}
+@keyframes ptpulse{to{transform:scale(1.18)}}
+.pt-tray{position:absolute;left:0;right:0;top:5%;z-index:6;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:14px;pointer-events:none}
+.pt-tray>*{pointer-events:auto}
+.pt-num{width:clamp(64px,8vw,92px);aspect-ratio:1;border-radius:50%;border:5px solid #fff;background:#B79BFF;color:#fff;font:700 clamp(30px,4vw,46px) var(--display);box-shadow:0 6px 0 rgba(61,51,88,.15);cursor:pointer;animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*70ms);transition:transform .2s,background .2s}
+.pt-num.on{background:#FFD24D;color:#3D3358;transform:scale(1.12)}
+.pt-real svg,.pt-starbtn svg{width:26px;height:26px;fill:#FFD84D;stroke:#F2B705;stroke-width:1.4;vertical-align:-5px}
+.pt-starbtn{display:flex;align-items:center;gap:4px;margin-right:10px;padding:6px 14px}.pt-starbtn b{font:700 20px var(--display);color:#4B3F7A}
+.pt-hands{position:absolute;left:50%;top:42%;translate:-50% -50%;width:min(56%,520px);aspect-ratio:320/200;z-index:8;background:rgba(255,255,255,.94);border:6px solid #fff;border-radius:40px;box-shadow:0 10px 0 rgba(61,51,88,.12);touch-action:none;cursor:pointer;padding:12px;animation:tilein .4s cubic-bezier(.3,1.5,.5,1)}
+.pt-hands[hidden]{display:none}
+.pt-hands svg{width:100%;height:100%;display:block;overflow:visible}
+.pt-hands .bub circle{fill:rgba(255,255,255,.85);stroke:#9FD3FF;stroke-width:2.5}
+.pt-hands.rinse .bub{animation:ptrinse 1.6s ease-in forwards}
+@keyframes ptrinse{to{transform:translateY(140px);opacity:0}}
+.pt-sheetfly{width:50px;height:50px}
+body[data-screen=potty] #petbox{display:none}
+.pt-chart .ptc-card{background:#fff;border-radius:30px;padding:22px 26px;max-width:660px;width:100%;text-align:center;box-shadow:0 14px 30px rgba(0,0,0,.2)}
+.pt-chart h2{font:700 clamp(24px,3.4vw,34px) var(--display);color:#C0506A;margin:0}
+.ptc-week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:14px 0}
+.ptc-day{background:#F6F2FF;border-radius:16px;padding:6px 4px;min-height:92px}
+.ptc-day.today{background:#FFF3C4;box-shadow:inset 0 0 0 3px #FFD24D}
+.ptc-day small{display:block;font:700 14px var(--display);color:#8F86B4;margin-bottom:4px}
+.ptc-st{display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
+.ptc-st svg,.ptc-five svg{width:24px;height:24px;fill:#FFD84D;stroke:#F2B705;stroke-width:1.4;stroke-linejoin:round;animation:starpop .6s cubic-bezier(.3,1.8,.5,1)}
+.ptc-jar{background:#F1ECFF;border-radius:20px;padding:10px;font:600 16px var(--display);color:#4B3F7A}
+.ptc-five{display:flex;justify-content:center;gap:8px;margin-top:6px}.ptc-five svg{width:42px;height:42px;animation:none}.ptc-five i:not(.on) svg{fill:#E4DDF2;stroke:#D2C9E6}
+.ptc-btns{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}.ptc-btns svg{width:26px;height:26px;fill:#FFD84D;stroke:#F2B705;vertical-align:-5px}
+.ptc-total{margin:10px 0 0;color:#8F86B4;font:600 15px var(--display)}
+@media (max-aspect-ratio:1/1){.pt-loo{height:32%;left:30%;bottom:8%}.pt-sink{height:42%}.pt-me{height:34%}.pt-pet{height:14%}.pt-floor{height:24%}.pt-hands{width:84%}}
+@media (prefers-reduced-motion:reduce){.pt-me.wiggle>svg,.pt-me.walk>svg,.potty g.glow{animation:none}}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1658,7 +1797,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v49';
+const APP_V = 'lw-v50';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -2116,7 +2255,7 @@ const VIEW_ICON = {
 const HOME_GAMES = [
   ['studio', 'Draw', 't-pink', "Let's draw!"], ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!'], ['animals', 'Animals', 't-butter', 'Animal friends!'], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!"],
   ['spy', 'Find it!', 't-mint', 'Can you find it?'], ['count', 'Count', 't-peach', "Let's count!"], ['memory', 'Memory', 't-lilac', 'Find the pairs!'], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!'],
-  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'], ['birthday', 'Birthday', 't-pink', "It's party time!"],
+  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'], ['birthday', 'Birthday', 't-pink', "It's party time!"], ['potty', 'Potty', 't-sky', 'Potty time!'],
   ['playarea', 'Play area', 't-peach', "Let's go to the play area!"], ['petcare', 'My pet', 't-pink', "Let's play with my pet!"],
 ];
 SCREENS.playarea = () => { S.view = 'world'; save(); go('home'); };
@@ -4329,17 +4468,46 @@ const HB_BPM = 92;
 const hbWords = name => [['Happy', 'birthday', 'to', 'you'], ['Happy', 'birthday', 'to', 'you'], ['Happy', 'birthday', 'dear', name], ['Happy', 'birthday', 'to', 'you']];
 
 /* the cake: two tiers on a plate; topping slots on the front, candle slots on top */
+/* ---- v1.50: bake the cake, share it, party games (piñata, freeze dance, party photo) ---- */
+const BD_FLV = [['strawberry', 'Strawberry'], ['chocolate', 'Chocolate'], ['vanilla', 'Vanilla'], ['rainbow', 'Rainbow']];
+const BD_FLAVORS = { strawberry: ['#FF9DB8', '#FFC9DC'], chocolate: ['#9C6640', '#C48A5C'], vanilla: ['#FFE29A', '#FFF2C7'], rainbow: ['url(#bdrb)', 'url(#bdrb2)'] };
+const BD_BATTER = { strawberry: '#FF9DB8', chocolate: '#8A5634', vanilla: '#FFE08A', rainbow: '#C9A8FF' };
+const BD_GRADS = `<defs><linearGradient id="bdsh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#3D3358" stop-opacity=".14"/></linearGradient>
+  <linearGradient id="bdrb" x1="0" x2="1">${['#FF8FB0', '#FFC93D', '#7EDB9B', '#7FC0FF', '#B79BFF'].map((c, i) => `<stop offset="${i / 4}" stop-color="${c}"/>`).join('')}</linearGradient>
+  <linearGradient id="bdrb2" x1="0" x2="1">${['#FFC1D6', '#FFE29A', '#B8F0CB', '#BFE2FF', '#DCCBFF'].map((c, i) => `<stop offset="${i / 4}" stop-color="${c}"/>`).join('')}</linearGradient></defs>`;
+const BD_DEFS = `<svg width="0" height="0" style="position:absolute" aria-hidden="true">${BD_GRADS}</svg>`;
+const bdMix = (a, b, k) => { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)), A = p(a), B = p(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * k)).join(',')})`; };
+const bdFlvIcon = k => { const [a, b] = BD_FLAVORS[k]; return `<svg viewBox="0 0 100 90" aria-hidden="true">${BD_GRADS}<rect x="14" y="44" width="72" height="34" rx="10" fill="${a}" stroke="#3D3358" stroke-width="3"/><rect x="26" y="20" width="48" height="28" rx="9" fill="${b}" stroke="#3D3358" stroke-width="3"/><path d="M26 25 q6 9 12 0 q6 7 12 0 q6 9 12 0 q6 7 12 0 V21 H26Z" fill="#fff"/><circle cx="50" cy="14" r="6" fill="#FF6B81" stroke="#3D3358" stroke-width="2"/></svg>`; };
+const BD_ING = [['egg', 'An egg! Crack!'], ['flour', 'Flour! Puff!'], ['milk', 'Milk! Splash!'], ['sugar', 'Sugar! Sweet!']];
+const BD_ING_SVG = {
+  egg: '<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="56" rx="28" ry="36" fill="#FFF8EC" stroke="#3D3358" stroke-width="4"/><ellipse cx="40" cy="42" rx="7" ry="11" fill="#fff"/></svg>',
+  flour: '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M22 30 H78 L84 92 H16Z" fill="#F4EBD9" stroke="#3D3358" stroke-width="4" stroke-linejoin="round"/><path d="M22 30 l7 -14 h42 l7 14" fill="#E8D9B8" stroke="#3D3358" stroke-width="4" stroke-linejoin="round"/><circle cx="50" cy="64" r="15" fill="#FFE29A"/><path d="M44 64 h12 M50 58 v12" stroke="#B98149" stroke-width="3" stroke-linecap="round"/></svg>',
+  milk: '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M30 32 H70 V92 H30Z" fill="#fff" stroke="#3D3358" stroke-width="4" stroke-linejoin="round"/><path d="M30 32 L40 14 H60 L70 32Z" fill="#7FC0FF" stroke="#3D3358" stroke-width="4" stroke-linejoin="round"/><rect x="32" y="50" width="36" height="22" fill="#7FC0FF"/><path d="M44 61 c0 -6 12 -6 12 0 c0 6 -12 6 -12 0" fill="#fff"/></svg>',
+  sugar: '<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="20" y="56" width="28" height="28" rx="6" fill="#fff" stroke="#3D3358" stroke-width="4"/><rect x="52" y="56" width="28" height="28" rx="6" fill="#fff" stroke="#3D3358" stroke-width="4"/><rect x="36" y="26" width="28" height="28" rx="6" fill="#fff" stroke="#3D3358" stroke-width="4"/><path d="M76 20 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#FFD24D"/></svg>',
+};
+const BD_BOWL = '<svg viewBox="0 0 300 270" aria-hidden="true"><ellipse cx="150" cy="250" rx="120" ry="14" fill="rgba(61,51,88,.18)"/><path d="M36 130 H264 Q258 236 150 240 Q42 236 36 130Z" fill="#7FC0FF" stroke="#3D3358" stroke-width="5"/><ellipse cx="150" cy="130" rx="114" ry="26" fill="#BFE4FF" stroke="#3D3358" stroke-width="5"/><ellipse class="batter" cx="150" cy="134" rx="100" ry="20" style="fill:var(--bat,#FFF3D6);opacity:var(--fill,0)"/><g class="spoon" style="transform-origin:150px 132px"><path d="M150 132 L236 36" stroke="#C99555" stroke-width="12" stroke-linecap="round"/><ellipse cx="150" cy="132" rx="17" ry="10" fill="#C99555"/></g><path d="M60 172 q40 30 90 32" stroke="#fff" stroke-width="7" fill="none" opacity=".5" stroke-linecap="round"/></svg>';
+const BD_OVEN = '<svg viewBox="0 0 300 270" aria-hidden="true"><ellipse cx="150" cy="256" rx="124" ry="12" fill="rgba(61,51,88,.18)"/><rect x="40" y="40" width="220" height="210" rx="24" fill="#fff" stroke="#3D3358" stroke-width="5"/><rect x="40" y="40" width="220" height="46" rx="22" fill="#E5DDF5" stroke="#3D3358" stroke-width="5"/><circle class="od od1" cx="88" cy="63" r="9"/><circle class="od od2" cx="118" cy="63" r="9"/><circle class="od od3" cx="148" cy="63" r="9"/><circle cx="220" cy="63" r="13" fill="#FF8FB0" stroke="#3D3358" stroke-width="4"/><rect x="64" y="102" width="172" height="120" rx="16" fill="#3D3358"/><rect class="oglow" x="72" y="110" width="156" height="104" rx="12" fill="#FFB020" opacity=".55"/><path d="M104 206 q46 -46 92 0Z" fill="#FFC9DC" opacity=".85"/><rect x="96" y="228" width="108" height="10" rx="5" fill="#C9C1E2"/></svg>';
+const bdSlice = fl => { const [a] = BD_FLAVORS[fl] || BD_FLAVORS.strawberry; return `<svg viewBox="0 0 100 70" aria-hidden="true">${BD_GRADS}<path d="M10 58 L90 58 L90 34 L10 22Z" fill="${a}" stroke="#3D3358" stroke-width="3" stroke-linejoin="round"/><path d="M10 40 L90 47" stroke="#fff" stroke-width="5"/><path d="M10 22 L90 34 L90 27 L10 15Z" fill="#fff" stroke="#3D3358" stroke-width="3" stroke-linejoin="round"/><circle cx="74" cy="22" r="7" fill="#FF6B81" stroke="#3D3358" stroke-width="2.5"/></svg>`; };
+const BD_PINATA = `<svg viewBox="0 0 140 190" aria-hidden="true"><defs><clipPath id="pnc"><path d="${star5(70, 116, 62, 30)}"/></clipPath></defs><g class="pbody" style="transform-origin:70px 0px"><path d="M70 0 V56" stroke="#C9975B" stroke-width="4"/><g clip-path="url(#pnc)">${['#FF8FB0', '#FFD24D', '#8EDCC0', '#7FC0FF', '#B79BFF', '#FF8FB0', '#FFD24D'].map((c, i) => `<rect x="0" y="${50 + i * 21}" width="140" height="21" fill="${c}"/><path d="M0 ${71 + i * 21} q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" stroke="#fff" stroke-width="2.5" fill="none" opacity=".7"/>`).join('')}</g><path d="${star5(70, 116, 62, 30)}" fill="none" stroke="#3D3358" stroke-width="4" stroke-linejoin="round"/><circle cx="60" cy="110" r="5" fill="#3D3358"/><circle cx="80" cy="110" r="5" fill="#3D3358"/><path d="M62 124 q8 7 16 0" stroke="#3D3358" stroke-width="3.5" fill="none" stroke-linecap="round"/></g></svg>`;
+const bdCandy = c => `<svg viewBox="0 0 80 40" aria-hidden="true"><path d="M16 20 L2 8 V32Z" fill="${c}" stroke="#3D3358" stroke-width="2.5" stroke-linejoin="round"/><path d="M64 20 L78 8 V32Z" fill="${c}" stroke="#3D3358" stroke-width="2.5" stroke-linejoin="round"/><ellipse cx="40" cy="20" rx="26" ry="15" fill="${c}" stroke="#3D3358" stroke-width="2.5"/><path d="M28 14 q12 -6 24 0" stroke="#fff" stroke-width="3" fill="none" opacity=".6"/></svg>`;
+const BD_BAG = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M20 34 H80 L74 92 H26Z" fill="#FFB3C8" stroke="#3D3358" stroke-width="4" stroke-linejoin="round"/><path d="M36 34 q0 -22 14 -22 q14 0 14 22" stroke="#3D3358" stroke-width="4" fill="none"/><path d="M42 58 l8 8 8 -8" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg>';
+const BD_ICON = {
+  pinata: `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4 V22" stroke="#C9975B" stroke-width="3"/><path d="${star5(50, 58, 38, 18)}" fill="#FFD24D" stroke="#3D3358" stroke-width="3.5" stroke-linejoin="round"/><path d="M22 52 H78 M26 66 H74" stroke="#FF8FB0" stroke-width="7"/><circle cx="43" cy="54" r="3.5" fill="#3D3358"/><circle cx="57" cy="54" r="3.5" fill="#3D3358"/></svg>`,
+  dance: '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M36 74 V22 L78 12 V64" stroke="#3D3358" stroke-width="6" fill="none" stroke-linejoin="round"/><ellipse cx="27" cy="76" rx="13" ry="10" fill="#B79BFF" stroke="#3D3358" stroke-width="4"/><ellipse cx="69" cy="66" rx="13" ry="10" fill="#FF8FB0" stroke="#3D3358" stroke-width="4"/></svg>',
+  photo: '<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="10" y="28" width="80" height="58" rx="12" fill="#7FC0FF" stroke="#3D3358" stroke-width="4"/><path d="M34 28 l6 -10 h20 l6 10" fill="#BFE2FF" stroke="#3D3358" stroke-width="4" stroke-linejoin="round"/><circle cx="50" cy="57" r="17" fill="#fff" stroke="#3D3358" stroke-width="4"/><circle cx="50" cy="57" r="8" fill="#3D3358"/><circle cx="76" cy="40" r="4" fill="#FFD24D"/></svg>',
+};
 const BD_SLOTS = [[150, 204], [82, 206], [218, 206], [110, 132], [190, 132], [150, 128]];
 const bdCandleX = n => Array.from({ length: n }, (_, i) => n === 1 ? 150 : 150 - Math.min(24, 118 / (n - 1)) * (n - 1) / 2 + Math.min(24, 118 / (n - 1)) * i);
-function bdCakeSVG(n) {
+function bdCakeSVG(n, fl = 'strawberry') {
+  const [c1, c2] = BD_FLAVORS[fl] || BD_FLAVORS.strawberry;
   const drip = (x0, x1, y) => { let d = `M${x0} ${y}`; for (let x = x0; x < x1; x += 24) d += ` q6 ${x % 48 ? 16 : 26} 12 0 q6 -8 12 0`; return d + ` V${y - 8} H${x0}Z`; };
   const candles = bdCandleX(n).map((x, i) => `<g class="cslot" data-i="${i}"><circle cx="${x}" cy="92" r="11" fill="#fff" opacity=".7" stroke="#FF8FB0" stroke-width="3" stroke-dasharray="4 4"/><rect x="${x - 13}" y="44" width="26" height="56" fill="transparent"/>
       <g class="cndl"><rect x="${x - 6}" y="50" width="12" height="46" rx="5" fill="${['#8EDCC0', '#FF9DB8', '#B79BFF', '#FFD24D'][i % 4]}" stroke="#3D3358" stroke-width="2.4"/><path d="M${x - 6} 62 l12 -6 M${x - 6} 76 l12 -6 M${x - 6} 90 l12 -6" stroke="#fff" stroke-width="3" opacity=".7"/><path d="M${x} 50 v-5" stroke="#3D3358" stroke-width="2"/>
       <g class="flame" style="transform-origin:${x}px 44px"><ellipse cx="${x}" cy="36" rx="7.5" ry="12" fill="#FFB020"/><ellipse cx="${x}" cy="39" rx="4" ry="7" fill="#FFF3A8"/></g></g></g>`).join('');
   return `<svg viewBox="0 0 300 270" aria-hidden="true"><ellipse cx="150" cy="252" rx="138" ry="16" fill="rgba(61,51,88,.18)"/><ellipse cx="150" cy="244" rx="134" ry="18" fill="#fff" stroke="#E5DDF5" stroke-width="3"/>
-    <rect x="34" y="158" width="232" height="84" rx="22" fill="#FF9DB8" stroke="#3D3358" stroke-width="4"/><rect x="34" y="158" width="232" height="84" rx="22" fill="url(#bdsh)"/>
+    <rect x="34" y="158" width="232" height="84" rx="22" fill="${c1}" stroke="#3D3358" stroke-width="4"/><rect x="34" y="158" width="232" height="84" rx="22" fill="url(#bdsh)"/>
     <path d="${drip(34, 266, 166)}" fill="#fff"/><path d="M40 226 H260" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 14"/>
-    <rect x="76" y="94" width="148" height="72" rx="20" fill="#FFE29A" stroke="#3D3358" stroke-width="4"/><rect x="76" y="94" width="148" height="72" rx="20" fill="url(#bdsh)"/>
+    <rect x="76" y="94" width="148" height="72" rx="20" fill="${c2}" stroke="#3D3358" stroke-width="4"/><rect x="76" y="94" width="148" height="72" rx="20" fill="url(#bdsh)"/>
     <path d="${drip(76, 224, 102)}" fill="#FFF6E2"/><ellipse cx="150" cy="96" rx="72" ry="12" fill="#FFF6E2" stroke="#3D3358" stroke-width="3"/>
     ${BD_SLOTS.map((_, i) => `<g class="tp" data-i="${i}"></g>`).join('')}${candles}</svg>`;
 }
@@ -4350,7 +4518,7 @@ SCREENS.birthday = el => {
   const info = bdayInfo(), nC = info ? Math.min(9, info.turning) : Math.max(2, Math.min(5, S.age || 3));
   const name = S.name || 'Liyana', pn = S.pet ? petName() : null, line = bdayLine(info);
   const moons = info && !info.today && info.days <= 14 ? `<span class="bd-moons">${Array.from({ length: info.days }, () => '<i></i>').join('')}</span>` : '';
-  const STEPS = ['cake', 'candles', 'song', 'blow', 'gifts'];
+  const STEPS = ['bake', 'cake', 'candles', 'song', 'blow', 'share', 'gifts', 'games'];
   el.innerHTML = bar('Birthday party!', `<span class="bd-steps">${STEPS.map((s, i) => `<i data-s="${i}"></i>`).join('')}</span>`) + `<div class="play bday ${info && info.today ? 'today' : ''}" id="bd">
     <svg class="bd-bunting" viewBox="0 0 1000 90" preserveAspectRatio="none" aria-hidden="true"><path d="M0 10 Q500 70 1000 10" stroke="#C9975B" stroke-width="4" fill="none"/>${Array.from({ length: 13 }, (_, i) => { const x = 20 + i * 76, y = 10 + 60 * (1 - Math.pow((x - 500) / 500, 2)) * .98; return `<path d="M${x - 22} ${y - 2} L${x + 22} ${y + 2} L${x} ${y + 42}Z" fill="${['#FF8FB0', '#FFD24D', '#8EDCC0', '#B79BFF', '#7FC0FF'][i % 5]}" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>`; }).join('')}</svg>
     <div class="bd-head"><div class="bd-banner">Happy Birthday, <b>${esc(name)}</b>!</div>${line ? `<div class="bd-count">${moons}<span>${esc(line)}</span></div>` : ''}</div>
@@ -4360,13 +4528,13 @@ SCREENS.birthday = el => {
     <div class="bd-guest g-naya naya p-sit">${nayaSVG('partyhat')}</div>
     ${S.pet ? `<div class="bd-guest g-pet"><div class="gp">${petSVG(S.pet, 'partyhat')}</div></div>` : ''}
     <div class="bd-table"></div>
-    <div class="bd-cake" id="cake"><svg width="0" height="0" style="position:absolute"><defs><linearGradient id="bdsh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#3D3358" stop-opacity=".14"/></linearGradient></defs></svg>${bdCakeSVG(nC)}</div>
-    <div class="bd-tray" id="tray"></div>
+    <div class="bd-cake" id="cake">${BD_DEFS}${bdCakeSVG(nC)}</div>
+    <div class="bd-kit" id="kit"></div><div class="bd-tray" id="tray"></div>
     <div class="bd-lyrics" id="lyr" hidden>${hbWords(name).map((l, li) => `<div class="ln" data-l="${li}">${l.map((w, wi) => `<span data-w="${wi}">${esc(w)}</span>`).join(' ')}</div>`).join('')}</div>
     <div class="bd-big" id="big"></div></div>`;
   const bd = $('#bd', el), cake = $('#cake', el), tray = $('#tray', el), lyr = $('#lyr', el), big = $('#big', el);
   const guests = $$('.bd-guest', el), sama = $('.g-sama', el), naya = $('.g-naya', el), me = $('.g-me', el);
-  let step = -1, busy = false;
+  let step = -1, busy = false, flavor = null; const kit = $('#kit', el), petEl = $('.g-pet', el), playedG = new Set();
   const setStep = i => { step = i; $$('.bd-steps i', el).forEach((d, k) => { d.classList.toggle('on', k === i); d.classList.toggle('done', k < i); }); };
   const ctr = e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
   const cheerAll = (ms = 1600) => { sama.classList.add('clap'); naya.classList.add('clap'); me.classList.add('wee'); guests.forEach(g => g.classList.add('hop'));
@@ -4377,11 +4545,11 @@ SCREENS.birthday = el => {
 
   /* ---- 0 intro ---- */
   later(() => { say(`It's party time! Happy birthday ${name}!${line ? ' ' + line : ''}`); cheerAll(1800); }, 400);
-  later(decorate, line ? 5200 : 3200);
+  later(bake, line ? 5200 : 3200);
 
   /* ---- 1 decorate the cake ---- */
   function decorate() {
-    setStep(0); let put = 0; const need = S.age <= 2 ? 3 : 5;
+    setStep(1); let put = 0; const need = S.age <= 2 ? 3 : 5;
     tray.innerHTML = shuffle(BD_TOPS.slice()).map((t, i) => `<button class="bd-top" data-t="${t}" style="--i:${i}" aria-label="${t}">${art(t)}</button>`).join('');
     say('Let\'s decorate your cake! Tap the yummy things.');
     coach(() => 'Tap something yummy for the cake!', () => $('.bd-top:not(.used)', tray));
@@ -4401,7 +4569,7 @@ SCREENS.birthday = el => {
 
   /* ---- 2 candles: count them in ---- */
   function candles() {
-    setStep(1); tray.innerHTML = ''; let lit = 0; cake.classList.add('slots');
+    setStep(2); tray.innerHTML = ''; let lit = 0; cake.classList.add('slots');
     say(`Now the candles! You are ${info ? (NUMS[nC] || nC) : 'so big'}! Tap the cake to put them in.`);
     coach(() => 'Tap the cake to put in a candle!', () => $('.cslot:not(.on)', cake));
     const add = () => {
@@ -4409,12 +4577,12 @@ SCREENS.birthday = el => {
       later(() => { s.classList.add('lit'); sfx.chime(); }, 260); say(`${(NUMS[lit] || String(lit)).replace(/^./, c => c.toUpperCase())}!`); sparkle(...ctr(s), 5, ['#FFE29A', '#FFB020', '#fff']);
       if (lit === nC) { cake.classList.remove('slots'); later(() => { say(`${String(NUMS[nC] || nC).replace(/^./, c => c.toUpperCase())} candles! Now let's sing!`); later(song, 2600); }, 700); }
     };
-    cake.onclick = () => { if (step === 1 && lit < nC) add(); };
+    cake.onclick = () => { if (step === 2 && lit < nC) add(); };
   }
 
   /* ---- 3 sing Happy Birthday: music box tune + karaoke words ---- */
   function song() {
-    setStep(2); cake.onclick = null; lyr.hidden = false; bd.classList.add('singing'); $('.ln', lyr).classList.add('cur'); guests.forEach(g => g.classList.add('sing')); coach.off();
+    setStep(3); cake.onclick = null; lyr.hidden = false; bd.classList.add('singing'); $('.ln', lyr).classList.add('cur'); guests.forEach(g => g.classList.add('sing')); coach.off();
     const spb = 60 / HB_BPM, t0 = (ac ? ac.currentTime : 0) + .5, words = $$('.ln span', lyr), lines = $$('.ln', lyr); let beat = 0;
     const at = (b, fn) => { const ms = (t0 - (ac ? ac.currentTime : 0) + b * spb) * 1000; later(fn, Math.max(0, ms)); };
     const sound = ac && ac.state === 'running' && !S.sfxOff;
@@ -4431,22 +4599,22 @@ SCREENS.birthday = el => {
 
   /* ---- 4 countdown and blow ---- */
   function blow() {
-    setStep(3); const nums = ['3', '2', '1'], spoken = ['Three!', 'Two!', 'One!'];
+    setStep(4); const nums = ['3', '2', '1'], spoken = ['Three!', 'Two!', 'One!'];
     say('Get ready to blow out your candles!');
     nums.forEach((n, i) => later(() => { big.textContent = n; big.className = 'bd-big go'; void big.offsetWidth; big.classList.add('z'); say(spoken[i]); sfx.boop(); }, 1800 + i * 1100));
     later(() => { big.textContent = 'Blow!'; big.className = 'bd-big go blowtxt'; void big.offsetWidth; big.classList.add('z'); say('Blow! Tap the candles!'); busy = false;
       cake.classList.add('ready'); coach(() => 'Tap the candles to blow them out!', () => $('.cslot.lit', cake)); }, 1800 + 3 * 1100);
     cake.onclick = () => {
-      if (step !== 3 || busy || !cake.classList.contains('ready')) return; busy = true; cake.classList.remove('ready'); big.className = 'bd-big'; coach.off();
+      if (step !== 4 || busy || !cake.classList.contains('ready')) return; busy = true; cake.classList.remove('ready'); big.className = 'bd-big'; coach.off();
       sfx.whoosh(); $$('.cslot.lit', cake).forEach((s, i) => later(() => { s.classList.remove('lit'); const [x, y] = ctr(s); sparkle(x, y - 20, 5, ['#E7E3F0', '#CFC6E6', '#fff']); }, i * 90));
       later(() => { sfx.yay(); cheer(); cheerAll(2400); say(`Hooray! Happy birthday ${name}! Make a wish!`); }, 500);
-      later(gifts, 3600);
+      later(share, 3600);
     };
   }
 
   /* ---- 5 presents from each guest ---- */
   function gifts() {
-    setStep(4); cake.onclick = null; const pickG = shuffle(BD_GIFTS.slice()); let opened = 0;
+    setStep(6); cake.onclick = null; const pickG = shuffle(BD_GIFTS.slice()); let opened = 0;
     const from = [['Sama', '#B79BFF'], ['Naya', '#8EDCC0'], ...(S.pet ? [[pn, '#FFB3C8']] : [['Mummy and Daddy', '#FFD24D']])];
     tray.innerHTML = from.map(([who, c], i) => `<button class="bd-gift" data-i="${i}" style="--c:${c};--i:${i}" aria-label="Present from ${esc(who)}"><i class="lid"></i><i class="box"></i><span class="inside">${art(pickG[i][0])}</span><b>${esc(who)}</b></button>`).join('');
     say('Presents! Open them one by one.');
@@ -4455,17 +4623,381 @@ SCREENS.birthday = el => {
       if (b.classList.contains('open')) return; b.classList.add('open'); opened++; sfx.star(); sparkle(...ctr(b), 12);
       const i = +b.dataset.i; say(`${pickG[i][1]} from ${from[i][0]}!`);
       if (i === 0) { sama.classList.add('clap'); later(() => sama.classList.remove('clap'), 1400); } else if (i === 1) { naya.classList.add('clap'); later(() => naya.classList.remove('clap'), 1400); } else { const g = $('.g-pet', el); if (g) { g.classList.add('hop'); later(() => g.classList.remove('hop'), 1400); } }
-      if (opened === from.length) later(finale, 1800);
+      if (opened === from.length) later(games, 1800);
     }));
+  }
+
+  /* ================= v1.50: bake, share, party games ================= */
+  /* ---- 0 bake: pick a flavor, add 4 things, stir, oven ---- */
+  function bake() {
+    setStep(0); bd.classList.add('baking');
+    tray.innerHTML = BD_FLV.map(([k, l], i) => `<button class="bd-flv" data-f="${k}" style="--i:${i}" aria-label="${l} cake">${bdFlvIcon(k)}<b>${l}</b></button>`).join('');
+    say("First, let's bake your cake! What kind of cake?");
+    coach(() => 'Pick a cake!', () => flavor ? null : $('.bd-flv', tray));
+    $$('.bd-flv', tray).forEach(b => b.addEventListener('click', () => { if (flavor) return; flavor = b.dataset.f; b.classList.add('pick'); sfx.boop(); say(`${BD_FLV.find(f => f[0] === flavor)[1]} cake! Yummy!`); later(mix, 1100); }));
+  }
+  function mix() {
+    let added = 0, stirred = 0, phase = 'add', lastP = null;
+    kit.innerHTML = BD_BOWL; kit.classList.add('on'); kit.style.setProperty('--bat', '#FFF3D6'); kit.style.setProperty('--fill', 0);
+    tray.innerHTML = BD_ING.map(([k, l], i) => `<button class="bd-top bd-ing" data-k="${k}" style="--i:${i}" aria-label="${k}">${BD_ING_SVG[k]}</button>`).join('');
+    say('Put everything in the bowl!');
+    coach(() => phase === 'add' ? 'Tap the egg, the flour, the milk and the sugar!' : phase === 'stir' ? 'Stir, stir, stir! Rub the bowl round and round.' : null, () => phase === 'add' ? $('.bd-ing:not(.used)', tray) : phase === 'stir' ? kit : null);
+    $$('.bd-ing', tray).forEach(b => b.addEventListener('click', () => {
+      if (b.classList.contains('used') || phase !== 'add') return; b.classList.add('used');
+      const fly = document.createElement('div'); fly.className = 'bd-fly'; fly.innerHTML = BD_ING_SVG[b.dataset.k]; document.body.appendChild(fly); onLeave(() => fly.remove());
+      const [x0, y0] = ctr(b), kr = kit.getBoundingClientRect(), x1 = kr.left + kr.width / 2, y1 = kr.top + kr.height * .5; fly.style.cssText = `left:${x0}px;top:${y0}px`; sfx.boop();
+      fly.animate([{ transform: 'translate(-50%,-50%) scale(1) rotate(0)' }, { transform: `translate(calc(-50% + ${(x1 - x0) / 2}px),calc(-50% + ${(y1 - y0) / 2 - 130}px)) scale(1.1) rotate(-20deg)`, offset: .5 }, { transform: `translate(calc(-50% + ${x1 - x0}px),calc(-50% + ${y1 - y0}px)) scale(.4) rotate(-120deg)`, opacity: .2 }], { duration: 700, easing: 'ease-in-out' }).onfinish = () => {
+        fly.remove(); added++; kit.style.setProperty('--fill', added / BD_ING.length); sfx.pop(); sparkle(x1, y1, 6, ['#fff', '#FFF3D6', '#FFE29A']); say(BD_ING.find(x => x[0] === b.dataset.k)[1]);
+        if (added === BD_ING.length) later(() => { phase = 'stir'; kit.classList.add('stir'); say('Now stir it! Rub round and round!'); }, 800);
+      };
+    }));
+    const stir = d => {
+      if (phase !== 'stir') return; const before = stirred; stirred += d; const k = Math.min(1, stirred / 1300);
+      kit.style.setProperty('--bat', bdMix('#FFF3D6', BD_BATTER[flavor], k)); const sp = $('.spoon', kit); if (sp) sp.style.transform = `rotate(${(stirred / 3) % 360}deg)`;
+      if (Math.floor(stirred / 240) > Math.floor(before / 240)) sfx.pop();
+      if (k >= 1) { phase = 'done'; say('All mixed! Into the oven!'); sfx.yay(); later(ovenStep, 1000); }
+    };
+    kit.onpointerdown = e => { lastP = [e.clientX, e.clientY]; try { kit.setPointerCapture(e.pointerId); } catch (_) { } stir(110); };
+    kit.onpointermove = e => { if (!lastP) return; const d = Math.hypot(e.clientX - lastP[0], e.clientY - lastP[1]); lastP = [e.clientX, e.clientY]; stir(d); };
+    kit.onpointerup = kit.onpointercancel = () => { lastP = null; };
+  }
+  function ovenStep() {
+    kit.onpointerdown = kit.onpointermove = kit.onpointerup = kit.onpointercancel = null; kit.classList.remove('stir'); kit.innerHTML = BD_OVEN; tray.innerHTML = ''; coach.off();
+    say("Into the oven! Let's count while it bakes.");
+    ['One!', 'Two!', 'Three!'].forEach((w, i) => later(() => { say(w); sfx.note(i * 2); kit.classList.add('t' + (i + 1)); }, 1500 + i * 1000));
+    later(() => { sfx.star(); sfx.chime(); say('Ding! The cake is ready!'); kit.classList.add('ding'); }, 4700);
+    later(() => { kit.className = 'bd-kit'; kit.innerHTML = ''; cake.innerHTML = BD_DEFS + bdCakeSVG(nC, flavor); bd.classList.remove('baking'); cake.classList.add('fresh'); sparkle(...ctr(cake), 14); cheerAll(); later(() => cake.classList.remove('fresh'), 900); later(decorate, 1700); }, 5800);
+  }
+
+  /* ---- 5 share: cut the cake, a slice for every guest (sharing + counting) ---- */
+  function share() {
+    setStep(5); cake.onclick = null; coach.off(); busy = false;
+    const who = [[sama, 'Sama'], [naya, 'Naya'], ...(petEl ? [[petEl, pn]] : []), [me, name]];
+    say("Let's share the cake with everyone! Tap the cake to cut it."); cake.classList.add('cutme');
+    coach(() => cake.classList.contains('cutme') ? 'Tap the cake to cut it!' : null, () => cake.classList.contains('cutme') ? cake : null);
+    cake.onclick = () => {
+      if (!cake.classList.contains('cutme')) return; cake.classList.remove('cutme'); cake.onclick = null; sfx.whoosh(); cake.classList.add('cut');
+      const br = bd.getBoundingClientRect(), plates = who.map(([g, nm], i) => { const r = g.getBoundingClientRect(), p = document.createElement('button'); p.className = 'bd-plate'; p.dataset.i = i; p.setAttribute('aria-label', 'Plate for ' + nm); p.style.left = (r.left + r.width / 2 - br.left) + 'px'; p.style.setProperty('--i', i); bd.appendChild(p); return p; });
+      say('A slice for everyone! Tap each plate.'); let given = 0;
+      coach(() => 'Tap a plate to give a slice!', () => plates.find(p => !p.classList.contains('full')) || null);
+      plates.forEach(p => p.addEventListener('click', () => {
+        if (p.classList.contains('full')) return; p.classList.add('full'); const [g, nm] = who[+p.dataset.i];
+        const fly = document.createElement('div'); fly.className = 'bd-fly bd-flyslice'; fly.innerHTML = bdSlice(flavor); document.body.appendChild(fly); onLeave(() => fly.remove());
+        const [x0, y0] = ctr(cake), [x1, y1] = ctr(p); fly.style.cssText = `left:${x0}px;top:${y0}px`; sfx.boop();
+        fly.animate([{ transform: 'translate(-50%,-50%) scale(.7)' }, { transform: `translate(calc(-50% + ${(x1 - x0) / 2}px),calc(-50% + ${(y1 - y0) / 2 - 110}px)) scale(1)`, offset: .5 }, { transform: `translate(calc(-50% + ${x1 - x0}px),calc(-50% + ${y1 - y0 - 14}px)) scale(.85)` }], { duration: 650, easing: 'ease-in-out' }).onfinish = () => {
+          fly.remove(); p.innerHTML = bdSlice(flavor); sfx.pop(); given++; sparkle(x1, y1 - 20, 5);
+          say(nm === name ? `And one for you, ${name}!` : `One for ${nm}!`);
+          g.classList.add('hop'); later(() => g.classList.remove('hop'), 1100); if (g === sama || g === naya) { g.classList.add('clap'); later(() => g.classList.remove('clap'), 1100); }
+          if (given === who.length) later(() => {
+            say(`${String(NUMS[given] || given).replace(/^./, c => c.toUpperCase())} slices. Everyone has cake! Mmm, yummy!`); sfx.yay(); cheerAll(); guests.forEach(x => x.classList.add('munch'));
+            later(() => guests.forEach(x => x.classList.remove('munch')), 2400); later(() => { plates.forEach(x => x.remove()); cake.classList.remove('cut'); gifts(); }, 3800);
+          }, 700);
+        };
+      }));
+    };
+  }
+
+  /* ---- 7 party games: she picks; each game comes back here ---- */
+  function games() {
+    setStep(7); coach.off(); busy = false; big.className = 'bd-big'; bd.classList.remove('pinata');
+    const G = [['pinata', 'Piñata'], ['dance', 'Freeze dance'], ['photo', 'Party photo']];
+    tray.innerHTML = G.map(([k, l], i) => `<button class="bd-game ${playedG.has(k) ? 'played' : ''}" data-g="${k}" style="--i:${i}" aria-label="${l}">${BD_ICON[k]}<b>${l}</b></button>`).join('') + `<button class="bd-game end" data-g="end" style="--i:3" aria-label="All done">${tickIcon}<b>All done</b></button>`;
+    say(playedG.size ? (playedG.size === 3 ? 'You played every game! Tap all done, or play again.' : 'What next? Another game?') : 'Party games! What shall we play?');
+    coach(() => 'Pick a party game!', () => $('.bd-game:not(.played)', tray) || $('.bd-game.end', tray));
+    $$('.bd-game', tray).forEach(b => b.addEventListener('click', () => { const k = b.dataset.g; sfx.boop(); coach.off(); if (k === 'end') return finale(); playedG.add(k); tray.innerHTML = ''; ({ pinata: pinataGame, dance: danceGame, photo: photoGame })[k](games); }));
+  }
+  function pinataGame(done) {
+    bd.classList.add('pinata'); const pin = document.createElement('button'); pin.className = 'bd-pin'; pin.setAttribute('aria-label', 'Piñata'); pin.innerHTML = BD_PINATA; bd.appendChild(pin); onLeave(() => pin.remove());
+    let hits = 0; const need = 6; say('Whack the piñata! Tap it!');
+    coach(() => hits < need ? 'Tap the piñata!' : null, () => hits < need ? pin : null);
+    pin.onclick = () => {
+      if (hits >= need) return; hits++; sfx.pop(); sparkle(...ctr(pin), 5, ['#FF8FB0', '#FFD24D', '#8EDCC0', '#7FC0FF']);
+      $('.pbody', pin).animate([{ transform: 'rotate(0)' }, { transform: `rotate(${hits % 2 ? 24 : -24}deg)` }, { transform: `rotate(${hits % 2 ? -12 : 12}deg)` }, { transform: 'rotate(0)' }], { duration: 650, easing: 'ease-out' });
+      if (hits === 3) say('Harder! Again!');
+      if (hits === need) later(() => { pin.classList.add('burst'); sfx.yay(); cheer(...ctr(pin), 10); say('It broke open! Candies everywhere!'); rain(); }, 300);
+    };
+    function rain() {
+      const br = bd.getBoundingClientRect(), pr = pin.getBoundingClientRect(), px = pr.left + pr.width / 2 - br.left, py = pr.top + pr.height * .6 - br.top, N = 8, candies = [];
+      const bag = document.createElement('div'); bag.className = 'bd-bag'; bag.innerHTML = BD_BAG + '<b>0</b>'; tray.appendChild(bag); let got = 0;
+      for (let i = 0; i < N; i++) {
+        const c = document.createElement('button'); c.className = 'bd-candy'; c.setAttribute('aria-label', 'candy'); c.innerHTML = bdCandy(['#FF6B81', '#FFD24D', '#5CD68A', '#4DA3FF', '#B79BFF', '#FF9DC8'][i % 6]); bd.appendChild(c); candies.push(c); onLeave(() => c.remove());
+        const tx = br.width * (.14 + .72 * (i + .5) / N) + rnd(-16, 16), ty = br.height * (i % 2 ? .62 : .7);
+        c.style.left = tx + 'px'; c.style.top = ty + 'px';
+        c.animate([{ transform: `translate(calc(-50% + ${px - tx}px),calc(-50% + ${py - ty}px)) scale(.3)` }, { transform: `translate(calc(-50% + ${(px - tx) * .5}px),calc(-50% + ${(py - ty) * .5 - 100}px)) scale(1) rotate(${rnd(-120, 120)}deg)`, offset: .45 }, { transform: `translate(-50%,-50%) rotate(${rnd(-30, 30)}deg)` }], { duration: 900 + i * 70, easing: 'cubic-bezier(.3,.6,.5,1)', fill: 'backwards' });
+        c.onclick = () => {
+          if (c.classList.contains('got')) return; c.classList.add('got'); got++; sfx.dot(); sparkle(...ctr(c), 5); $('b', bag).textContent = got; bag.classList.remove('bump'); void bag.offsetWidth; bag.classList.add('bump');
+          say(`${String(NUMS[got] || got).replace(/^./, x => x.toUpperCase())}!`);
+          if (got === N) later(() => { say(`${String(NUMS[N]).replace(/^./, x => x.toUpperCase())} candies in your bag! Yummy!`); sfx.yay(); cheerAll(); later(() => { pin.remove(); candies.forEach(x => x.remove()); bag.remove(); done(); }, 2600); }, 500);
+        };
+      }
+      later(() => { say('Tap the candies to put them in your bag!'); coach(() => 'Tap a candy!', () => candies.find(x => !x.classList.contains('got')) || null); }, 1400);
+    }
+  }
+  function danceGame(done) {
+    const btn = document.createElement('button'); btn.className = 'bd-dance'; btn.innerHTML = BD_ICON.dance + '<b>Dance!</b>'; tray.appendChild(btn);
+    let rounds = 0, playing = false, frozen = false, oopsSaid = false; const MEL = [72, 76, 79, 76, 74, 77, 81, 77, 72, 76, 79, 84, 79, 76, 74, 72], BASS = [48, 48, 53, 55];
+    const music = ms => { playing = true; for (let t = 0, i = 0; t < ms; t += 250, i++) { const k = i; later(() => { if (!playing) return; note(mtof(MEL[k % MEL.length]), { dur: .3, vol: .11, kind: 'box' }); if (k % 2 === 0) note(mtof(BASS[(k >> 2) % 4]), { dur: .4, vol: .09, kind: 'soft' }); }, t); } };
+    btn.onclick = () => {
+      if (frozen) { me.classList.remove('oops'); void me.offsetWidth; me.classList.add('oops'); later(() => me.classList.remove('oops'), 550); if (!oopsSaid) { oopsSaid = true; say('Shh, freeze like a statue!'); } return; }
+      me.classList.remove('d-spin', 'd-jump', 'd-wiggle'); void me.offsetWidth; me.classList.add('d-' + pick(['spin', 'jump', 'wiggle'])); sfx.pop();
+    };
+    const round = () => {
+      rounds++; frozen = false; oopsSaid = false; const ms = 3600 + Math.random() * 2800;
+      say(rounds === 1 ? "Freeze dance! Tap Dance to dance. When the music stops, freeze!" : 'Dance again!');
+      guests.forEach(g => g.classList.add('dancing')); music(ms);
+      later(() => {
+        playing = false; frozen = true; guests.forEach(g => g.classList.remove('dancing')); big.textContent = 'Freeze!'; big.className = 'bd-big go blowtxt'; void big.offsetWidth; big.classList.add('z'); say('Freeze!'); sfx.boop();
+        later(() => { big.className = 'bd-big'; frozen = false; sfx.star(); say(pick(['Great freezing!', 'You were a statue!', 'Well done!']));
+          if (rounds < 3) later(round, 1300); else later(() => { sfx.yay(); cheerAll(); say('What a dancer!'); later(() => { btn.remove(); done(); }, 2200); }, 900); }, 2600);
+      }, ms + 700);
+    };
+    coach(() => frozen ? null : 'Tap the dance button!', () => frozen ? null : btn, { max: 2 });
+    later(round, 400);
+  }
+  function photoGame(done) {
+    say('Party photo! Everyone say cheese!'); cheerAll(1500);
+    ['3', '2', '1'].forEach((n, i) => later(() => { big.textContent = n; big.className = 'bd-big go'; void big.offsetWidth; big.classList.add('z'); sfx.boop(); }, 1400 + i * 900));
+    later(() => { big.className = 'bd-big'; say('Cheese!'); const f = document.createElement('div'); f.className = 'bd-flash'; document.body.appendChild(f); setTimeout(() => f.remove(), 700); sfx.whoosh(); snap(); }, 1400 + 3 * 900);
+    function snap() {
+      const W = 1040, H = 760, place = (svg, x, y, w, h) => svg.replace(/^<svg /, `<svg x="${x}" y="${y}" width="${w}" height="${h}" `);
+      const samaS = (samaSVG('partyhat').match(/<svg[\s\S]*<\/svg>/) || [''])[0];
+      const nd = document.createElement('div'); nd.innerHTML = nayaSVG('partyhat'); nd.querySelectorAll('.np-crawl,.np-lie').forEach(n => n.remove()); const nayaS = nd.innerHTML;
+      const ck = $('svg:last-of-type', cake).cloneNode(true); ck.querySelectorAll('.cslot > circle, .cslot > rect, .flame').forEach(n => n.remove()); ck.querySelectorAll('.cslot:not(.on)').forEach(n => n.remove()); const cakeS = ck.outerHTML;
+      const flags = Array.from({ length: 12 }, (_, i) => { const x = 40 + i * 88, y = 22 + 44 * (1 - Math.pow((x - 520) / 520, 2)); return `<path d="M${x - 26} ${y} L${x + 26} ${y + 2} L${x} ${y + 46}Z" fill="${['#FF8FB0', '#FFD24D', '#8EDCC0', '#B79BFF', '#7FC0FF'][i % 5]}" stroke="#fff" stroke-width="3"/>`; }).join('');
+      const conf = Array.from({ length: 40 }, () => `<circle cx="${rnd(10, W - 10).toFixed(0)}" cy="${rnd(150, 540).toFixed(0)}" r="${rnd(3, 7).toFixed(1)}" fill="${pick(['#FF8FB0', '#FFD24D', '#8EDCC0', '#B79BFF', '#7FC0FF'])}" opacity=".8"/>`).join('');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${BD_GRADS}<rect width="${W}" height="${H}" fill="${info && info.today ? '#FFEFC2' : '#FFE3EE'}"/>${conf}
+        <path d="M0 22 Q520 112 ${W} 22" stroke="#C9975B" stroke-width="4" fill="none"/>${flags}
+        <rect x="250" y="104" width="540" height="64" rx="32" fill="#fff" stroke="#FFD3E0" stroke-width="5"/><text x="520" y="147" font-family="Fredoka, Arial Rounded MT Bold, Arial, sans-serif" font-weight="700" font-size="34" fill="#C0506A" text-anchor="middle">${esc(name)}'s Birthday Party</text>
+        ${place(samaS, 30, 190, 200, 400)}${place(avatarFull(S.avatar, accent(), 'partyhat'), 220, 170, 210, 420)}${place(nayaS, 700, 410, 170, 170)}${S.pet ? place(petSVG(S.pet, 'partyhat'), 870, 418, 150, 168) : ''}
+        <rect x="-10" y="572" width="${W + 20}" height="210" rx="40" fill="#FFC7DA"/><rect x="-10" y="572" width="${W + 20}" height="14" fill="#fff"/>
+        ${place(cakeS, 400, 330, 300, 270)}
+        <text x="520" y="${H - 40}" font-family="Arial, sans-serif" font-size="22" fill="#8F86B4" text-anchor="middle">${new Date().toLocaleDateString()}</text></svg>`;
+      const show = url => { const o = document.createElement('div'); o.className = 'showtime bd-photo'; o.innerHTML = `<div class="stframe"><img src="${url}" alt="Party photo"></div><div class="stname">Saved in My pictures!</div>`; document.body.appendChild(o); onLeave(() => o.remove()); sfx.star(); say('What a lovely photo! It is in My pictures.');
+        let gone = false; const end = () => { if (gone) return; gone = true; o.remove(); done(); }; o.onclick = end; later(end, 4000); };
+      const im = new Image();
+      im.onload = () => { const c = document.createElement('canvas'); c.width = 780; c.height = 570; c.getContext('2d').drawImage(im, 0, 0, 780, 570); let url = null; try { url = c.toDataURL('image/jpeg', .8); } catch (e) { }
+        if (url) { gallery.unshift(url); gallery = gallery.slice(0, 30); saveGallery(); show(url); } else done(); };
+      im.onerror = () => done(); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
   }
 
   /* ---- 6 finale ---- */
   function finale() {
-    setStep(5); coach.off(); cheer(); cheerAll(2600); sfx.yay();
+    setStep(8); coach.off(); cheer(); cheerAll(2600); sfx.yay();
     S.parties = (S.parties || 0) + 1; save();
     later(() => reward(info && info.today ? `Happy birthday ${name}! You are ${NUMS[nC] || nC}!` : 'What a wonderful party!'), 900);
     later(() => { tray.innerHTML = `<button class="btn go big bd-again" id="again">Party again!</button>`; $('#again', tray).onclick = () => go('birthday'); }, 2600);
   }
+};
+/* ===== POTTY TIME (v1.50) =====
+   Pretend potty routine in a little bathroom, every step a tap (or a rub), always positive:
+     1 "I need to go potty!" - tap the potty   2 pants down (tap her) and sit   3 wait and count 1-5, tinkle!
+     4 wipe (tap the paper roll)   5 pants up   6 flush (tap the handle)   7 wash hands: tap, soap, scrub (rub), rinse, towel
+   then a potty dance and a sticker. The star chart is for REAL potty trips: a grown-up taps "I went potty!" and she gets a star,
+   five stars = a sticker surprise. Saved by date in S.potty = { log: { 'YYYY-MM-DD': n }, total }. ===== */
+const PT_STEPS = ['potty', 'pants', 'wait', 'wipe', 'up', 'flush', 'wash'];
+const ptDay = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const PT_TOILET = `<svg viewBox="0 0 200 260" aria-hidden="true"><ellipse cx="100" cy="252" rx="78" ry="8" fill="rgba(61,51,88,.16)"/>
+  <rect x="44" y="14" width="112" height="92" rx="16" fill="#fff" stroke="#3D3358" stroke-width="4"/><rect x="40" y="6" width="120" height="18" rx="9" fill="#F1ECFF" stroke="#3D3358" stroke-width="4"/>
+  <g class="handle" style="transform-origin:58px 40px"><rect x="30" y="26" width="38" height="28" fill="transparent"/><circle cx="60" cy="40" r="7" fill="#C9C1E2" stroke="#3D3358" stroke-width="3"/><rect x="34" y="36" width="26" height="8" rx="4" fill="#C9C1E2" stroke="#3D3358" stroke-width="3"/></g>
+  <path d="M66 182 Q70 244 82 248 H118 Q130 244 134 182Z" fill="#fff" stroke="#3D3358" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M24 146 Q24 196 100 200 Q176 196 176 146Z" fill="#fff" stroke="#3D3358" stroke-width="4" stroke-linejoin="round"/>
+  <ellipse cx="100" cy="146" rx="76" ry="26" fill="#FFB3C8" stroke="#3D3358" stroke-width="4"/>
+  <ellipse cx="100" cy="148" rx="52" ry="15" fill="#BFE4FF" stroke="#3D3358" stroke-width="3"/>
+  <g class="swirl" style="transform-origin:100px 148px"><path d="M100 148 m-34 0 a34 10 0 1 1 34 10 a22 6 0 1 1 -18 -6" stroke="#7FC0FF" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+  <g class="pee"><ellipse cx="100" cy="149" rx="30" ry="8" fill="#FFE98A" opacity=".8"/></g>
+  <path d="M40 140 q10 -10 30 -12" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>
+  <path d="${star5(100, 180, 9, 4)}" fill="#FFD24D"/>
+  <g class="lid-up"><path d="M36 112 Q36 66 100 62 Q164 66 164 112 Q130 126 100 126 Q70 126 36 112Z" fill="#FFB3C8" stroke="#3D3358" stroke-width="4"/><path d="M86 92 c-3 -5 -11 -2 -7 4 l7 7 7 -7 c4 -6 -4 -9 -7 -4z" fill="#fff"/></g>
+  <g class="lid-down"><ellipse cx="100" cy="144" rx="78" ry="28" fill="#FFB3C8" stroke="#3D3358" stroke-width="4"/><path d="M100 140 c-4 -6 -14 -2 -9 5 l9 9 9 -9 c5 -7 -5 -11 -9 -5z" fill="#fff"/></g></svg>`;
+const PT_PAPER = `<svg viewBox="0 0 80 150" aria-hidden="true"><rect x="2" y="16" width="76" height="10" rx="5" fill="#C9C1E2" stroke="#3D3358" stroke-width="3"/>
+  <path class="sheet" d="M14 40 H66 V140 l-6 -5 -6 5 -6 -5 -6 5 -6 -5 -6 5 -6 -5 -6 5 -6 -5Z" fill="#fff" stroke="#C9C1E2" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="12" y="20" width="56" height="40" rx="14" fill="#fff" stroke="#3D3358" stroke-width="4"/><ellipse cx="68" cy="40" rx="6" ry="20" fill="#F1ECFF" stroke="#3D3358" stroke-width="3"/><circle cx="68" cy="40" r="4" fill="#C9C1E2"/>
+  <path d="M24 32 v16 M40 32 v16" stroke="#E5DDF5" stroke-width="3" stroke-linecap="round"/></svg>`;
+const PT_SINK = `<svg viewBox="0 0 260 360" aria-hidden="true">
+  <rect x="44" y="6" width="172" height="118" rx="56" fill="#DFF2FF" stroke="#3D3358" stroke-width="4"/><path d="M84 30 l-22 26 M104 26 l-38 46" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".8"/><rect x="58" y="18" width="144" height="94" rx="47" fill="none" stroke="#FFD3E0" stroke-width="5"/>
+  <g class="towel"><rect x="228" y="120" width="28" height="8" rx="4" fill="#C9C1E2" stroke="#3D3358" stroke-width="3"/><g class="tw" style="transform-origin:242px 124px"><path d="M228 124 H256 V214 Q242 222 228 214Z" fill="#8EDCC0" stroke="#3D3358" stroke-width="3.5" stroke-linejoin="round"/><path d="M228 196 H256" stroke="#fff" stroke-width="4"/></g></g>
+  <rect x="20" y="198" width="210" height="150" rx="14" fill="#FFE3EE" stroke="#3D3358" stroke-width="4"/><path d="M125 212 V334" stroke="#3D3358" stroke-width="3" opacity=".3"/><circle cx="112" cy="272" r="5" fill="#FFB3C8" stroke="#3D3358" stroke-width="2.5"/><circle cx="138" cy="272" r="5" fill="#FFB3C8" stroke="#3D3358" stroke-width="2.5"/>
+  <rect x="10" y="184" width="230" height="22" rx="10" fill="#fff" stroke="#3D3358" stroke-width="4"/>
+  <path d="M60 184 Q62 222 125 224 Q188 222 190 184Z" fill="#E5F4FF" stroke="#3D3358" stroke-width="4"/>
+  <path class="stream" d="M125 160 V214" stroke="#7FC0FF" stroke-width="10" stroke-linecap="round" stroke-dasharray="10 8"/>
+  <g class="faucet"><rect x="96" y="128" width="64" height="58" fill="transparent"/><path d="M116 184 V148 Q116 138 128 138 H140 Q150 138 150 148 V156" stroke="#B9B2D4" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M116 184 V148 Q116 138 128 138 H140 Q150 138 150 148 V156" stroke="#E9E5F5" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="104" cy="172" r="9" fill="#7FC0FF" stroke="#3D3358" stroke-width="3"/></g>
+  <g class="soap"><rect x="180" y="128" width="46" height="58" fill="transparent"/><rect x="188" y="146" width="30" height="40" rx="9" fill="#FF9DB8" stroke="#3D3358" stroke-width="3.5"/><path d="M198 146 V136 H212 M203 136 V132" stroke="#3D3358" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="203" cy="166" r="6" fill="#fff" opacity=".8"/></g></svg>`;
+const PT_STOOL = `<svg viewBox="0 0 120 50" aria-hidden="true"><rect x="4" y="4" width="112" height="16" rx="8" fill="#B79BFF" stroke="#3D3358" stroke-width="4"/><path d="M18 20 L14 46 M102 20 L106 46" stroke="#3D3358" stroke-width="8" stroke-linecap="round"/><path d="M18 20 L14 46 M102 20 L106 46" stroke="#B79BFF" stroke-width="3" stroke-linecap="round"/><path d="${star5(60, 12, 5, 2.2)}" fill="#FFE29A"/></svg>`;
+const PT_UNDIES = `<svg viewBox="0 0 60 40" aria-hidden="true"><path d="M4 4 H56 L52 18 Q42 22 36 36 H24 Q18 22 8 18Z" fill="#fff" stroke="#3D3358" stroke-width="3" stroke-linejoin="round"/><path d="M4 4 H56 V10 H4Z" fill="#FFB3C8" stroke="#3D3358" stroke-width="3" stroke-linejoin="round"/><path d="M30 24 c-2 -3 -7 -1 -4 3 l4 4 4 -4 c3 -4 -2 -6 -4 -3z" fill="#FF8FB0"/></svg>`;
+const PT_HANDS = `<svg viewBox="0 0 320 200" aria-hidden="true"><g fill="#FFD9B8" stroke="#3D3358" stroke-width="4" stroke-linejoin="round" class="skin">
+  <path d="M150 190 V120 L118 70 Q110 58 120 54 Q128 52 134 62 L146 80 L132 30 Q130 18 140 16 Q150 16 152 28 L162 70 L162 20 Q164 8 174 10 Q182 12 182 24 L180 72 L192 30 Q196 20 204 22 Q212 26 208 38 L196 92 Q194 140 178 190Z" transform="translate(-64 0)"/>
+  <path d="M170 190 V120 L202 70 Q210 58 200 54 Q192 52 186 62 L174 80 L188 30 Q190 18 180 16 Q170 16 168 28 L158 70 L158 20 Q156 8 146 10 Q138 12 138 24 L140 72 L128 30 Q124 20 116 22 Q108 26 112 38 L124 92 Q126 140 142 190Z" transform="translate(64 0)"/></g><g class="bub"></g></svg>`;
+TILE.potty = `<path d="M10 90 H90" stroke="#E5DDF5" stroke-width="6" stroke-linecap="round"/><path d="M26 18 H74 Q80 18 80 26 V52 H20 V26 Q20 18 26 18Z" fill="#FFB3C8"/><path d="M30 86 L34 66 H66 L70 86Z" fill="#fff"/><path d="M14 52 H86 Q86 74 50 74 Q14 74 14 52Z" fill="#fff"/><ellipse cx="50" cy="52" rx="36" ry="9" fill="#FF8FB0"/><ellipse cx="50" cy="52" rx="22" ry="5" fill="#BFE4FF"/><path d="${star5(50, 34, 10, 4.5)}" fill="#FFD24D"/>`;
+
+SCREENS.potty = el => {
+  const name = S.name || 'Liyana', pn = S.pet ? petName() : null;
+  S.potty = S.potty || { log: {}, total: 0 };
+  el.innerHTML = bar('Potty time!', `<button class="btn pt-starbtn" id="chartbtn" aria-label="Potty stars">${STARSVG}<b>${S.potty.total || 0}</b></button><span class="bd-steps pt-steps">${PT_STEPS.map((s, i) => `<i data-s="${i}"></i>`).join('')}</span>`) + `<div class="play potty" id="pt">
+    <div class="pt-floor"></div><div class="pt-mat"></div>
+    <div class="pt-loo" id="loo">${PT_TOILET}<div class="pt-paper" id="paper">${PT_PAPER}</div></div>
+    <div class="pt-sink" id="sink">${PT_SINK}<div class="pt-stool">${PT_STOOL}</div></div>
+    ${S.pet ? `<div class="pt-pet">${petSVG(S.pet)}</div>` : ''}
+    <div class="pt-me avf" id="me">${avatarFull(S.avatar, accent(), S.wear.av)}<div class="pt-undies">${PT_UNDIES}</div></div>
+    <div class="pt-tray" id="tray"></div>
+    <div class="pt-hands" id="hands" hidden>${PT_HANDS.replace("#FFD9B8", SKIN[S.avatar.skin] || "#FFD9B8")}</div>
+    <div class="bd-big" id="big"></div></div>`;
+  const pt = $('#pt', el), me = $('#me', el), loo = $('#loo', el), paper = $('#paper', el), sink = $('#sink', el), tray = $('#tray', el), hands = $('#hands', el), big = $('#big', el), pet = $('.pt-pet', el);
+  const handle = $('.handle', loo), faucet = $('.faucet', sink), soap = $('.soap', sink), towel = $('.towel', sink), undies = $('.pt-undies', me);
+  let step = -1;
+  /* where her feet and hips really are inside her box (the drawing does not fill it), measured once while she stands */
+  const M = (() => { try { const r = me.getBoundingClientRect(), sh = $('.legL ellipse', me).getBoundingClientRect(), lg = $('.legL rect', me).getBoundingClientRect(); if (r.height > 0) return { foot: (r.bottom - sh.bottom) / r.height, hip: (r.bottom - lg.top) / r.height }; } catch (e) { } return { foot: .18, hip: .3 }; })();
+  const setStep = i => { step = i; $$('.pt-steps i', el).forEach((d, k) => { d.classList.toggle('on', k === i); d.classList.toggle('done', k < i); }); };
+  const ctr = e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  const petHop = () => { if (!pet) return; pet.classList.remove('hop'); void pet.offsetWidth; pet.classList.add('hop'); };
+  const yay = (t, ms = 1200) => { me.classList.add('wee'); petHop(); later(() => me.classList.remove('wee'), ms); if (t) say(t); };
+  /* place her: x = centre in px of the play area, b = bottom in px */
+  const moveTo = (x, b, ms = 1100) => new Promise(res => {
+    const pr = pt.getBoundingClientRect(), w = me.getBoundingClientRect().width; me.classList.add('walk'); me.style.transition = `left ${ms}ms ease-in-out, bottom ${ms}ms ease-in-out`;
+    me.style.left = ((x - w / 2) / pr.width * 100) + '%'; me.style.bottom = (b / pr.height * 100) + '%'; later(() => { me.classList.remove('walk'); res(); }, ms);
+  });
+  const seatSpot = () => { const pr = pt.getBoundingClientRect(), r = loo.getBoundingClientRect(), h = me.getBoundingClientRect().height; return [r.left + r.width / 2 - pr.left, pr.bottom - (r.top + r.height * 150 / 260) - h * (M.hip - .02)]; };
+  const besideLoo = () => { const pr = pt.getBoundingClientRect(), r = loo.getBoundingClientRect(); return [r.right - pr.left + me.getBoundingClientRect().width * .3, pr.height * .06]; };
+  const atSink = () => { const pr = pt.getBoundingClientRect(), r = sink.getBoundingClientRect(), st = $('.pt-stool', el).getBoundingClientRect(); return [r.left + r.width * .45 - pr.left, pr.bottom - st.top - 12 - me.getBoundingClientRect().height * M.foot]; };
+  const tinkle = () => { for (let i = 0; i < 12; i++) note(2093 - i * 70 + Math.random() * 90, { dur: .25, vol: .05, kind: 'bell', when: i * .08 }); };
+  const flushSnd = () => { sfx.whoosh(); [0, 250, 500, 800].forEach((t, i) => setTimeout(() => { sfx.whoosh(); glide(380 - i * 50, 180, .4, .05); }, t)); };
+  const sheetFly = () => { const f = document.createElement('div'); f.className = 'bd-fly pt-sheetfly'; f.innerHTML = '<svg viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" rx="4" fill="#fff" stroke="#C9C1E2" stroke-width="3"/></svg>'; document.body.appendChild(f); onLeave(() => f.remove());
+    const [x0, y0] = ctr(paper), [x1, y1] = ctr(me); f.style.cssText = `left:${x0}px;top:${y0}px`;
+    f.animate([{ transform: 'translate(-50%,-50%) rotate(0)' }, { transform: `translate(calc(-50% + ${x1 - x0}px),calc(-50% + ${y1 - y0}px)) rotate(200deg) scale(.6)`, opacity: .3 }], { duration: 700, easing: 'ease-in-out' }).onfinish = () => f.remove(); };
+
+  /* ---- 1 she needs to go! ---- */
+  me.classList.add('wiggle');
+  later(() => { say(`Uh oh! ${name} needs to go potty! Tap the potty!`); }, 500);
+  later(() => { setStep(0); loo.classList.add('glow'); coach(() => 'Tap the potty!', () => step === 0 ? loo : null); }, 900);
+  loo.addEventListener('click', e => {
+    if (e.target.closest('.pt-paper')) return;
+    if (step === 0) { setStep(-1); loo.classList.remove('glow'); coach.off(); sfx.boop(); loo.classList.add('open'); say("Let's go! Quick quick!"); me.classList.remove('wiggle');
+      const [x] = seatSpot(); moveTo(x - me.getBoundingClientRect().width * .9, pt.getBoundingClientRect().height * .06, 1300).then(pants); }
+    else if (step === 5) flush();
+  });
+
+  /* ---- 2 pants down, sit ---- */
+  function pants() {
+    setStep(1); say('Pants down! Tap your pants.'); undies.classList.add('show');
+    coach(() => 'Tap to pull your pants down!', () => step === 1 ? undies : null);
+    const go2 = () => { if (step !== 1) return; setStep(-1); coach.off(); sfx.pop(); undies.classList.add('down'); say('Pants down!');
+      later(async () => { const [x, b] = seatSpot(); me.classList.add('sit', 'onpot'); await moveTo(x, b, 600); sfx.boop(); say('Sit on the potty. Good sitting!'); later(wait, 1500); }, 800); };
+    undies.onclick = me.onclick = go2;
+  }
+
+  /* ---- 3 wait and count, tinkle! ---- */
+  function wait() {
+    me.onclick = undies.onclick = null;
+    setStep(2); say("Let's wait. Count with me!"); let n = 0;
+    tray.innerHTML = [1, 2, 3, 4, 5].map(i => `<button class="pt-num" data-n="${i}" style="--i:${i}" aria-label="${i}">${i}</button>`).join('');
+    coach(() => 'Tap the numbers and count!', () => $('.pt-num:not(.on)', tray));
+    $$('.pt-num', tray).forEach(b => b.addEventListener('click', () => {
+      if (b.classList.contains('on') || +b.dataset.n !== n + 1) { if (!b.classList.contains('on')) { const nx = $(`.pt-num[data-n="${n + 1}"]`, tray); nx && nx.classList.add('coach-glow'); } return; }
+      b.classList.add('on'); n++; sfx.note(n - 1); say(String(NUMS[n]).replace(/^./, c => c.toUpperCase()) + '!'); sparkle(...ctr(b), 4);
+      if (n === 5) { coach.off(); later(() => { tray.innerHTML = ''; tinkle(); loo.classList.add('peed'); sparkle(...ctr(loo), 12, ['#FFE98A', '#BFE4FF', '#fff']);
+        say(`Pee pee in the potty! Well done, ${name}!`); yay(); later(wipe, 2600); }, 700); }
+    }));
+  }
+
+  /* ---- 4 wipe ---- */
+  function wipe() {
+    setStep(3); say('Now wipe. Tap the paper!'); paper.classList.add('glow'); let w = 0;
+    coach(() => 'Tap the toilet paper!', () => step === 3 ? paper : null);
+    paper.onclick = () => {
+      if (step !== 3) return; w++; paper.classList.remove('glow'); paper.classList.remove('pull'); void paper.offsetWidth; paper.classList.add('pull'); sfx.pop(); sheetFly();
+      if (w === 1) say('Wipe, wipe! Front to back.'); if (w === 2) { setStep(-1); coach.off(); say('All clean!'); sfx.star(); later(up, 1200); }
+    };
+  }
+
+  /* ---- 5 pants up ---- */
+  function up() {
+    setStep(4); say('Pants up! Tap your pants.');
+    coach(() => 'Tap to pull your pants up!', () => step === 4 ? undies : null);
+    undies.onclick = me.onclick = async () => {
+      if (step !== 4) return; setStep(-1); coach.off(); undies.onclick = me.onclick = null; me.classList.remove('sit', 'onpot');
+      const [x, b] = besideLoo(); await moveTo(x, b, 700); undies.classList.remove('down'); sfx.pop(); say('Pants up! Good job!');
+      later(() => { undies.classList.remove('show'); }, 700); later(flushStep, 1300);
+    };
+  }
+
+  /* ---- 6 flush ---- */
+  function flushStep() {
+    setStep(5); say('Now flush! Tap the handle.'); handle.classList.add('glow');
+    coach(() => 'Tap the handle to flush!', () => step === 5 ? handle : null);
+  }
+  function flush() {
+    setStep(-1); coach.off(); handle.classList.remove('glow'); handle.classList.add('push'); flushSnd(); loo.classList.add('flushing'); say('Flush! Bye bye pee pee!');
+    later(() => { loo.classList.remove('peed'); }, 900);
+    later(() => { loo.classList.remove('flushing', 'open'); handle.classList.remove('push'); sfx.star(); petHop(); say('All gone! Now wash your hands.'); }, 2300);
+    later(async () => { const [x, b] = atSink(); await moveTo(x, b, 1300); wash(); }, 3600);
+  }
+
+  /* ---- 7 wash hands: water, soap, scrub, rinse, dry ---- */
+  function wash() {
+    setStep(6); let phase = 'water';
+    say('Turn on the water! Tap the tap.'); faucet.classList.add('glow');
+    coach(() => ({ water: 'Tap the tap for water!', soap: 'Tap the soap!', scrub: 'Rub your hands! Scrub scrub scrub!', rinse: 'Tap the tap to rinse!', dry: 'Tap the towel to dry your hands!' })[phase] || null,
+      () => ({ water: faucet, soap, scrub: hands, rinse: faucet, dry: towel })[phase] || null);
+    const glowOnly = g => [faucet, soap, towel].forEach(x => x.classList.toggle('glow', x === g));
+    faucet.addEventListener('click', () => {
+      if (phase === 'water') { phase = 'soap'; sink.classList.add('run'); sfx.whoosh(); say('Splash! Now some soap.'); glowOnly(soap); later(() => sink.classList.remove('run'), 1800); }
+      else if (phase === 'rinse') { phase = 'dry'; sink.classList.add('run'); sfx.whoosh(); hands.classList.add('rinse'); say('Rinse rinse! Bubbles all gone.'); glowOnly(towel);
+        later(() => { hands.hidden = true; hands.classList.remove('rinse'); $('.bub', hands).innerHTML = ''; sink.classList.remove('run'); say('Now dry your hands with the towel!'); }, 1900); }
+    });
+    soap.addEventListener('click', () => { if (phase !== 'soap') return; phase = 'scrub'; glowOnly(null); sfx.pop(); soap.classList.add('pump'); later(() => soap.classList.remove('pump'), 500); scrub(); });
+    towel.addEventListener('click', () => { if (phase !== 'dry') return; phase = 'done'; glowOnly(null); coach.off(); $('.tw', towel).classList.add('rub'); sfx.boop(); say('Dry dry dry! Clean hands!'); later(finale, 1600); });
+    function scrub() {
+      hands.hidden = false; say('Rub your hands! Scrub scrub scrub!'); let rubbed = 0, last = null, nb = 0; const bub = $('.bub', hands), sv = $('svg', hands);
+      const add = (cx, cy) => { const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle'); c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', (6 + Math.random() * 12).toFixed(1)); bub.appendChild(c); nb++; };
+      hands.onpointerdown = e => { last = [e.clientX, e.clientY]; try { hands.setPointerCapture(e.pointerId); } catch (_) { } };
+      hands.onpointermove = e => {
+        if (!last || phase !== 'scrub') return; const d = Math.hypot(e.clientX - last[0], e.clientY - last[1]); if (d < 3) return; last = [e.clientX, e.clientY]; rubbed += d;
+        if (rubbed / 45 > nb) { const r = sv.getBoundingClientRect(); add(((e.clientX - r.left) / r.width * 320 + rnd(-20, 20)).toFixed(0), ((e.clientY - r.top) / r.height * 200 + rnd(-20, 20)).toFixed(0)); if (nb % 4 === 0) sfx.pop(); }
+        if (nb === 10) say('Scrub scrub scrub!');
+        if (nb >= 24) { phase = 'rinse'; last = null; sfx.star(); say('So many bubbles! Now rinse. Tap the tap!'); glowOnly(faucet); }
+      };
+      hands.onpointerup = hands.onpointercancel = () => { last = null; };
+    }
+  }
+
+  /* ---- potty dance + sticker ---- */
+  function finale() {
+    setStep(7); coach.off(); me.classList.add('dance'); petHop(); cheer(); sfx.yay();
+    say(`Hooray! ${name} did it all by herself! Potty dance!`);
+    S.potties = (S.potties || 0) + 1; save();
+    later(() => { me.classList.remove('dance'); reward('A potty sticker for you!'); }, 2600);
+    later(() => { tray.innerHTML = `<button class="btn go big" id="again">Potty again!</button><button class="btn big pt-real" id="real">${STARSVG} I went potty for real!</button>`;
+      $('#again', tray).onclick = () => go('potty'); $('#real', tray).onclick = () => chart(true); }, 4200);
+  }
+
+  /* ---- the real-life star chart ---- */
+  function chart(addNow) {
+    sfx.boop(); const o = document.createElement('div'); o.className = 'overlay pt-chart'; document.body.appendChild(o); onLeave(() => o.remove());
+    const draw = () => {
+      const d0 = new Date(), mon = new Date(d0); mon.setDate(d0.getDate() - ((d0.getDay() + 6) % 7));
+      const days = Array.from({ length: 7 }, (_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return [ptDay(d), ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]]; });
+      const tot = S.potty.total || 0, jar = tot % 5 || (tot ? 5 : 0);
+      o.innerHTML = `<div class="ptc-card"><h2>${esc(name)}'s potty stars</h2>
+        <div class="ptc-week">${days.map(([k, l]) => `<div class="ptc-day ${k === ptDay() ? 'today' : ''}"><small>${l}</small><div class="ptc-st">${Array.from({ length: Math.min(6, S.potty.log[k] || 0) }, () => STARSVG).join('')}</div></div>`).join('')}</div>
+        <div class="ptc-jar"><span>5 stars = a surprise sticker!</span><div class="ptc-five">${Array.from({ length: 5 }, (_, i) => `<i class="${i < jar ? 'on' : ''}">${STARSVG}</i>`).join('')}</div></div>
+        <div class="ptc-btns"><button class="btn go big" id="ptadd">${STARSVG} I went potty!</button><button class="btn" id="ptundo" ${S.potty.log[ptDay()] ? '' : 'disabled'}>Undo</button><button class="btn" id="ptclose">Close</button></div>
+        <p class="ptc-total">${tot} potty star${tot === 1 ? '' : 's'} so far</p></div>`;
+      $('#ptadd', o).onclick = add; $('#ptclose', o).onclick = () => { o.remove(); sfx.boop(); };
+      $('#ptundo', o).onclick = () => { const k = ptDay(); if (!S.potty.log[k]) return; S.potty.log[k]--; S.potty.total = Math.max(0, (S.potty.total || 0) - 1); save(); upd(); draw(); };
+    };
+    const upd = () => { const b = $('#chartbtn b', el); if (b) b.textContent = S.potty.total || 0; };
+    const add = () => {
+      const k = ptDay(); S.potty.log[k] = (S.potty.log[k] || 0) + 1; S.potty.total = (S.potty.total || 0) + 1;
+      /* keep the log small: drop days older than 60 days */
+      const cut = new Date(); cut.setDate(cut.getDate() - 60); Object.keys(S.potty.log).forEach(d => { if (d < ptDay(cut)) delete S.potty.log[d]; });
+      save(); upd(); draw(); sfx.star(); const s = $('.ptc-day.today .ptc-st svg:last-child', o); if (s) { const [x, y] = ctr(s); sparkle(x, y, 10); }
+      if (S.potty.total % 5 === 0) { say(`Five potty stars! You are a potty superstar, ${name}!`); later(() => reward('A potty superstar sticker!'), 900); }
+      else say(pick([`Well done ${name}! You went potty!`, 'A potty star for you! Hooray!', `Big girl ${name}! Another star!`]));
+    };
+    o.onclick = e => { if (e.target === o) o.remove(); };
+    draw(); if (addNow) add(); else say(`${name}'s potty stars!`);
+  }
+  $('#chartbtn', el).onclick = () => chart(false);
 };
 /* ===== games ===== */
 const speakerIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
