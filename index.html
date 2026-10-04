@@ -1306,6 +1306,64 @@ body[data-screen=potty] #petbox{display:none}
 .ppcard{background:#fff;border-radius:24px;width:min(760px,100%);height:min(86vh,900px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.2)}
 .ppcard iframe{flex:1;border:0;width:100%}.ppcard .btn{margin:10px auto 14px}
 </style>
+<style>
+/* ===== v1.55 home grid: 15 tiles = 8 + 7 (second row centred); portrait 5/5/5 ===== */
+.tiles.g10{grid-template-columns:repeat(16,1fr)}.tiles.g10>.tile:nth-child(8){grid-column:auto / span 2}.tiles.g10>.tile:nth-child(9){grid-column:2 / span 2}
+@media (max-width:1000px){.tiles.g10{grid-template-columns:repeat(10,1fr)}.tiles.g10>.tile:nth-child(9),.tiles.g10>.tile:nth-child(11){grid-column:auto / span 2}}
+/* ===== v1.55 Letters ===== */
+.lt-hub{display:grid;place-items:center}
+.lt-acts{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,3vw,32px);width:min(980px,94%)}
+@media (max-aspect-ratio:1/1){.lt-acts{grid-template-columns:1fr;width:min(420px,88%)}}
+.lt-act{position:relative;border:6px solid #fff;border-radius:36px;aspect-ratio:1;padding:12% 10% 24%;cursor:pointer;box-shadow:0 8px 0 rgba(61,51,88,.14);animation:tilein .5s cubic-bezier(.3,1.5,.5,1) backwards}
+@media (max-aspect-ratio:1/1){.lt-act{aspect-ratio:auto;height:24vh}}
+.lt-act:nth-child(2){animation-delay:80ms}.lt-act:nth-child(3){animation-delay:160ms}
+.lt-act i{position:absolute;left:50%;bottom:10px;translate:-50% 0;font:700 clamp(18px,2.4vw,26px) var(--display);font-style:normal;color:#4B3F7A;background:#fff;border-radius:999px;padding:2px 16px;white-space:nowrap}
+.lt-ico{display:flex;align-items:center;justify-content:center;gap:6%;width:100%;height:100%}.lt-ico svg{height:100%}
+.lt-ico b{display:grid;place-items:center;width:42%;aspect-ratio:1;border-radius:22%;border:4px solid #fff;color:#fff;font:700 clamp(36px,5vw,64px) var(--display);box-shadow:0 5px 0 rgba(61,51,88,.15)}
+.lt-ico.lt-nm{flex-wrap:wrap;gap:4px}.lt-ico.lt-nm b{width:28%;font-size:clamp(20px,2.6vw,34px);border-width:3px}
+.lt-back{margin-right:8px}
+.lt-stars{display:flex;gap:2px;margin-right:10px}.lt-stars svg{width:30px;height:30px;fill:#E4DDF2;stroke:#D2C9E6;stroke-width:1.4;stroke-linejoin:round;transition:transform .2s}
+.lt-stars svg.on{fill:#FFD84D;stroke:#F2B705;animation:starpop .6s cubic-bezier(.3,1.8,.5,1)}
+.lt-find{display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;gap:12px}
+.lt-pic{height:38%;display:grid;place-items:center;width:100%}
+.lt-ask{display:flex;align-items:baseline;gap:14px;font:700 clamp(110px,16vh,170px)/1 var(--display);color:var(--c);-webkit-text-stroke:6px #fff;paint-order:stroke;filter:drop-shadow(0 8px 0 rgba(61,51,88,.12));animation:stpop .5s cubic-bezier(.3,1.5,.5,1)}
+.lt-ask small{font-size:.55em}
+.lt-word{display:flex;align-items:center;gap:20px;animation:stpop .5s cubic-bezier(.3,1.5,.5,1)}.lt-word .lt-art,.lt-tpic .lt-art{display:block;width:clamp(110px,18vh,170px);aspect-ratio:1}.lt-art svg{width:100%;height:100%}
+.lt-word b{font:700 clamp(46px,8vh,76px) var(--display);color:#4B3F7A}.lt-word em{font-style:normal}
+.lt-cards{display:flex;justify-content:center;gap:clamp(12px,3vw,34px);flex-wrap:wrap}
+.lt-card{width:clamp(110px,15vw,170px);aspect-ratio:1;border:6px solid #fff;border-radius:34px;background:var(--c);color:#fff;font:700 clamp(70px,10vw,112px)/1 var(--display);cursor:pointer;box-shadow:0 8px 0 rgba(61,51,88,.16);animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*80ms)}
+.lt-card.no{animation:ltno .45s ease-in-out}.lt-card.yes{transform:scale(1.15);box-shadow:0 0 0 8px #FFE066,0 8px 0 rgba(61,51,88,.16);transition:.25s}
+@keyframes ltno{20%,60%{transform:translateX(-10px) rotate(-4deg)}40%,80%{transform:translateX(10px) rotate(4deg)}}
+.lt-trace{display:grid;grid-template-columns:1fr auto;grid-template-rows:1fr auto;gap:8px;align-items:center}
+.lt-svg{grid-row:1;grid-column:1;width:100%;height:100%;max-height:100%;touch-action:none;cursor:crosshair}
+.lt-svg .lt-bg{stroke:#EFE8FA;stroke-width:24;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lt-svg .lt-guide{stroke:#fff;stroke-width:3;fill:none;stroke-dasharray:3 6;stroke-linecap:round}
+.lt-svg .lt-dot{fill:#C9C1E2}.lt-svg .lt-dot.lit{fill:#fff}
+.lt-svg .lt-ink{stroke-width:18;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lt-svg .lt-start circle{fill:#C9C1E2;stroke:#fff;stroke-width:2.5}.lt-svg .lt-start text{font:700 9px var(--display);fill:#fff;text-anchor:middle}.lt-svg .lt-start path{fill:#C9C1E2}
+.lt-svg .lt-start.now circle,.lt-svg .lt-start.now path{fill:#4CC976}.lt-svg .lt-start.now circle{animation:ltpulse .8s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 50%}
+.lt-svg .lt-start.done{opacity:0}
+@keyframes ltpulse{to{transform:scale(1.25)}}
+.lt-svg.win{animation:ltwin .8s ease-in-out}@keyframes ltwin{50%{transform:scale(1.06) rotate(-2deg)}}
+.lt-tpic{grid-row:1;grid-column:2;display:flex;flex-direction:column;align-items:center;gap:6px;width:clamp(130px,20vw,220px)}.lt-tpic b{font:700 28px var(--display);color:#4B3F7A}
+.lt-pickrow{grid-row:2;grid-column:1 / span 2;display:flex;gap:6px;overflow-x:auto;padding:6px 4px 10px;scrollbar-width:none}
+.lt-mini{flex:none;width:52px;height:52px;border:4px solid #fff;border-radius:16px;background:var(--c);color:#fff;font:700 26px/1 var(--display);cursor:pointer;opacity:.75}.lt-mini.on{opacity:1;transform:scale(1.12);box-shadow:0 0 0 4px #FFE066}
+@media (max-aspect-ratio:1/1){.lt-trace{grid-template-columns:1fr;grid-template-rows:1fr auto auto}.lt-tpic{grid-row:2;grid-column:1;flex-direction:row;width:auto;justify-content:center}.lt-tpic .lt-art{width:90px}.lt-pickrow{grid-row:3;grid-column:1}}
+.lt-name{display:grid;grid-template-columns:auto 1fr;grid-template-rows:1fr 1fr;align-items:center;gap:10px}
+.lt-av{grid-row:1 / span 2;height:86%;aspect-ratio:1/2;align-self:end}.lt-av svg{width:100%;height:100%;overflow:visible}
+.lt-slots{display:flex;justify-content:center;gap:clamp(6px,1.2vw,14px);flex-wrap:wrap}
+.lt-slot{display:grid;place-items:center;width:clamp(64px,9vw,104px);aspect-ratio:1;border:5px dashed #D2C9E6;border-radius:24px;font:700 clamp(46px,6.4vw,74px)/1 var(--display);color:#E4DDF2;background:rgba(255,255,255,.5)}
+.lt-slot.on{border:5px solid #fff;background:#FFD84D;color:#fff;-webkit-text-stroke:2px #E8A800;animation:stpop .45s cubic-bezier(.3,1.6,.5,1)}
+.lt-tiles{display:flex;justify-content:center;gap:clamp(8px,1.6vw,18px);flex-wrap:wrap}
+.lt-tile{width:clamp(72px,10vw,116px);aspect-ratio:1;border:5px solid #fff;border-radius:26px;background:var(--c);color:#fff;font:700 clamp(50px,7vw,80px)/1 var(--display);cursor:pointer;box-shadow:0 7px 0 rgba(61,51,88,.15);animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*70ms)}
+.lt-tile.used{visibility:hidden}.lt-tile.no{animation:ltno .45s ease-in-out}
+.lt-av{pointer-events:none}
+@media (max-aspect-ratio:1/1){.lt-name{grid-template-columns:1fr;grid-template-rows:minmax(0,34%) auto auto;align-content:start;gap:24px}.lt-av{grid-row:1;grid-column:1;height:100%;justify-self:center;align-self:end}.lt-slots{grid-row:2;grid-column:1}.lt-tiles{grid-row:3;grid-column:1}}
+</style>
+<style>/* v1.55: 8 tiles per row - keep the longest label (Peek-a-boo) inside its pill */
+@media (min-width:1001px){.tiles.g10 .tile .pill{font-size:clamp(13px,1.45vw,19px);padding-left:8px;padding-right:8px;max-width:94%;white-space:nowrap;letter-spacing:-.01em}}
+.lt-slots{grid-column:2;grid-row:1}.lt-tiles{grid-column:2;grid-row:2}
+@media (max-aspect-ratio:1/1){.lt-slots{grid-column:1;grid-row:2}.lt-tiles{grid-column:1;grid-row:3}}</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1889,7 +1947,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v54';
+const APP_V = 'lw-v55';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -2482,7 +2540,7 @@ const VIEW_ICON = {
 const HOME_GAMES = [
   ['studio', 'Draw', 't-pink', "Let's draw!"], ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!'], ['animals', 'Animals', 't-butter', 'Animal friends!'], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!"],
   ['spy', 'Find it!', 't-mint', 'Can you find it?'], ['count', 'Count', 't-peach', "Let's count!"], ['memory', 'Memory', 't-lilac', 'Find the pairs!'], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!'],
-  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'], ['birthday', 'Birthday', 't-pink', "It's party time!"], ['potty', 'Potty', 't-sky', 'Potty time!'],
+  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'], ['letters', 'ABC', 't-butter', "Let's learn letters!"], ['birthday', 'Birthday', 't-pink', "It's party time!"], ['potty', 'Potty', 't-sky', 'Potty time!'],
   ['playarea', 'Play area', 't-peach', "Let's go to the play area!"], ['petcare', 'My pet', 't-pink', "Let's play with my pet!"],
 ];
 SCREENS.playarea = () => { S.view = 'world'; save(); go('home'); };
@@ -5270,6 +5328,185 @@ SCREENS.potty = el => {
     draw(); if (addNow) add(); else say(`${name}'s potty stars!`);
   }
   $('#chartbtn', el).onclick = () => chart(false);
+};
+/* ===== LETTERS / ABC (v1.55): three toddler letter games behind one tile.
+     1 Find the letter  - "Can you find Bee?" among 2-4 big letter cards (by age); right → "Bee is for Ball!" with its picture.
+     2 Trace the letter - big letter with numbered start dots and arrows; drag along it (forgiving) until every dot lights up.
+     3 My name          - tap the letters of her name in order to build it: "El, Eye, Why, Ay, En, Ay. Liyana!"
+   Spoken letter names are spelled out (LSAY) so every voice says "Bee", not "buh"; the natural voice pack has these lines. ===== */
+const LSAY = { A: 'Ay', B: 'Bee', C: 'See', D: 'Dee', E: 'Ee', F: 'Eff', G: 'Jee', H: 'Aitch', I: 'Eye', J: 'Jay', K: 'Kay', L: 'El', M: 'Em', N: 'En', O: 'Oh', P: 'Pee', Q: 'Cue', R: 'Ar', S: 'Ess', T: 'Tee', U: 'You', V: 'Vee', W: 'Double you', X: 'Ex', Y: 'Why', Z: 'Zee' };
+const LWORD = { A: ['apple', 'Apple'], B: ['ball', 'Ball'], C: ['cat', 'Cat'], D: ['dog', 'Dog'], E: ['egg', 'Egg'], F: ['fish', 'Fish'], G: ['guitar', 'Guitar'], H: ['heart', 'Heart'], I: ['icecream', 'Ice cream'], J: ['jellyfish', 'Jellyfish'], K: ['kite', 'Kite'], L: ['lion', 'Lion'], M: ['moon', 'Moon'],
+  N: ['note', 'Note'], O: ['octopus', 'Octopus'], P: ['pig', 'Pig'], Q: ['crown', 'Queen'], R: ['rainbow', 'Rainbow'], S: ['star', 'Star'], T: ['turtle', 'Turtle'], U: ['unicorn', 'Unicorn'], V: ['van', 'Van'], W: ['whale', 'Whale'], X: ['xylophone', 'Xylophone'], Y: ['yoyo', 'Yo-yo'], Z: ['zebra', 'Zebra'] };
+const LCOL = ['#FF6B8A', '#FF9F43', '#F7C531', '#4CC976', '#3FA9F5', '#9B7BFF'];
+const lcol = L => LCOL[(L.charCodeAt(0) - 65) % LCOL.length];
+
+/* new pictures for H J K V X Y Z (same 100x100 soft style as the art library) */
+Object.assign(ART, {
+  heart: () => `<path d="M50 86 C18 64 8 44 14 30 C20 14 42 12 50 30 C58 12 80 14 86 30 C92 44 82 64 50 86Z" fill="#FF6B8A"/><path d="M26 28 Q30 20 38 22" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>` + E(12, 46, 4) + CH(56, 22) + SM(57, 6),
+  jellyfish: () => `<path d="M14 52 C14 22 86 22 86 52 Q76 58 68 52 Q59 58 50 52 Q41 58 32 52 Q23 58 14 52Z" fill="#C9A8FF"/><path d="M28 30 Q34 22 44 22" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".6"/>
+    ${[26, 40, 54, 68].map((x, i) => `<path d="M${x + 2} 56 q${i % 2 ? 6 : -6} 10 0 18 q${i % 2 ? -6 : 6} 8 0 16" stroke="#B48CF5" stroke-width="5" fill="none" stroke-linecap="round"/>`).join('')}` + E(12, 40, 4) + CH(48, 22) + SM(48, 5),
+  kite: () => `<path d="M50 6 L82 40 L50 78 L18 40Z" fill="#FFB020"/><path d="M50 6 L50 78 M18 40 H82" stroke="#fff" stroke-width="3"/><path d="M50 6 L82 40 L50 40Z" fill="#FF6B8A"/><path d="M50 40 L18 40 L50 78Z" fill="#3FA9F5"/>
+    <path d="M50 78 Q40 86 50 92 Q60 98 52 104" stroke="#8B6B4A" stroke-width="2.5" fill="none"/><path d="M44 86 l6 2 -6 3z M52 96 l6 2 -6 3z" fill="#4CC976"/>`,
+  van: () => `<path d="M8 72 V40 Q8 28 20 28 H66 Q76 28 82 38 L92 54 V72Z" fill="#4FC3F7"/><path d="M70 34 H64 V52 H88 L80 38 Q77 34 70 34Z" fill="#DFF3FF"/><rect x="18" y="36" width="18" height="14" rx="3" fill="#DFF3FF"/><rect x="40" y="36" width="18" height="14" rx="3" fill="#DFF3FF"/>
+    <rect x="8" y="58" width="84" height="6" fill="#fff" opacity=".6"/><circle cx="90" cy="64" r="3" fill="#FFE066"/>${wheel(26, 74)}${wheel(72, 74)}`,
+  xylophone: () => `<path d="M14 40 L86 30 M14 78 L86 88" stroke="#B98149" stroke-width="5" stroke-linecap="round"/>${['#FF6B6B', '#FF9F43', '#F7C531', '#4CC976', '#3FA9F5', '#9B7BFF'].map((c, i) => `<rect x="${17 + i * 11.5}" y="${32 - i * 1.6}" width="9" height="${54 - i * 3}" rx="4" fill="${c}"/><circle cx="${21.5 + i * 11.5}" cy="${38 - i * 1.6}" r="1.6" fill="#fff"/>`).join('')}
+    <path d="M60 12 L84 4" stroke="#B98149" stroke-width="3" stroke-linecap="round"/><circle cx="58" cy="13" r="5" fill="#FF6B8A"/>`,
+  yoyo: () => `<path d="M50 6 V26" stroke="#8B6B4A" stroke-width="2.5"/><circle cx="50" cy="20" r="0"/><circle cx="50" cy="60" r="34" fill="#FF6B8A"/><circle cx="50" cy="60" r="24" fill="#FF9DB0"/><circle cx="50" cy="60" r="8" fill="#fff"/><path d="M50 6 Q48 20 50 52" stroke="#8B6B4A" stroke-width="2.5" fill="none"/>
+    <path d="M30 42 Q36 34 46 32" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>`,
+  zebra: () => `<ellipse cx="50" cy="56" rx="30" ry="32" fill="#fff" stroke="${INK}" stroke-width="3"/><path d="M28 20 L34 34 L22 32Z M72 20 L66 34 L78 32Z" fill="#fff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M44 24 Q50 14 56 24 L54 34 Q50 28 46 34Z" fill="${INK}"/><path d="M22 50 h12 M24 62 h10 M66 50 h12 M66 62 h10 M40 30 q10 6 20 0" stroke="${INK}" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <ellipse cx="50" cy="74" rx="18" ry="12" fill="#C9C1E2"/><circle cx="44" cy="74" r="2.4" fill="${INK}"/><circle cx="56" cy="74" r="2.4" fill="${INK}"/>` + E(11, 50, 4),
+});
+
+/* uppercase letter strokes in a 100x120 box, in writing order (for tracing) */
+const larc = (cx, cy, rx, ry, a0, a1, n = 14) => Array.from({ length: n + 1 }, (_, i) => { const a = (a0 + (a1 - a0) * i / n) * Math.PI / 180; return [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry]; });
+const LSTROKES = {
+  A: [[[15, 110], [50, 10], [85, 110]], [[30, 72], [70, 72]]],
+  B: [[[25, 10], [25, 110]], [[25, 10], [58, 10], [74, 22], [74, 42], [58, 58], [25, 58]], [[25, 58], [62, 58], [80, 72], [80, 96], [62, 110], [25, 110]]],
+  C: [larc(55, 60, 42, 50, -45, -315, 18)],
+  D: [[[25, 10], [25, 110]], [[25, 10], ...larc(35, 60, 50, 50, -90, 90, 14), [25, 110]]],
+  E: [[[75, 10], [25, 10], [25, 110], [75, 110]], [[25, 60], [65, 60]]],
+  F: [[[75, 10], [25, 10], [25, 110]], [[25, 60], [65, 60]]],
+  G: [larc(55, 60, 40, 50, -40, -360, 18), [[95, 62], [62, 62]]],
+  H: [[[22, 10], [22, 110]], [[78, 10], [78, 110]], [[22, 60], [78, 60]]],
+  I: [[[50, 10], [50, 110]], [[30, 10], [70, 10]], [[30, 110], [70, 110]]],
+  J: [[[70, 10], [70, 85], ...larc(48, 85, 22, 25, 0, 180, 8).slice(1)]],
+  K: [[[25, 10], [25, 110]], [[78, 10], [25, 65]], [[42, 50], [80, 110]]],
+  L: [[[25, 10], [25, 110], [78, 110]]],
+  M: [[[15, 110], [15, 10], [50, 70], [85, 10], [85, 110]]],
+  N: [[[22, 110], [22, 10], [78, 110], [78, 10]]],
+  O: [larc(50, 60, 38, 50, -90, -450, 22)],
+  P: [[[25, 110], [25, 10]], [[25, 10], [60, 10], [78, 25], [78, 45], [60, 60], [25, 60]]],
+  Q: [larc(50, 60, 38, 50, -90, -450, 22), [[58, 84], [86, 112]]],
+  R: [[[25, 110], [25, 10]], [[25, 10], [60, 10], [78, 25], [78, 45], [60, 60], [25, 60]], [[45, 60], [80, 110]]],
+  S: [[[78, 22], [65, 12], [45, 10], [28, 20], [25, 35], [35, 50], [55, 58], [72, 68], [78, 85], [70, 102], [50, 110], [30, 105], [20, 95]]],
+  T: [[[15, 10], [85, 10]], [[50, 10], [50, 110]]],
+  U: [[[22, 10], [22, 80], ...larc(50, 80, 28, 30, 180, 0, 10).slice(1), [78, 10]]],
+  V: [[[15, 10], [50, 110], [85, 10]]],
+  W: [[[10, 10], [30, 110], [50, 40], [70, 110], [90, 10]]],
+  X: [[[20, 10], [80, 110]], [[80, 10], [20, 110]]],
+  Y: [[[20, 10], [50, 58]], [[80, 10], [50, 58]], [[50, 58], [50, 110]]],
+  Z: [[[20, 10], [80, 10], [20, 110], [80, 110]]],
+};
+/* evenly spaced checkpoints along a stroke */
+const lsample = (pts, gap = 11) => { const out = [pts[0]]; let carry = 0; for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], d = Math.hypot(x1 - x0, y1 - y0); let t = gap - carry; while (t <= d) { out.push([x0 + (x1 - x0) * t / d, y0 + (y1 - y0) * t / d]); t += gap; } carry = d - (t - gap); } const last = pts[pts.length - 1], pl = out[out.length - 1]; if (Math.hypot(last[0] - pl[0], last[1] - pl[1]) > 4) out.push(last); return out; };
+const lpath = pts => 'M' + pts.map(p => p.map(v => v.toFixed(1)).join(' ')).join(' L');
+
+TILE.letters = `<rect x="8" y="40" width="40" height="40" rx="8" fill="#FF6B8A"/><rect x="52" y="40" width="40" height="40" rx="8" fill="#3FA9F5"/><rect x="30" y="4" width="40" height="40" rx="8" fill="#F7C531"/>
+  <text x="28" y="70" font-family="Fredoka,sans-serif" font-weight="700" font-size="30" fill="#fff" text-anchor="middle">B</text><text x="72" y="70" font-family="Fredoka,sans-serif" font-weight="700" font-size="30" fill="#fff" text-anchor="middle">C</text><text x="50" y="34" font-family="Fredoka,sans-serif" font-weight="700" font-size="30" fill="#fff" text-anchor="middle">A</text>`;
+
+SCREENS.letters = (el, mode) => {
+  const name = (S.name || 'Liyana').trim() || 'Liyana';
+  if (!mode) {
+    el.innerHTML = bar('Letters') + `<div class="play lt-hub"><div class="lt-acts">
+      <button class="lt-act t-pink" data-m="find" aria-label="Find the letter"><span class="lt-ico"><b style="background:#FF6B8A">A</b><b style="background:#3FA9F5">B</b></span><i>Find it</i></button>
+      <button class="lt-act t-sky" data-m="trace" aria-label="Trace the letter"><span class="lt-ico"><svg viewBox="-10 -5 120 130"><path d="${lpath(LSTROKES.A[0])} M30 72 L70 72" stroke="#fff" stroke-width="18" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="${lpath(LSTROKES.A[0])}" stroke="#FF6B8A" stroke-width="10" fill="none" stroke-dasharray="6 9" stroke-linecap="round"/></svg></span><i>Trace it</i></button>
+      <button class="lt-act t-butter" data-m="name" aria-label="My name"><span class="lt-ico lt-nm">${[...name.toUpperCase()].slice(0, 6).map(c => `<b style="background:${lcol(c)}">${esc(c)}</b>`).join('')}</span><i>My name</i></button></div></div>`;
+    say("Let's learn letters! Pick a game.");
+    $$('.lt-act', el).forEach(b => b.addEventListener('click', () => { sfx.boop(); go('letters', b.dataset.m); }));
+    coach(() => 'Pick a letter game!', () => $('.lt-act', el));
+    return;
+  }
+  const back = `<button class="btn round lt-back" aria-label="Back" onclick="go('letters')"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#3D3358" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>`;
+  const meter = `<span class="lt-stars">${Array.from({ length: 5 }, () => STARSVG).join('')}</span>`;
+  const star = n => $$('.lt-stars svg', el).forEach((s, i) => s.classList.toggle('on', i < n));
+  const ctr = e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  const cap = s => s.replace(/^./, c => c.toUpperCase());
+
+  /* ---------- 1 FIND THE LETTER ---------- */
+  if (mode === 'find') {
+    el.innerHTML = bar('Find the letter', back + meter) + `<div class="play lt-find"><div class="lt-pic" id="pic"></div><div class="lt-cards" id="cards"></div></div>`;
+    const nOpt = Math.max(2, Math.min(4, (S.age || 3)));
+    const order = shuffle(Object.keys(LSAY)); let round = 0, target = null, busy = false;
+    const next = () => {
+      busy = false; target = order[round % 26]; const opts = shuffle([target, ...shuffle(Object.keys(LSAY).filter(l => l !== target)).slice(0, nOpt - 1)]);
+      $('#pic', el).innerHTML = `<div class="lt-ask" style="--c:${lcol(target)}"><b>${target}</b><small>${target.toLowerCase()}</small></div>`;
+      $('#cards', el).innerHTML = opts.map((l, i) => `<button class="lt-card" data-l="${l}" style="--c:${lcol(l)};--i:${i}" aria-label="${LSAY[l]}">${l}</button>`).join('');
+      say(round === 0 ? `Can you find ${LSAY[target]}?` : pick([`Now find ${LSAY[target]}!`, `Where is ${LSAY[target]}?`, `Can you find ${LSAY[target]}?`]));
+      coach(() => `Find ${LSAY[target]}!`, () => $(`.lt-card[data-l="${target}"]`, el));
+      $$('.lt-card', el).forEach(b => b.addEventListener('click', () => {
+        if (busy) return; const l = b.dataset.l;
+        if (l !== target) { b.classList.remove('no'); void b.offsetWidth; b.classList.add('no'); sfx.oops(); coach.miss(); say(`That's ${LSAY[l]}. Find ${LSAY[target]}!`); return; }
+        busy = true; coach.off(); b.classList.add('yes'); sfx.star(); sparkle(...ctr(b), 12); round++; star(round);
+        const [aid, word] = LWORD[l];
+        later(() => { $('#pic', el).innerHTML = `<div class="lt-word"><span class="lt-art">${art(aid)}</span><b><em style="color:${lcol(l)}">${l}</em>${esc(word.slice(1))}</b></div>`; say(`${LSAY[l]} is for ${word}!`); }, 450);
+        if (round >= 5) later(() => { cheer(); reward('You know your letters!'); later(() => { round = 0; star(0); next(); }, 3200); }, 2600);
+        else later(next, 2700);
+      }));
+    };
+    next();
+    return;
+  }
+
+  /* ---------- 2 TRACE THE LETTER ---------- */
+  if (mode === 'trace') {
+    el.innerHTML = bar('Trace the letter', back + meter) + `<div class="play lt-trace"><svg class="lt-svg" id="tsvg" viewBox="-12 -8 124 136"></svg><div class="lt-tpic" id="tpic"></div>
+      <div class="lt-pickrow" id="prow">${Object.keys(LSAY).map(l => `<button class="lt-mini" data-l="${l}" style="--c:${lcol(l)}">${l}</button>`).join('')}</div></div>`;
+    const svg = $('#tsvg', el); let letter = null, strokes = [], si = 0, pi = 0, done = 0, drawing = false, col = '#FF6B8A', pickTok = 0;
+    const setLetter = l => {
+      letter = l; col = lcol(l); strokes = LSTROKES[l].map(s => lsample(s)); si = 0; pi = 0; $('#tpic', el).innerHTML = '';
+      $$('.lt-mini', el).forEach(b => b.classList.toggle('on', b.dataset.l === l)); const on = $(`.lt-mini[data-l="${l}"]`, el); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+      const base = LSTROKES[l].map(s => `<path d="${lpath(s)}" class="lt-bg"/>`).join('') + LSTROKES[l].map(s => `<path d="${lpath(s)}" class="lt-guide"/>`).join('');
+      const starts = LSTROKES[l].map((s, k) => { const [x, y] = s[0], [x2, y2] = s[1], a = Math.atan2(y2 - y, x2 - x) * 180 / Math.PI; return `<g class="lt-start" data-k="${k}"><circle cx="${x}" cy="${y}" r="8"/><text x="${x}" y="${y + 4}">${k + 1}</text><path d="M0 -5 L9 0 L0 5Z" transform="translate(${x} ${y}) rotate(${a.toFixed(0)}) translate(12 0)"/></g>`; }).join('');
+      svg.innerHTML = base + `<g id="ink"></g>` + strokes.map((s, k) => s.map((p, j) => `<circle class="lt-dot" data-k="${k}" data-j="${j}" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6"/>`).join('')).join('') + starts;
+      mark(); say(`Let's trace ${LSAY[l]}! Start at number one.`);
+      coach(() => si < strokes.length ? `Put your finger on number ${si + 1} and follow the dots!` : null, () => si < strokes.length ? $(`.lt-start[data-k="${si}"]`, el) : null);
+    };
+    const mark = () => { $$('.lt-start', svg).forEach(g => { const k = +g.dataset.k; g.classList.toggle('now', k === si); g.classList.toggle('done', k < si); }); };
+    const ink = () => { const g = $('#ink', svg); g.innerHTML = strokes.map((s, k) => { const n = k < si ? s.length : k === si ? pi : 0; return n > 1 ? `<path d="${lpath(s.slice(0, n))}" stroke="${col}" class="lt-ink"/>` : n === 1 ? `<circle cx="${s[0][0]}" cy="${s[0][1]}" r="9" fill="${col}"/>` : ''; }).join(''); };
+    const toSvg = e => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
+    const hit = (q, p, r) => Math.hypot(q.x - p[0], q.y - p[1]) < r;
+    const step = q => {
+      if (si >= strokes.length) return; const s = strokes[si];
+      if (pi === 0) { if (hit(q, s[0], 16)) { pi = 1; sfx.boop(); ink(); } return; }
+      let moved = false; for (let k = 0; k < 3 && pi < s.length; k++) { if (hit(q, s[pi], 15)) { pi++; moved = true; } else if (pi + 1 < s.length && hit(q, s[pi + 1], 13)) { pi += 2; moved = true; } else break; }
+      if (moved) { $$(`.lt-dot[data-k="${si}"]`, svg).forEach(d => d.classList.toggle('lit', +d.dataset.j < pi)); if (pi % 3 === 0) sfx.paint(); ink(); }
+      if (pi >= s.length) { si++; pi = 0; sfx.chime(); mark(); ink(); if (si < strokes.length) say(pick(['Good! Now number ' + (si + 1) + '!', 'Now number ' + (si + 1) + '!'])); else finish(); }
+    };
+    const finish = () => {
+      drawing = false; coach.off(); done++; star(done % 5 || 5); sfx.yay(); const r = svg.getBoundingClientRect(); sparkle(r.left + r.width / 2, r.top + r.height / 2, 16);
+      svg.classList.add('win'); later(() => svg.classList.remove('win'), 900);
+      const [aid, word] = LWORD[letter]; $('#tpic', el).innerHTML = `<span class="lt-art">${art(aid)}</span><b>${esc(word)}</b>`;
+      say(`You traced ${LSAY[letter]}! ${LSAY[letter]} is for ${word}!`);
+      if (done % 5 === 0) later(() => reward('Super tracing!'), 1800);
+      const ks = Object.keys(LSAY), was = letter, tok = ++pickTok; later(() => { if (letter === was && tok === pickTok) setLetter(ks[(ks.indexOf(was) + 1) % 26]); }, done % 5 === 0 ? 4400 : 3300);   /* not if she already picked another letter */
+    };
+    svg.addEventListener('pointerdown', e => { drawing = true; try { svg.setPointerCapture(e.pointerId); } catch (_) { } step(toSvg(e)); });
+    svg.addEventListener('pointermove', e => { if (drawing) step(toSvg(e)); });
+    ['pointerup', 'pointercancel'].forEach(ev => svg.addEventListener(ev, () => { drawing = false; if (si < strokes.length && pi > 0 && pi < strokes[si].length) { /* lifted mid-stroke: keep progress, she can carry on */ } }));
+    $$('.lt-mini', el).forEach(b => b.addEventListener('click', () => { sfx.boop(); pickTok++; setLetter(b.dataset.l); }));
+    setLetter(name[0].toUpperCase() in LSTROKES ? name[0].toUpperCase() : 'A');
+    return;
+  }
+
+  /* ---------- 3 MY NAME ---------- */
+  if (mode === 'name') {
+    const letters = [...name.toUpperCase()].filter(c => LSAY[c]).slice(0, 10);
+    el.innerHTML = bar('My name', back) + `<div class="play lt-name"><div class="lt-av avf">${avatarFull(S.avatar, accent(), S.wear.av)}</div>
+      <div class="lt-slots" id="slots">${letters.map((c, i) => `<span class="lt-slot" data-i="${i}">${c}</span>`).join('')}</div><div class="lt-tiles" id="tiles"></div></div>`;
+    let at = 0, busy = false;
+    const deal = () => {
+      at = 0; busy = false; $$('.lt-slot', el).forEach(s => s.classList.remove('on'));
+      $('#tiles', el).innerHTML = shuffle(letters.map((c, i) => ({ c, i }))).map(({ c, i }, k) => `<button class="lt-tile" data-c="${c}" style="--c:${lcol(c)};--i:${k}" aria-label="${LSAY[c]}">${c}</button>`).join('');
+      say(`Let's spell your name! ${name} starts with ${LSAY[letters[0]]}.`);
+      coach(() => at < letters.length ? `Find ${LSAY[letters[at]]}!` : null, () => at < letters.length ? $(`.lt-tile[data-c="${letters[at]}"]:not(.used)`, el) : null);
+      $$('.lt-tile', el).forEach(t => t.addEventListener('click', () => {
+        if (busy || t.classList.contains('used')) return;
+        if (t.dataset.c !== letters[at]) { t.classList.remove('no'); void t.offsetWidth; t.classList.add('no'); sfx.oops(); coach.miss(); say(`That's ${LSAY[t.dataset.c]}. Find ${LSAY[letters[at]]}!`); return; }
+        coach.ok(); t.classList.add('used'); const slot = $(`.lt-slot[data-i="${at}"]`, el), [x0, y0] = ctr(t), [x1, y1] = ctr(slot);
+        t.animate([{ transform: 'translate(0,0) scale(1)' }, { transform: `translate(${x1 - x0}px,${y1 - y0}px) scale(.8)`, opacity: .2 }], { duration: 380, easing: 'ease-in' });
+        sfx.note(at % 7); say(LSAY[letters[at]] + '!'); at++;
+        later(() => { slot.classList.add('on'); sparkle(x1, y1, 5); }, 360);
+        if (at === letters.length) {
+          busy = true; coach.off();
+          later(() => { say(`${letters.map(c => LSAY[c]).join(', ')}. ${name}! That's your name!`); cheer(); $('.lt-av', el).classList.add('wee'); }, 900);
+          later(() => { $('.lt-av', el).classList.remove('wee'); reward(`You spelled ${name}!`); }, 4600);
+          later(deal, 7600);
+        }
+      }));
+    };
+    deal();
+  }
 };
 /* ===== games ===== */
 const speakerIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
