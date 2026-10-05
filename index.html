@@ -1375,6 +1375,59 @@ body[data-screen=potty] #petbox{display:none}
 .lt-ico svg{height:100%;width:auto;max-width:100%}
 @media (max-aspect-ratio:1/1){.lt-acts{grid-template-columns:minmax(0,1fr);width:min(440px,88%)}.lt-act{height:clamp(120px,24vh,220px)}}
 </style>
+<style>
+/* ===== v1.57 home grid: 16 tiles = 8 + 8 (portrait 4 x 4) ===== */
+.tiles.g10{grid-template-columns:repeat(16,1fr)}.tiles.g10>.tile:nth-child(n){grid-column:auto / span 2}
+@media (max-width:1000px){.tiles.g10{grid-template-columns:repeat(8,1fr)}.tiles.g10>.tile:nth-child(n){grid-column:auto / span 2}}
+/* ===== v1.57 Pizza party (fixed vh/vw sizes only: Safari-safe) ===== */
+.pizza{position:relative;overflow:hidden;border-radius:28px;--s:min(44vh,38vw);background:linear-gradient(#FFF0D4,#FFE2B8)}
+.pz-wall{position:absolute;inset:0 0 28% 0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.28) 0 56px,transparent 56px 112px)}
+.pz-counter{position:absolute;left:0;right:0;bottom:0;height:30%;background:repeating-conic-gradient(#fff 0 25%,#FF9F8F 0 50%) 0 0/72px 72px;border-top:10px solid #fff;box-shadow:0 -8px 0 rgba(139,90,43,.12)}
+.pz-guest,.pz-me,.pz-pet{position:absolute;z-index:3;pointer-events:none}
+.pz-guest svg,.pz-me svg,.pz-pet svg{width:100%;height:100%;display:block;overflow:visible}
+.pz-guest.sama{left:3%;bottom:20%;height:calc(var(--s)*.98);width:calc(var(--s)*.49)}
+.pz-guest.naya{left:4%;bottom:21%;height:calc(var(--s)*.58);width:calc(var(--s)*.58)}
+.pz-guest.g-pet{left:4%;bottom:21%;height:calc(var(--s)*.5);width:calc(var(--s)*.45)}
+.pz-guest .flip,.pz-guest .nsv{width:100%;height:100%}
+.pz-me{right:19%;bottom:20%;height:calc(var(--s)*.9);width:calc(var(--s)*.45)}
+.pz-pet{right:3%;bottom:21%;height:calc(var(--s)*.46);width:calc(var(--s)*.41)}
+.pz-guest.hop,.pz-pet.hop{animation:bdhop .5s ease-in-out 2}
+.pz-guest.munch,.pz-me.munch,.pz-pet.munch{animation:bdmunch .28s ease-in-out 8 alternate}
+.pz-bubble{position:absolute;left:21%;top:3%;z-index:6;display:flex;align-items:center;gap:10px;background:#fff;border:5px solid #FFD3A0;border-radius:30px;padding:8px 16px;box-shadow:0 6px 0 rgba(139,90,43,.16);font:700 clamp(16px,2.2vh,22px) var(--display);color:#8B5A2B;animation:stpop .5s cubic-bezier(.3,1.5,.5,1)}
+.pz-w{display:flex;flex-direction:column;align-items:center;gap:3px}.pz-w svg{width:clamp(38px,6vh,56px);height:clamp(38px,6vh,56px)}
+.pz-w u{display:inline-block;width:11px;height:11px;border-radius:50%;background:#E4DDF2;margin:0 2px;transition:background .2s,transform .2s}.pz-w u.on{background:#5CD68A;transform:scale(1.25)}
+.pz-w{position:relative}.pz-w u:nth-of-type(n){display:inline-block}
+.pz-board{position:absolute;left:50%;margin-left:calc(var(--s)/-2);bottom:21%;width:var(--s);height:var(--s);z-index:5;touch-action:none}
+.pz-board>svg{position:absolute;left:0;top:0;width:100%;height:100%;display:block;overflow:visible;filter:drop-shadow(0 10px 6px rgba(139,90,43,.25))}
+.pz-board.active{cursor:pointer}
+.pz-board.baked .pz-dough{fill:#EDB765;stroke:#C98A3C}.pz-board.baked #cheese rect{fill:#F6B93B}.pz-board.baked .pz-sauce{fill:#D9382F}
+.pz-pop{animation:bdpop .4s cubic-bezier(.3,1.6,.5,1);transform-box:fill-box}
+.pz-tool{position:absolute;z-index:6;width:30%;pointer-events:none;opacity:0;transition:opacity .2s}.pz-tool.on{opacity:1}.pz-tool svg{width:100%;display:block;filter:drop-shadow(0 6px 4px rgba(61,51,88,.2))}
+.pz-guide .vis{pointer-events:none;stroke:#fff;stroke-width:3;stroke-dasharray:5 8;stroke-linecap:round;animation:ltpulse 1s ease-in-out infinite alternate}.pz-guide .hit{stroke:transparent;stroke-width:34;stroke-linecap:round;cursor:pointer}
+.pz-guide.cut .vis{stroke:#8B5A2B;stroke-dasharray:none;stroke-width:3.5;animation:none}.pz-guide.cut .hit{pointer-events:none}
+.pz-slice{cursor:pointer;transition:transform .35s ease-out}.pz-slice.gone{display:none}
+.pz-tray{position:absolute;left:0;right:0;bottom:1.5%;z-index:7;display:flex;justify-content:center;align-items:flex-end;gap:clamp(8px,1.6vw,18px);pointer-events:none;height:19%}
+.pz-tray>*{pointer-events:auto}
+.pz-ing{width:clamp(68px,12.5vh,112px);height:clamp(68px,12.5vh,112px);border:5px solid #fff;border-radius:26px;background:#FFF6E2;box-shadow:0 6px 0 rgba(61,51,88,.14);padding:8px;cursor:pointer;animation:tilein .45s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i,0)*60ms)}
+.pz-ing svg{width:100%;height:100%;display:block}
+.pz-oven{position:absolute;right:4%;top:4%;z-index:6;width:calc(var(--s)*.8);height:calc(var(--s)*.72);cursor:pointer}.pz-oven[hidden]{display:none}
+.pz-oven>svg{width:100%;height:100%;display:block;overflow:visible}
+.pz-oven.in{animation:bdfresh .6s cubic-bezier(.3,1.5,.5,1)}
+.pz-oven .od{fill:#C9C1E2;stroke:#3D3358;stroke-width:3;transition:fill .2s}.pz-oven.t1 .od1,.pz-oven.t2 .od2,.pz-oven.t3 .od3{fill:#FFD24D}
+.pz-oven .oglow{animation:bdoven .8s ease-in-out infinite alternate}.pz-oven.ding{animation:bdding .45s ease-in-out 2}
+.pz-plate{position:absolute;bottom:13%;width:clamp(86px,13vh,124px);height:clamp(34px,5vh,48px);margin-left:calc(clamp(86px,13vh,124px)/-2);z-index:4;border-radius:50%;background:#fff;border:4px solid #E5DDF5;box-shadow:0 5px 0 rgba(61,51,88,.14)}
+.pz-plate i{position:absolute;left:50%;bottom:30%;width:clamp(44px,7vh,62px);height:clamp(44px,7vh,62px);margin-left:calc(clamp(44px,7vh,62px)/-2);transform:translateY(calc(var(--n,1)*-6px)) rotate(calc(var(--n,1)*14deg - 20deg))}
+.pz-plate i svg{width:100%;height:100%}
+.pz-fly{position:fixed;z-index:70;pointer-events:none}
+@media (max-aspect-ratio:1/1){
+ .pizza{--s:min(40vh,80vw)}
+ .pz-guest.sama{bottom:auto;top:13%;left:2%;height:calc(var(--s)*.58);width:calc(var(--s)*.29)}.pz-guest.naya{bottom:auto;top:13%;left:2%;height:calc(var(--s)*.36);width:calc(var(--s)*.36)}.pz-guest.g-pet{bottom:auto;top:13%;left:2%;height:calc(var(--s)*.32);width:calc(var(--s)*.29)}
+ .pz-me{bottom:auto;top:13%;right:24%;height:calc(var(--s)*.54);width:calc(var(--s)*.27)}.pz-pet{bottom:auto;top:15%;right:3%;height:calc(var(--s)*.3);width:calc(var(--s)*.27)}
+ .pz-bubble{left:50%;top:1.5%;transform:translateX(-50%);animation:none}.pz-board{bottom:23%}.pz-oven{top:11%;right:4%;width:calc(var(--s)*.58);height:calc(var(--s)*.52)}.pz-plate{bottom:35%}
+}
+@media (prefers-reduced-motion:reduce){.pz-guide .vis,.pz-oven .oglow{animation:none}}
+</style>
+<style>body[data-screen=pizza] #petbox{display:none}</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1958,7 +2011,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v56';
+const APP_V = 'lw-v57';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -2551,7 +2604,7 @@ const VIEW_ICON = {
 const HOME_GAMES = [
   ['studio', 'Draw', 't-pink', "Let's draw!"], ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!'], ['animals', 'Animals', 't-butter', 'Animal friends!'], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!"],
   ['spy', 'Find it!', 't-mint', 'Can you find it?'], ['count', 'Count', 't-peach', "Let's count!"], ['memory', 'Memory', 't-lilac', 'Find the pairs!'], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!'],
-  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'], ['letters', 'ABC', 't-butter', "Let's learn letters!"], ['birthday', 'Birthday', 't-pink', "It's party time!"], ['potty', 'Potty', 't-sky', 'Potty time!'],
+  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'], ['letters', 'ABC', 't-butter', "Let's learn letters!"], ['birthday', 'Birthday', 't-pink', "It's party time!"], ['potty', 'Potty', 't-sky', 'Potty time!'], ['pizza', 'Pizza', 't-peach', "Let's make pizza!"],
   ['playarea', 'Play area', 't-peach', "Let's go to the play area!"], ['petcare', 'My pet', 't-pink', "Let's play with my pet!"],
 ];
 SCREENS.playarea = () => { S.view = 'world'; save(); go('home'); };
@@ -3605,7 +3658,7 @@ function liyanaHouse() {
 }
 /* the tappable part: the roof and upper floor above the welcome board (the board covers the rest, like a garden gate) */
 const LHOUSE_HIT = { x: LHOUSE_X - 210, y: 40, w: 470, h: 250 };
-const HOME_ACTS = [['potty', 'Potty', 't-sky', 'Potty time!'], ['birthday', 'Party', 't-pink', "It's party time!"], ['petcare', 'My pet', 't-peach', "Let's play with my pet!"], ['wardrobe', 'Dress up', 't-lilac', "Let's get dressed up!"]];
+const HOME_ACTS = [['potty', 'Potty', 't-sky', 'Potty time!'], ['pizza', 'Pizza', 't-peach', "Let's make pizza!"], ['birthday', 'Party', 't-pink', "It's party time!"], ['petcare', 'My pet', 't-peach', "Let's play with my pet!"], ['wardrobe', 'Dress up', 't-lilac', "Let's get dressed up!"]];
 function houseMenu(onGo) {
   const o = document.createElement('div'); o.className = 'lhmenu'; o.innerHTML = `<div class="lhcard" role="dialog" aria-label="My house"><button class="lhx" aria-label="Close">&times;</button>
     <h2>${esc((S.name || 'Liyana').trim() || 'Liyana')}'s House</h2><div class="lhacts">${HOME_ACTS.filter(([id]) => id !== 'petcare' || S.pet).map(([id, l, tone, s], i) => `<button class="lhact ${tone}" data-id="${id}" data-say="${esc(s)}" style="--i:${i}" aria-label="${l}"><span>${tileIcon(id)}</span><b>${l}</b></button>`).join('')}</div></div>`;
@@ -5517,6 +5570,190 @@ SCREENS.letters = (el, mode) => {
       }));
     };
     deal();
+  }
+};
+/* ===== PIZZA PARTY (v1.57): make a pizza for a hungry friend, step by step, every step a touch or a rub.
+     1 roll the dough (rub with the rolling pin)  2 sauce (tap the bowl, spread it)  3 cheese (sprinkle)
+     4 toppings - the friend WISHES for 1-3 kinds (by age) and she counts three of each  5 bake (tap the oven, 3-2-1, Ding!)
+     6 cut (tap the lines: 4 or 6 slices)  7 share the slices (one for you, one for the friend... counting)  then a sticker.
+   Layout is plain absolute boxes with fixed vh/vw sizes (no aspect-ratio + percent padding: that broke Safari once). ===== */
+const PZ_TOPS = { pepperoni: 'pepperoni', mushroom: 'mushrooms', olive: 'olives', pepper: 'peppers', corn: 'corn', tomato: 'tomatoes' };
+const PZ_ART = {
+  pepperoni: '<circle cx="50" cy="50" r="40" fill="#D9453D"/><circle cx="50" cy="50" r="40" fill="none" stroke="#B8332C" stroke-width="4"/><circle cx="36" cy="40" r="6" fill="#F27A6B"/><circle cx="60" cy="58" r="7" fill="#F27A6B"/><circle cx="58" cy="34" r="4" fill="#F27A6B"/>',
+  mushroom: '<path d="M10 54 Q10 14 50 14 Q90 14 90 54Z" fill="#E4CBA8"/><path d="M22 40 Q28 24 44 22" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".5"/><rect x="38" y="52" width="24" height="34" rx="9" fill="#F7EBDA"/><circle cx="66" cy="36" r="5" fill="#CDA879"/><circle cx="44" cy="44" r="4" fill="#CDA879"/>',
+  olive: '<circle cx="50" cy="50" r="38" fill="#4A4A63"/><circle cx="50" cy="50" r="15" fill="#E8473F"/><path d="M26 34 Q32 24 44 22" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".45"/>',
+  pepper: '<circle cx="50" cy="50" r="34" fill="none" stroke="#3DBB4F" stroke-width="15"/><circle cx="50" cy="50" r="34" fill="none" stroke="#7BE08A" stroke-width="4" stroke-dasharray="40 200" stroke-linecap="round"/>',
+  corn: '<circle cx="34" cy="40" r="15" fill="#FFD84D"/><circle cx="64" cy="38" r="15" fill="#FFD84D"/><circle cx="50" cy="66" r="15" fill="#FFD84D"/><circle cx="30" cy="35" r="4" fill="#FFF3A8"/><circle cx="60" cy="33" r="4" fill="#FFF3A8"/><circle cx="46" cy="61" r="4" fill="#FFF3A8"/>',
+  tomato: '<circle cx="50" cy="50" r="38" fill="#FF6B5B"/><circle cx="50" cy="50" r="30" fill="#FF8F82"/><path d="M50 50 L50 24 M50 50 L74 58 M50 50 L28 62" stroke="#FFD0C8" stroke-width="5" stroke-linecap="round"/><circle cx="50" cy="50" r="5" fill="#FFE9E5"/>',
+};
+const PZ_PIN = '<svg viewBox="0 0 120 50" aria-hidden="true"><rect x="22" y="14" width="76" height="22" rx="11" fill="#D9A066" stroke="#8B5A2B" stroke-width="3"/><rect x="2" y="19" width="26" height="12" rx="6" fill="#B07A45" stroke="#8B5A2B" stroke-width="3"/><rect x="92" y="19" width="26" height="12" rx="6" fill="#B07A45" stroke="#8B5A2B" stroke-width="3"/><path d="M32 20 H86" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5"/></svg>';
+const PZ_SPOON = '<svg viewBox="0 0 120 60" aria-hidden="true"><path d="M110 30 H52" stroke="#B07A45" stroke-width="9" stroke-linecap="round"/><ellipse cx="34" cy="30" rx="30" ry="20" fill="#E8473F" stroke="#8B5A2B" stroke-width="3"/><ellipse cx="26" cy="24" rx="12" ry="6" fill="#F2665B"/></svg>';
+const PZ_HAND = '<svg viewBox="0 0 80 60" aria-hidden="true"><ellipse cx="40" cy="36" rx="30" ry="18" fill="#FFD9B8" stroke="#3D3358" stroke-width="3"/><rect x="26" y="8" width="8" height="14" rx="4" fill="#FFE066"/><rect x="42" y="4" width="8" height="16" rx="4" fill="#FFE066"/><rect x="54" y="10" width="8" height="12" rx="4" fill="#FFE066"/></svg>';
+const pzBowl = (inner, rim = '#7FC0FF') => `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="50" cy="90" rx="38" ry="7" fill="rgba(61,51,88,.18)"/><path d="M10 48 H90 Q86 86 50 88 Q14 86 10 48Z" fill="${rim}" stroke="#3D3358" stroke-width="4"/><ellipse cx="50" cy="48" rx="40" ry="11" fill="#fff" stroke="#3D3358" stroke-width="4"/>${inner}</svg>`;
+const PZ_SAUCEB = pzBowl('<ellipse cx="50" cy="48" rx="33" ry="7.5" fill="#E8473F"/><ellipse cx="42" cy="46" rx="12" ry="3" fill="#F2665B"/>');
+const PZ_CHEESEB = pzBowl([[30, 44, 20], [44, 50, -30], [58, 44, 10], [68, 50, -20], [50, 41, 40], [38, 52, 70]].map(([x, y, a]) => `<rect x="${x - 7}" y="${y - 2}" width="14" height="4.6" rx="2.3" fill="#FFD24D" transform="rotate(${a} ${x} ${y})"/>`).join(''), '#FFB020');
+TILE.pizza = '<path d="M50 94 L12 22 Q50 2 88 22Z" fill="#F6CB7B" stroke="#E0A44A" stroke-width="4" stroke-linejoin="round"/><path d="M20 34 Q50 16 80 34" fill="none" stroke="#E0A44A" stroke-width="7" stroke-linecap="round"/><path d="M26 38 L50 82 L74 38Q50 26 26 38Z" fill="#E8473F"/><path d="M30 42 L50 76 L70 42Q50 32 30 42Z" fill="#FFD24D"/><circle cx="42" cy="46" r="6" fill="#D9453D" stroke="#B8332C" stroke-width="2"/><circle cx="58" cy="46" r="6" fill="#D9453D" stroke="#B8332C" stroke-width="2"/><circle cx="50" cy="62" r="5.5" fill="#D9453D" stroke="#B8332C" stroke-width="2"/>';
+
+const pzList = ws => { const n = ws.map(k => PZ_TOPS[k]); return n.length === 1 ? n[0] : n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1]; };
+const pzCap = s => s.replace(/^./, c => c.toUpperCase());
+const pzPetNames = () => ['Biscuit', 'Mochi', 'Clover', 'Rory', 'Ember'];
+/* every sentence the game can say, so the natural-voice pack can include them all (tools/voice/pizza.txt) */
+function pzLines() {
+  const keys = Object.keys(PZ_TOPS), out = new Set(), who = ['Sama', 'Naya', ...pzPetNames()];
+  const combos = []; keys.forEach((a, i) => { combos.push([a]); keys.slice(i + 1).forEach((b, j) => { combos.push([a, b]); keys.slice(i + j + 2).forEach(c => combos.push([a, b, c])); }); });
+  combos.forEach(c => out.add(`Put on ${pzList(c)}!`));
+  who.forEach(w => { out.add(`${w} is hungry! Let's make a pizza!`); out.add(`One for ${w}!`); out.add(`Another one for ${w}!`); });
+  keys.forEach(k => out.add(`${pzCap(NUMS[3])} ${PZ_TOPS[k]}!`));
+  ['One for you!', 'Another one for you!', 'First, the dough! Rub the rolling pin back and forth.', 'Perfect pizza dough!', 'Now the tomato sauce! Tap the bowl.', 'Spread it all around!', 'Yummy sauce!', 'Cheese time! Tap the cheese.', 'Sprinkle the cheese everywhere!', 'Lots of cheese!', 'Now the toppings!', 'Perfect! Just what was wished for!', 'Wow, so many toppings!',
+    'Yummy!', 'Nice!', 'Delicious!', 'Into the oven! Tap the oven.', 'Hot pizza! Careful!', 'Ding! The pizza is ready!', 'Now cut the pizza! Tap a line.', 'Cut!', 'Snip!', 'Slice!', 'Four slices!', 'Six slices!', 'Share the pizza! Tap a slice.', 'Pizza for everyone! Yum yum!', 'What a great pizza chef!', 'You made a yummy pizza!', 'Rub the dough with the rolling pin!', 'Tap the sauce bowl!', 'Rub round and round with the spoon!', 'Tap the cheese bowl!', 'Rub your finger over the pizza!', 'Tap the toppings!', 'Tap the oven!', 'Tap a line to cut!', 'Tap a slice!', "Let's make pizza!", 'Roll it flat!', 'Another pizza!'].forEach(x => out.add(x));
+  for (let i = 1; i <= 3; i++) out.add(pzCap(NUMS[i]) + '!');
+  return [...out];
+}
+
+SCREENS.pizza = el => {
+  const age = S.age || 3, nm = (S.name || 'Liyana').trim() || 'Liyana', petN = S.pet ? petName() : null;
+  const guests = [['Sama', 'sama'], ['Naya', 'naya'], ...(S.pet ? [[petN, 'pet']] : [])], [who, gk] = guests[(S.pizzas || 0) % guests.length];
+  const KEYS = Object.keys(PZ_TOPS), wish = shuffle(KEYS.slice()).slice(0, Math.max(1, Math.min(3, age - 1))).sort((a, b) => KEYS.indexOf(a) - KEYS.indexOf(b));
+  const nCuts = age <= 2 ? 2 : 3, nSl = nCuts * 2, STEPS = 7;
+  const guestHTML = gk === 'sama' ? `<div class="pz-guest sama p-stand g-sama" id="guest">${samaSVG('partyhat')}</div>` : gk === 'naya' ? `<div class="pz-guest naya p-sit g-naya" id="guest">${nayaSVG('partyhat')}</div>` : `<div class="pz-guest g-pet" id="guest">${petSVG(S.pet, 'partyhat')}</div>`;
+  const dots = Array.from({ length: STEPS }, (_, i) => `<i data-s="${i}"></i>`).join('');
+  el.innerHTML = bar('Pizza party!', `<span class="bd-steps pz-steps">${dots}</span>`) + `<div class="play pizza" id="pz"><div class="pz-wall"></div><div class="pz-counter"></div>
+    ${guestHTML}<div class="pz-me avf" id="me">${avatarFull(S.avatar, accent(), S.wear.av)}</div>${S.pet && gk !== 'pet' ? `<div class="pz-pet" id="pet">${petSVG(S.pet)}</div>` : ''}
+    <div class="pz-bubble" id="bub"><b>${esc(who)} wants</b>${wish.map(k => `<span class="pz-w" data-k="${k}"><svg viewBox="0 0 100 100">${PZ_ART[k]}</svg><u></u><u></u><u></u></span>`).join('')}</div>
+    <div class="pz-oven" id="oven" hidden>${BD_OVEN}</div>
+    <div class="pz-board" id="board"><svg viewBox="-100 -100 200 200" id="bsvg"><defs id="bdefs"><clipPath id="pzc"><circle r="72"/></clipPath></defs>
+      <circle r="99" fill="#B5793F"/><circle r="94" fill="#DDA56A"/><circle r="94" fill="none" stroke="#C48A52" stroke-width="2" stroke-dasharray="3 9"/>
+      <g id="pie"><circle class="pz-dough" id="dough" r="30" fill="#F8DDA8" stroke="#E7BC73" stroke-width="5"/><g clip-path="url(#pzc)"><circle class="pz-sauce" id="sauce" r="0" fill="#E8473F"/><circle id="sauce2" r="0" fill="#F2665B" opacity=".55" cx="-8" cy="-8"/></g><g id="cheese" clip-path="url(#pzc)"></g><g id="tops" clip-path="url(#pzc)"></g></g>
+      <g id="slices"></g><g id="guides"></g></svg><div class="pz-tool" id="tool"></div></div>
+    <div class="pz-tray" id="tray"></div><div class="bd-big" id="big"></div></div>`;
+  const pz = $('#pz', el), board = $('#board', el), bsvg = $('#bsvg', el), tool = $('#tool', el), tray = $('#tray', el), oven = $('#oven', el), big = $('#big', el), guest = $('#guest', el), me = $('#me', el), petEl = $('#pet', el);
+  const dough = $('#dough', el), sauce = $('#sauce', el), sauce2 = $('#sauce2', el), cheese = $('#cheese', el), tops = $('#tops', el), bub = $('#bub', el);
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  let step = -1, phase = 'roll', drag = false, last = null, dist = 0, nCheese = 0; const placed = {}, pts = [];
+  const setStep = i => { step = i; $$('.pz-steps i', el).forEach((d, k) => { d.classList.toggle('on', k === i); d.classList.toggle('done', k < i); }); };
+  const ctr = e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  const cheerAll = () => { guest.classList.add('hop'); me.classList.add('wee'); if (petEl) petEl.classList.add('hop'); later(() => { guest.classList.remove('hop'); me.classList.remove('wee'); if (petEl) petEl.classList.remove('hop'); }, 1800); };
+  const toSvg = e => { const r = board.getBoundingClientRect(); return [((e.clientX - r.left) / r.width - .5) * 200, ((e.clientY - r.top) / r.height - .5) * 200, r.width]; };
+  const bigSay = (txt, cls = '') => { big.textContent = txt; big.className = 'bd-big go ' + cls; void big.offsetWidth; big.classList.add('z'); };
+  const ing = (id, html, label) => `<button class="pz-ing" id="${id}" aria-label="${label}">${html}</button>`;
+  const setTool = (html, show = true) => { tool.innerHTML = html; tool.classList.toggle('on', show); };
+  const moveTool = (ux, uy, rot = 0) => { tool.style.left = ((ux + 100) / 2) + '%'; tool.style.top = ((uy + 100) / 2) + '%'; tool.style.transform = `translate(-50%,-50%) rotate(${rot}deg)`; };
+
+  /* ---- 0 the friend is hungry, then the dough ---- */
+  say(`${who} is hungry! Let's make a pizza!`);
+  later(() => say(`Put on ${pzList(wish)}!`), 3200);
+  later(startDough, 6000);
+  function startDough() {
+    setStep(0); phase = 'roll'; dist = 0; say('First, the dough! Rub the rolling pin back and forth.'); setTool(PZ_PIN); board.classList.add('active');
+    coach(() => phase === 'roll' ? 'Rub the dough with the rolling pin!' : null, () => phase === 'roll' ? board : null);
+  }
+  /* one pointer handler for the three "rub the pizza" steps */
+  board.addEventListener('pointerdown', e => { if (!['roll', 'spread', 'sprinkle'].includes(phase)) return; drag = true; last = null; try { board.setPointerCapture(e.pointerId); } catch (_) { } rub(e, true); });
+  board.addEventListener('pointermove', e => { if (drag) rub(e, false); });
+  ['pointerup', 'pointercancel'].forEach(ev => board.addEventListener(ev, () => { drag = false; last = null; }));
+  function rub(e, first) {
+    const [ux, uy, w] = toSvg(e), px = w / 200; moveTool(ux, uy, phase === 'roll' ? 0 : -20);
+    const d = last ? Math.hypot(ux - last[0], uy - last[1]) : (first ? 6 : 0); last = [ux, uy]; if (!d) return; const before = dist; dist += d;
+    if (phase === 'roll') {
+      const k = Math.min(1, dist / 330); dough.setAttribute('r', (30 + 52 * k).toFixed(1)); if (Math.floor(dist / 40) > Math.floor(before / 40)) sfx.paint();
+      if (k >= 1) { phase = 'idle'; sfx.yay(); setTool('', false); coach.off(); say('Perfect pizza dough!'); later(startSauce, 2200); }
+    } else if (phase === 'spread') {
+      const k = Math.min(1, dist / 380), r = 14 + 58 * k; sauce.setAttribute('r', r.toFixed(1)); sauce2.setAttribute('r', (r * .8).toFixed(1)); if (Math.floor(dist / 40) > Math.floor(before / 40)) sfx.pop();
+      if (k >= 1) { phase = 'idle'; sfx.yay(); setTool('', false); coach.off(); say('Yummy sauce!'); later(startCheese, 2000); }
+    } else if (phase === 'sprinkle') {
+      if (Math.hypot(ux, uy) < 66 && Math.floor(dist / 22) > Math.floor(before / 22)) {
+        for (let i = 0; i < 2; i++) { const r = document.createElementNS(SVGNS, 'rect'), a = Math.random() * 180; r.setAttribute('x', -6); r.setAttribute('y', -1.6); r.setAttribute('width', 12); r.setAttribute('height', 3.2); r.setAttribute('rx', 1.6); r.setAttribute('fill', '#FFE066');
+          r.setAttribute('transform', `translate(${(ux + rnd(-12, 12)).toFixed(1)} ${(uy + rnd(-12, 12)).toFixed(1)}) rotate(${a.toFixed(0)})`); cheese.appendChild(r); nCheese++; }
+        if (nCheese % 6 < 2) sfx.dot();
+      }
+      if (nCheese >= 56) { phase = 'idle'; sfx.yay(); setTool('', false); coach.off(); say('Lots of cheese!'); later(startToppings, 2000); }
+    }
+  }
+
+  /* ---- 1 sauce ---- */
+  function startSauce() {
+    setStep(1); phase = 'sauceTap'; tray.innerHTML = ing('sauceB', PZ_SAUCEB, 'Tomato sauce'); say('Now the tomato sauce! Tap the bowl.');
+    coach(() => phase === 'sauceTap' ? 'Tap the sauce bowl!' : phase === 'spread' ? 'Rub round and round with the spoon!' : null, () => phase === 'sauceTap' ? $('#sauceB', el) : phase === 'spread' ? board : null);
+    $('#sauceB', el).onclick = () => { if (phase !== 'sauceTap') return; sfx.boop(); phase = 'spread'; dist = 0; tray.innerHTML = ''; sauce.setAttribute('r', 14); sauce2.setAttribute('r', 10); say('Spread it all around!'); setTool(PZ_SPOON); };
+  }
+  /* ---- 2 cheese ---- */
+  function startCheese() {
+    setStep(2); phase = 'cheeseTap'; tray.innerHTML = ing('cheeseB', PZ_CHEESEB, 'Cheese'); say('Cheese time! Tap the cheese.');
+    coach(() => phase === 'cheeseTap' ? 'Tap the cheese bowl!' : phase === 'sprinkle' ? 'Rub your finger over the pizza!' : null, () => phase === 'cheeseTap' ? $('#cheeseB', el) : phase === 'sprinkle' ? board : null);
+    $('#cheeseB', el).onclick = () => { if (phase !== 'cheeseTap') return; sfx.boop(); phase = 'sprinkle'; dist = 0; tray.innerHTML = ''; say('Sprinkle the cheese everywhere!'); setTool(PZ_HAND); };
+  }
+  /* ---- 3 toppings: the friend's wish, three of each ---- */
+  function startToppings() {
+    setStep(3); phase = 'tops'; board.classList.remove('active'); say('Now the toppings!'); later(() => say(`Put on ${pzList(wish)}!`), 1600);
+    tray.innerHTML = shuffle(KEYS.slice()).map((k, i) => `<button class="pz-ing pz-top" data-k="${k}" style="--i:${i}" aria-label="${PZ_TOPS[k]}"><svg viewBox="0 0 100 100">${PZ_ART[k]}</svg></button>`).join('');
+    coach(() => phase === 'tops' ? 'Tap the toppings!' : null, () => { const k = wish.find(w => (placed[w] || 0) < 3); return $(`.pz-top[data-k="${k}"]`, el); });
+    $$('.pz-top', el).forEach(b => b.addEventListener('click', () => {
+      if (phase !== 'tops') return; const k = b.dataset.k, tot = pts.length; if (tot >= 16) { say('Wow, so many toppings!'); return; }
+      let best = null, bd = -1; for (let t = 0; t < 14; t++) { const a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * 56, p = [Math.cos(a) * r, Math.sin(a) * r], d = Math.min(99, ...pts.map(q => Math.hypot(q[0] - p[0], q[1] - p[1]))); if (d > bd) { bd = d; best = p; } }
+      pts.push(best); const [cx, cy] = best, s = document.createElementNS(SVGNS, 'svg'); s.setAttribute('x', cx - 17); s.setAttribute('y', cy - 17); s.setAttribute('width', 34); s.setAttribute('height', 34); s.setAttribute('viewBox', '0 0 100 100'); s.setAttribute('class', 'pz-pop'); s.innerHTML = PZ_ART[k]; tops.appendChild(s);
+      sfx.pop(); const br = board.getBoundingClientRect(); sparkle(br.left + (cx + 100) / 200 * br.width, br.top + (cy + 100) / 200 * br.height, 4);
+      placed[k] = (placed[k] || 0) + 1;
+      if (wish.includes(k)) { const w = $(`.pz-w[data-k="${k}"]`, el); $$('u', w).forEach((u, i) => u.classList.toggle('on', i < placed[k])); if (placed[k] <= 3) { say(pzCap(NUMS[placed[k]]) + '!'); if (placed[k] === 3) { sfx.star(); later(() => say(`${pzCap(NUMS[3])} ${PZ_TOPS[k]}!`), 700); } } }
+      else say(pick(['Yummy!', 'Nice!', 'Delicious!']));
+      if (wish.every(w => (placed[w] || 0) >= 3)) { phase = 'idle'; coach.off(); later(() => { sfx.yay(); cheerAll(); say('Perfect! Just what was wished for!'); }, 1500); later(startBake, 3600); }
+    }));
+  }
+  /* ---- 4 bake ---- */
+  function startBake() {
+    setStep(4); phase = 'bakeTap'; tray.innerHTML = ''; oven.hidden = false; oven.classList.remove('t1', 't2', 't3', 'ding'); oven.classList.add('in'); say('Into the oven! Tap the oven.');
+    coach(() => phase === 'bakeTap' ? 'Tap the oven!' : null, () => phase === 'bakeTap' ? oven : null);
+    oven.onclick = () => {
+      if (phase !== 'bakeTap') return; phase = 'baking'; coach.off(); sfx.whoosh(); const o = oven.getBoundingClientRect(), b = board.getBoundingClientRect(), dx = o.left + o.width / 2 - (b.left + b.width / 2), dy = o.top + o.height * .62 - (b.top + b.height / 2);
+      const flyIn = board.animate([{ transform: 'none', opacity: 1 }, { transform: `translate(${dx}px,${dy}px) scale(.18)`, opacity: 0 }], { duration: 800, easing: 'ease-in-out', fill: 'forwards' });
+      ['Three!', 'Two!', 'One!'].forEach((w, i) => later(() => { bigSay(String(3 - i)); say(w); sfx.boop(); oven.classList.add('t' + (i + 1)); }, 1000 + i * 1000));
+      later(() => { sfx.star(); sfx.chime(); say('Ding! The pizza is ready!'); oven.classList.add('ding'); board.classList.add('baked'); flyIn.cancel(); board.animate([{ transform: `translate(${dx}px,${dy}px) scale(.18)`, opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 700, easing: 'cubic-bezier(.3,1.4,.5,1)' }); const bb = board.getBoundingClientRect(); sparkle(bb.left + bb.width / 2, bb.top + bb.height / 2, 14, ['#fff', '#FFE066', '#FFB020']); cheerAll(); }, 4300);
+      later(() => { say('Hot pizza! Careful!'); oven.hidden = true; startCut(); }, 6300);
+    };
+  }
+  /* ---- 5 cut ---- */
+  function startCut() {
+    setStep(5); phase = 'cut'; let cuts = 0; say('Now cut the pizza! Tap a line.');
+    const g = $('#guides', el); g.innerHTML = Array.from({ length: nCuts }, (_, i) => `<g class="pz-guide" data-i="${i}" transform="rotate(${i * 180 / nCuts})"><line x1="-90" y1="0" x2="90" y2="0" class="vis"/><line x1="-92" y1="0" x2="92" y2="0" class="hit"/></g>`).join('');
+    coach(() => phase === 'cut' ? 'Tap a line to cut!' : null, () => $('.pz-guide:not(.cut) .hit', el));
+    $$('.pz-guide', g).forEach(gd => gd.addEventListener('click', () => {
+      if (phase !== 'cut' || gd.classList.contains('cut')) return; gd.classList.add('cut'); cuts++; sfx.whoosh(); sfx.pop(); say(pick(['Cut!', 'Snip!', 'Slice!'])); const r = gd.getBoundingClientRect(); sparkle(r.left + r.width / 2, r.top + r.height / 2, 6, ['#fff', '#FFE066']);
+      if (cuts === nCuts) { phase = 'idle'; coach.off(); later(() => { say(nSl === 4 ? 'Four slices!' : 'Six slices!'); sfx.yay(); makeSlices(); }, 700); later(startServe, 2600); }
+    }));
+  }
+  function makeSlices() {
+    const defs = $('#bdefs', el), sl = $('#slices', el), pie = $('#pie', el); $('#guides', el).innerHTML = ''; defs.appendChild(pie); const P = (a, r) => [Math.cos(a) * r, Math.sin(a) * r];
+    for (let j = 0; j < nSl; j++) {
+      const a0 = j * Math.PI / nCuts, a1 = (j + 1) * Math.PI / nCuts, [x0, y0] = P(a0, 94), [x1, y1] = P(a1, 94), d = `M0 0 L${x0.toFixed(1)} ${y0.toFixed(1)} A94 94 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}Z`, mid = (a0 + a1) / 2, [ox, oy] = P(mid, 4);
+      const cp = document.createElementNS(SVGNS, 'clipPath'); cp.setAttribute('id', 'pzs' + j); const pp = document.createElementNS(SVGNS, 'path'); pp.setAttribute('d', d); cp.appendChild(pp); defs.appendChild(cp);
+      const gr = document.createElementNS(SVGNS, 'g'); gr.setAttribute('class', 'pz-slice'); gr.setAttribute('data-j', j); gr.style.transform = `translate(${ox.toFixed(1)}px,${oy.toFixed(1)}px)`; gr.innerHTML = `<g clip-path="url(#pzs${j})"><use href="#pie"/></g><path d="${d}" fill="none" stroke="#B5793F" stroke-width="1.6"/>`; sl.appendChild(gr);
+    }
+  }
+  /* ---- 6 share: slices go round the table, counting ---- */
+  function startServe() {
+    setStep(6); phase = 'serve'; const eaters = [{ id: 'g', el: guest, nm: who }, { id: 'me', el: me, nm: null }]; if (petEl && nSl % 3 === 0) eaters.push({ id: 'pet', el: petEl, nm: petN });
+    const pr = pz.getBoundingClientRect(); eaters.forEach(e => { const r = e.el.getBoundingClientRect(); const p = document.createElement('div'); p.className = 'pz-plate'; p.style.left = (r.left + r.width / 2 - pr.left) + 'px'; pz.appendChild(p); e.plate = p; e.n = 0; });
+    say('Share the pizza! Tap a slice.'); let given = 0;
+    coach(() => phase === 'serve' ? 'Tap a slice!' : null, () => $('.pz-slice:not(.gone)', el));
+    $$('.pz-slice', el).forEach(sl => sl.addEventListener('click', () => {
+      if (phase !== 'serve' || sl.classList.contains('gone')) return; sl.classList.add('gone'); const e = eaters[given % eaters.length], j = +sl.dataset.j; given++; e.n++;
+      const a0 = j * Math.PI / nCuts, a1 = (j + 1) * Math.PI / nCuts, xs = [0], ys = [0]; for (let t = 0; t <= 8; t++) { const a = a0 + (a1 - a0) * t / 8; xs.push(Math.cos(a) * 94); ys.push(Math.sin(a) * 94); }
+      const bx = Math.min(...xs), by = Math.min(...ys), bw = Math.max(...xs) - bx, bh = Math.max(...ys) - by, f = document.createElement('div'); f.className = 'pz-fly'; const sc = 110 / Math.max(bw, bh); f.style.width = (bw * sc) + 'px'; f.style.height = (bh * sc) + 'px';
+      f.innerHTML = `<svg viewBox="${bx} ${by} ${bw} ${bh}" width="100%" height="100%"><g clip-path="url(#pzs${j})"><use href="#pie"/></g></svg>`; document.body.appendChild(f); onLeave(() => f.remove());
+      const [x0, y0] = ctr(sl), pl = e.plate.getBoundingClientRect(), x1 = pl.left + pl.width / 2, y1 = pl.top + pl.height / 2 - 6; f.style.left = x0 + 'px'; f.style.top = y0 + 'px'; sfx.boop();
+      f.animate([{ transform: 'translate(-50%,-50%) scale(1)' }, { transform: `translate(calc(-50% + ${(x1 - x0) / 2}px),calc(-50% + ${(y1 - y0) / 2 - 90}px)) scale(1.1)`, offset: .5 }, { transform: `translate(calc(-50% + ${x1 - x0}px),calc(-50% + ${y1 - y0}px)) scale(.5)` }], { duration: 700, easing: 'ease-in-out' }).onfinish = () => {
+        f.remove(); sfx.pop(); const m = document.createElement('i'); m.style.setProperty('--n', e.n); m.innerHTML = f.innerHTML; e.plate.appendChild(m); sparkle(x1, y1 - 10, 4);
+        say(e.nm === null ? (e.n === 1 ? 'One for you!' : 'Another one for you!') : (e.n === 1 ? `One for ${e.nm}!` : `Another one for ${e.nm}!`));
+        e.el.classList.add('hop'); later(() => e.el.classList.remove('hop'), 700);
+        if (given === nSl) { phase = 'done'; coach.off(); later(finale, 1700); }
+      };
+    }));
+  }
+  /* ---- 7 yum ---- */
+  function finale() {
+    setStep(7); sfx.yay(); cheer(); say('Pizza for everyone! Yum yum!'); [guest, me, petEl].forEach(x => x && x.classList.add('munch'));
+    S.pizzas = (S.pizzas || 0) + 1; save(); later(() => [guest, me, petEl].forEach(x => x && x.classList.remove('munch')), 2600);
+    later(() => { say('What a great pizza chef!'); reward('You made a yummy pizza!'); }, 2800);
+    later(() => { tray.innerHTML = '<button class="btn go big" id="again">Another pizza!</button>'; $('#again', tray).onclick = () => go('pizza'); }, 4600);
   }
 };
 /* ===== games ===== */
