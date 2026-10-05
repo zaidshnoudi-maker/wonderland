@@ -1364,6 +1364,17 @@ body[data-screen=potty] #petbox{display:none}
 @media (min-width:1001px){.tiles.g10 .tile .pill{font-size:clamp(13px,1.45vw,19px);padding-left:8px;padding-right:8px;max-width:94%;white-space:nowrap;letter-spacing:-.01em}}
 .lt-slots{grid-column:2;grid-row:1}.lt-tiles{grid-column:2;grid-row:2}
 @media (max-aspect-ratio:1/1){.lt-slots{grid-column:1;grid-row:2}.lt-tiles{grid-column:1;grid-row:3}}</style>
+<style>
+/* v1.55b ABC menu on iPad Safari: percent padding + aspect-ratio made the cards explode. Fixed sizes instead. */
+.lt-hub{display:flex;align-items:center;justify-content:center}
+.lt-acts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2.6vw,30px);width:min(980px,94%)}
+.lt-act{position:relative;width:100%;min-width:0;height:clamp(190px,44vh,380px);aspect-ratio:auto;padding:0;overflow:hidden}
+.lt-ico{position:absolute;left:8%;right:8%;top:9%;bottom:27%;width:auto;height:auto;display:flex;align-items:center;justify-content:center;gap:6%}
+.lt-ico b{width:min(42%,15vh);aspect-ratio:auto;height:min(42%,15vh);font-size:clamp(30px,8vh,60px)}
+.lt-ico.lt-nm{flex-wrap:wrap;align-content:center}.lt-ico.lt-nm b{width:min(28%,10vh);height:min(28%,10vh);font-size:clamp(18px,4.4vh,32px)}
+.lt-ico svg{height:100%;width:auto;max-width:100%}
+@media (max-aspect-ratio:1/1){.lt-acts{grid-template-columns:minmax(0,1fr);width:min(440px,88%)}.lt-act{height:clamp(120px,24vh,220px)}}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1947,7 +1958,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v55';
+const APP_V = 'lw-v56';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
