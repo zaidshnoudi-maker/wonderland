@@ -1447,6 +1447,62 @@ body[data-screen=potty] #petbox{display:none}
 @media (prefers-reduced-motion:reduce){.pz-guide .vis,.pz-oven .oglow,.pz-oven .fl,.pz-bulb,.pz-steam i,.cwi{animation:none}}
 </style>
 <style>body[data-screen=pizza] #petbox{display:none}</style>
+<style>
+/* ===== v1.60 Dress-up boutique (fixed vh/vw sizes only: Safari-safe) ===== */
+.wd{position:relative;overflow:hidden;border-radius:28px;background:#FFE6F1;--h:min(62vh,44vw)}
+.wd-room{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+.wd-spot{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .5s;background:radial-gradient(ellipse 26% 70% at 29% 58%,rgba(255,255,255,0) 0,rgba(255,255,255,0) 55%,rgba(40,20,70,.55) 100%)}
+.wd.show .wd-spot{opacity:1}
+.wd-stage{position:absolute;left:2%;width:54%;top:0;bottom:0;z-index:3;pointer-events:none}
+.wd-walk{position:absolute;left:50%;bottom:9%;width:calc(var(--h)/2);height:var(--h);margin-left:calc(var(--h)/-4)}
+.wd .wd-me{position:absolute;left:0;top:0;width:100%;height:100%;cursor:default}
+.wd-me>svg{width:100%;height:100%;display:block;overflow:visible;transform-origin:50% 92%}
+.wd-me.pop>svg{animation:wdpop .5s cubic-bezier(.3,1.6,.5,1)}
+.wd-me.twirl>svg{animation:wdtwirl .7s ease-in-out}
+@keyframes wdpop{40%{transform:scale(1.08) translateY(-10px)}}
+@keyframes wdtwirl{25%{transform:scaleX(.1) translateY(-8px)}50%{transform:scaleX(-1) translateY(-14px)}75%{transform:scaleX(-.1) translateY(-8px)}}
+.wd-me.walk>svg{animation:walkbob .3s ease-in-out infinite alternate}
+.wd .wgL{transform-box:fill-box;transform-origin:100% 50%;animation:wdflap 1.5s ease-in-out infinite alternate}
+@keyframes wdflap{to{transform:scaleX(.86) skewY(-3deg)}}
+.wd-pet{position:absolute;left:calc(50% + var(--h)*.26);bottom:9.5%;width:calc(var(--h)*.36);height:calc(var(--h)*.4)}
+.wd-pet svg{width:100%;height:100%;display:block;overflow:visible}
+.wd-pet.pop svg{animation:wdpop .5s cubic-bezier(.3,1.6,.5,1)}
+.wd-panel{position:absolute;right:2%;top:3%;bottom:3%;width:42%;z-index:4;display:flex;flex-direction:column;gap:8px;padding:12px;background:rgba(255,255,255,.86);border:5px solid #fff;border-radius:30px;box-shadow:0 10px 24px rgba(120,60,140,.18);transition:transform .5s cubic-bezier(.5,0,.3,1)}
+.wd.show .wd-panel{transform:translateX(115%)}
+.wd-tabs{display:flex;gap:6px;justify-content:space-between;flex:none}
+.wd-tab{position:relative;flex:1;min-width:0;height:clamp(58px,8.6vh,82px);border:4px solid #fff;border-radius:18px;background:#F6EEFF;padding:4px 4px 18px;cursor:pointer;box-shadow:0 4px 0 rgba(120,60,140,.12)}
+.wd-tab>svg{width:100%;height:100%;display:block;overflow:visible}
+.wd-tab b{position:absolute;left:0;right:0;bottom:2px;font:700 clamp(10px,1.2vw,13px)/1.2 var(--display);color:#6B4FB3;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wd-tab[aria-pressed=true]{background:#fff;border-color:#FF8FB8;transform:translateY(-3px);box-shadow:0 6px 0 rgba(255,107,154,.25)}
+.wd-items{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(70px,8.2vw,100px),1fr));gap:10px;align-content:start;padding:6px 4px 10px}
+.wd-sub{grid-column:1 / -1;font:700 16px var(--display);color:#6B4FB3;padding:4px 4px 0}
+.wd-items .wd-sub{grid-row:span 1}
+.wd-it{position:relative;height:clamp(70px,8.2vw,100px);border:4px solid #fff;border-radius:20px;background:#FFF6FB;padding:5px;cursor:pointer;box-shadow:0 4px 0 rgba(120,60,140,.12);animation:tilein .35s cubic-bezier(.3,1.5,.5,1) backwards}
+.wd-it>svg{width:100%;height:100%;display:block;overflow:visible}
+.wd-it[aria-pressed=true]{border-color:#FF6B9A;background:#fff;box-shadow:0 0 0 3px rgba(255,107,154,.35),0 4px 0 rgba(120,60,140,.12)}
+.wd-it.lock>svg{opacity:.35;filter:grayscale(.6)}
+.wd-it .lk{position:absolute;right:4px;bottom:4px;display:flex;align-items:center;gap:2px;background:#fff;border-radius:12px;padding:1px 6px;box-shadow:0 2px 0 rgba(61,51,88,.12)}
+.wd-it .lk svg{width:18px;height:18px}.wd-it .lk b{font:700 15px var(--display);color:#3D3358}
+.wd-it.wig{animation:wiggle .5s}
+.wd-actions{position:absolute;left:3%;bottom:3%;z-index:5;display:flex;gap:10px;transition:opacity .4s}
+.wd.show .wd-actions{opacity:0;pointer-events:none}
+.wd-act{position:relative;width:clamp(78px,10vh,104px);height:clamp(78px,10vh,104px);border:5px solid #fff;border-radius:26px;background:linear-gradient(160deg,#FFC9DA,#FF8FB8);padding:8px 8px 22px;cursor:pointer;box-shadow:0 6px 0 rgba(201,59,117,.3)}
+.wd-act.wd-show{background:linear-gradient(160deg,#E4D8FF,#B79BFF);box-shadow:0 6px 0 rgba(107,79,179,.3)}
+.wd-act svg{width:100%;height:100%;display:block}
+.wd-act b{position:absolute;left:0;right:0;bottom:3px;font:700 13px var(--display);color:#fff;text-shadow:0 1px 0 rgba(61,51,88,.35);text-align:center;white-space:nowrap}
+.wd-act:active{transform:translateY(3px)}
+@media (max-aspect-ratio:1/1){
+ .wd{--h:min(40vh,78vw)}
+ .wd-stage{left:0;width:100%;top:0;bottom:auto;height:54%}
+ .wd-walk{bottom:4%}.wd-pet{bottom:4%}
+ .wd-panel{left:2%;right:2%;width:auto;top:55%;bottom:2%}
+ .wd.show .wd-panel{transform:translateY(110%)}
+ .wd-actions{left:3%;bottom:auto;top:2%;flex-direction:column}
+ .wd-spot{background:radial-gradient(ellipse 50% 40% at 50% 30%,rgba(255,255,255,0) 0,rgba(255,255,255,0) 55%,rgba(40,20,70,.55) 100%)}
+}
+@media (prefers-reduced-motion:reduce){.wd .wgL,.wd-me.walk>svg{animation:none}}
+body[data-screen=wardrobe] #petbox{display:none}
+</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -2032,7 +2088,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v59';
+const APP_V = 'lw-v60';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -2262,23 +2318,7 @@ SCREENS.stickers = el => {
   if (n) setTimeout(() => say(`${n} stickers! Great job!`), 300);
 };
 
-/* -- wardrobe -- */
-SCREENS.wardrobe = el => {
-  el.innerHTML = `<div class="topbar">${homeBtn}<h1>Dress up!</h1></div><div class="ward"><div class="stagebox"><div class="wav">${''}</div><div class="wpet">${''}</div></div><div class="wardrows"><div class="wlabel">Me</div><div class="accs" id="avs"></div><div class="wlabel">${esc(petName())}</div><div class="accs" id="pts"></div></div></div>`;
-  const draw = () => {
-    $('.wav', el).innerHTML = avatarFull(S.avatar, accent(), S.wear.av); $('.wpet', el).innerHTML = `<div class="pet">${petSVG(S.pet || 'puppy')}</div>`;
-    const mk = (kind, list) => list.map((id, i) => { const on = S.wear[kind] === id, lock = !isUnlocked(i); return `<button class="acc ${lock ? 'lock' : ''}" data-k="${kind}" data-id="${id}" data-i="${i}" aria-pressed="${on}" aria-label="${id}">${accIcon(kind, id)}${lock ? `<span class="lk"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="3" fill="#3D3358"/><path d="M8 10V8a4 4 0 0 1 8 0v2" fill="none" stroke="#3D3358" stroke-width="2.6"/></svg><b>${unlockedAt(i)}</b></span>` : ''}</button>`; }).join('');
-    $('#avs', el).innerHTML = mk('av', AV_ACCS); $('#pts', el).innerHTML = mk('pet', PET_ACCS);
-  };
-  draw();
-  el.addEventListener('click', e => {
-    const b = e.target.closest('.acc'); if (!b) return; const i = +b.dataset.i;
-    if (!isUnlocked(i)) { b.classList.remove('wig'); void b.offsetWidth; b.classList.add('wig'); sfx.oops(); say('Collect more stickers to unlock this!'); return; }
-    S.wear[b.dataset.k] = b.dataset.id; save(); sfx.yay(); draw(); renderPet(); petHappy();
-    const t = b.dataset.k === 'av' ? $('.wav', el) : $('.wpet', el); t.classList.remove('bounce'); void t.offsetWidth; t.classList.add('bounce'); say(pick(['Ooh, so cute!', 'Lovely!', 'Wow, look at that!', 'Nice!']));
-  });
-  setTimeout(() => say("Let's get dressed up!"), 250);
-};
+/* -- wardrobe: the dress-up boutique lives in 05i-dressup.js (v1.60) -- */
 
 /* -- gallery -- */
 SCREENS.gallery = el => {
@@ -2375,28 +2415,33 @@ function openParent() {
   $('#pr', o).onclick = e => { if (!armR) { armR = true; e.target.textContent = 'Tap again to reset all'; return; } S = defaults(); save(); gallery = []; saveGallery(); o.remove(); renderPet(); renderWorld(); go('setup1'); };
 }
 /* ===== Town: walkable home ===== */
-function avatarFull(a, shirt, acc) {
+function avatarFull(a, shirt, acc, ex) {
+  /* v1.60 outfit (ex = S.wear): dress colour + pattern, shoes, glasses, wings/cape behind, something in the right hand */
+  const W = ex || null; if (W && W.dress && WD_COL[W.dress]) shirt = WD_COL[W.dress];
+  const pat = W ? wdPattern(W.pat, shirt) : null, shoe = (W && WD_SHOE_COL[W.shoes]) || '#FF6FA0', glit = W && W.shoes === 'sparkle';
+  const backSVG = (W && WD_BACK_SVG[W.back]) || '', handSVG = (W && WD_HAND_SVG[W.hand]) || '', eyesSVG = (W && WD_GLASSES[W.eyes]) || '';
+  const sparkleShoe = x => glit ? `<circle cx="${x - 5}" cy="178" r="1.6" fill="#fff"/><circle cx="${x + 3}" cy="181" r="1.3" fill="#fff"/><circle cx="${x + 6}" cy="176" r="1.1" fill="#fff"/>` : '';
   const skin = SKIN[a.skin];
   const shd = (h, t) => { const n = parseInt(h.slice(1), 16); const f = c => Math.round(t < 0 ? c * (1 + t) : c + (255 - c) * t); return `rgb(${f(n >> 16)},${f((n >> 8) & 255)},${f(n & 255)})`; }; const dk = shd(shirt, -0.28), lt = shd(shirt, 0.45);
   const head = avatarSVG(a, shirt, acc).replace(/<ellipse cx="50" cy="110"[^>]*\/>/, '').replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
   return `<svg viewBox="0 -14 100 200" role="img" aria-label="Me">
-  <ellipse cx="50" cy="186" rx="26" ry="5" fill="rgba(61,51,88,.2)"/><g transform="translate(50 186) scale(.8) translate(-50 -186)">
-  <g class="legL"><rect x="37" y="138" width="10" height="38" rx="5" fill="${skin}"/><rect x="42" y="140" width="5" height="34" rx="2.5" fill="rgba(120,60,40,.12)"/><ellipse cx="41" cy="179" rx="12" ry="7" fill="#FF6FA0"/><path d="M31 181 Q41 185 51 181" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M36 176 h10" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/></g>
-  <g class="legR"><rect x="53" y="138" width="10" height="38" rx="5" fill="${skin}"/><rect x="58" y="140" width="5" height="34" rx="2.5" fill="rgba(120,60,40,.12)"/><ellipse cx="59" cy="179" rx="12" ry="7" fill="#FF6FA0"/><path d="M49 181 Q59 185 69 181" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M54 176 h10" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/></g>
-  <defs><linearGradient id="dsh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#3D3358" stop-opacity=".18"/></linearGradient></defs>
+  <ellipse cx="50" cy="186" rx="26" ry="5" fill="rgba(61,51,88,.2)"/>${backSVG ? `<g class="wd-back" transform="translate(50 ${W.back === 'cape' ? 112 : 128}) scale(${W.back === 'cape' ? 1.05 : 1.7}) translate(-50 -${W.back === 'cape' ? 112 : 128})">${backSVG}</g>` : ''}<g transform="translate(50 186) scale(.8) translate(-50 -186)">
+  <g class="legL"><rect x="37" y="138" width="10" height="38" rx="5" fill="${skin}"/><rect x="42" y="140" width="5" height="34" rx="2.5" fill="rgba(120,60,40,.12)"/><ellipse cx="41" cy="179" rx="12" ry="7" fill="${shoe}"/>${sparkleShoe(41)}<path d="M31 181 Q41 185 51 181" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M36 176 h10" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/></g>
+  <g class="legR"><rect x="53" y="138" width="10" height="38" rx="5" fill="${skin}"/><rect x="58" y="140" width="5" height="34" rx="2.5" fill="rgba(120,60,40,.12)"/><ellipse cx="59" cy="179" rx="12" ry="7" fill="${shoe}"/>${sparkleShoe(59)}<path d="M49 181 Q59 185 69 181" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M54 176 h10" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/></g>
+  <defs><linearGradient id="dsh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#3D3358" stop-opacity=".18"/></linearGradient>${pat ? pat.defs : ''}</defs>
   <path d="M26 128 Q4 150 12 160 Q20 166 28 158 Q36 166 44 159 Q50 166 56 159 Q64 166 72 158 Q80 166 88 160 Q96 150 74 128Z" fill="${lt}"/>
   <path d="M28 120 L72 120 Q88 146 84 156 Q78 163 70 157 Q64 164 57 157 Q50 164 43 157 Q36 164 30 157 Q22 163 16 156 Q12 146 28 120Z" fill="${shirt}"/>
-  <path d="M28 120 L72 120 Q88 146 84 156 Q78 163 70 157 Q64 164 57 157 Q50 164 43 157 Q36 164 30 157 Q22 163 16 156 Q12 146 28 120Z" fill="url(#dsh)"/>
+  <path d="M28 120 L72 120 Q88 146 84 156 Q78 163 70 157 Q64 164 57 157 Q50 164 43 157 Q36 164 30 157 Q22 163 16 156 Q12 146 28 120Z" fill="url(#dsh)"/>${pat ? `<path d="M28 120 L72 120 Q88 146 84 156 Q78 163 70 157 Q64 164 57 157 Q50 164 43 157 Q36 164 30 157 Q22 163 16 156 Q12 146 28 120Z" fill="${pat.fill}"/>` : ''}
   <path d="M40 124 Q36 146 30 156 M50 124 V158 M60 124 Q64 146 70 156" stroke="${dk}" stroke-opacity=".16" stroke-width="2.4" fill="none" stroke-linecap="round"/>
   <path d="M15 154 Q22 160 30 155 Q36 161 43 156 Q50 161 57 156 Q64 161 70 155 Q78 160 85 154" stroke="#fff" stroke-opacity=".85" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-  <path d="M29 98 Q50 90 71 98 L72 122 Q50 128 28 122Z" fill="${shirt}"/><path d="M29 98 Q50 90 71 98 L72 122 Q50 128 28 122Z" fill="url(#dsh)"/>
+  <path d="M29 98 Q50 90 71 98 L72 122 Q50 128 28 122Z" fill="${shirt}"/><path d="M29 98 Q50 90 71 98 L72 122 Q50 128 28 122Z" fill="url(#dsh)"/>${pat ? `<path d="M29 98 Q50 90 71 98 L72 122 Q50 128 28 122Z" fill="${pat.fill}"/>` : ''}
   <path d="M39 97 Q50 108 61 97" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
   <path d="M50 105 c-3 -4 -8 -1 -5 3 l5 5 5 -5 c3 -4 -2 -7 -5 -3z" fill="#fff" opacity=".85"/>
   <path d="M27 121 Q50 129 73 121" stroke="${dk}" stroke-width="5.5" fill="none" stroke-linecap="round"/>
   <circle cx="50" cy="125" r="4.6" fill="#FFD84D"/><circle cx="48.6" cy="123.6" r="1.6" fill="#fff"/>
   <g fill="#fff" opacity=".9"><circle cx="30" cy="142" r="1.5"/><circle cx="70" cy="140" r="1.5"/><circle cx="40" cy="150" r="1.2"/><circle cx="62" cy="149" r="1.2"/><path d="M22 136 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2z" opacity=".8"/><path d="M78 146 l1 2.6 2.6 1 -2.6 1 -1 2.6 -1 -2.6 -2.6 -1 2.6 -1z" opacity=".8"/></g>
-  </g><g class="hd" transform="translate(50 122) scale(1.32) translate(-50 -90)">${head}</g><g transform="translate(50 186) scale(.8) translate(-50 -186)">
-  <g class="armL"><rect x="19" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="23.5" cy="138" r="6" fill="${skin}"/><circle cx="23.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="23.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="22" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="17" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g><g class="armR"><rect x="72" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="76.5" cy="138" r="6" fill="${skin}"/><circle cx="76.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="76.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="75" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="70" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g></g></svg>`;
+  </g><g class="hd" transform="translate(50 122) scale(1.32) translate(-50 -90)">${head}${eyesSVG}</g><g transform="translate(50 186) scale(.8) translate(-50 -186)">
+  <g class="armL"><rect x="19" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="23.5" cy="138" r="6" fill="${skin}"/><circle cx="23.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="23.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="22" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="17" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g><g class="armR"><rect x="72" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="76.5" cy="138" r="6" fill="${skin}"/><circle cx="76.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="76.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="75" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="70" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/>${handSVG}</g></g></svg>`;
 }
 
 const WELCOME_X = 2465;                              /* dead centre of the clearing between the playground gate (1990) and soft play (2940) */
@@ -2457,7 +2502,7 @@ SCREENS.world = el => {
     <button class="lhouse" id="lhouse" style="left:${LHOUSE_HIT.x}px;top:${LHOUSE_HIT.y}px;width:${LHOUSE_HIT.w}px;height:${LHOUSE_HIT.h}px" aria-label="My house"></button>
     <button class="ball" id="ball" style="left:1150px;top:620px" aria-label="Ball"><i></i></button>
     ${S.pet ? `<div class="tpet" id="tpet"><div class="flip">${petSVG(S.pet)}</div></div>` : ''}
-    <div class="avf" id="tav"><div class="flip">${avatarFull(S.avatar, accent())}</div></div>
+    <div class="avf" id="tav"><div class="flip">${meSVG()}</div></div>
   </div>
   <div class="petals" aria-hidden="true">${Array.from({ length: 0 }, () => `<i style="left:${rnd(0, 100)}%;--d:${rnd(9, 18)}s;--dl:${rnd(-16, 0)}s;--w:${rnd(9, 16)}px;--c:${pick(['#FFC1D6', '#fff', '#FFE2A8', '#E3D4FF'])};--sw:${rnd(30, 120)}px"></i>`).join('')}</div>
   <svg class="fgrass" id="fgr" style="width:${FGW}px" viewBox="0 0 ${FGW} 90" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6BC66F"/><stop offset="1" stop-color="#3F9B54"/></linearGradient></defs>${Array.from({ length: Math.round(FGW / 60) }, (_, i) => { const x = i * 60 + rnd(-10, 10), h = rnd(36, 78), l = rnd(-14, 14); return `<path d="M${x} 90 Q${x + l * .3} ${90 - h * .55} ${x + l} ${90 - h} Q${x + l * .6 + 5} ${90 - h * .5} ${x + 9} 90Z" fill="url(#bl)"/>`; }).join('')}</svg>
@@ -2529,7 +2574,7 @@ SCREENS.world = el => {
   const rider = (x, y, w, h) => avatarSVG(S.avatar, accent()).replace('<svg ', `<svg x="${x}" y="${y}" width="${w}" height="${h}" `).replace('class="av"', '');
   const petRider = (x, y, w, h) => petSVG(S.pet).replace('<svg ', `<svg x="${x}" y="${y}" width="${w}" height="${h}" `);
   const legs = (x, y, skin) => `<g class="rl rl1"><rect x="${x}" y="${y}" width="9" height="24" rx="4.5" fill="${skin}"/><ellipse cx="${x + 3}" cy="${y + 25}" rx="8" ry="4.5" fill="#FF9DB0"/></g><g class="rl rl2"><rect x="${x + 16}" y="${y}" width="9" height="24" rx="4.5" fill="${skin}"/><ellipse cx="${x + 19}" cy="${y + 25}" rx="8" ry="4.5" fill="#FF9DB0"/></g>`;
-  const person = (sit) => `<g class="ppl${sit ? ' sit' : ''}"><g class="in">${avatarFull(S.avatar, accent(), S.wear.av).replace('<svg ', '<svg x="-18" y="-72" width="36" height="72" ')}</g></g>`;
+  const person = (sit) => `<g class="ppl${sit ? ' sit' : ''}"><g class="in">${meSVG().replace('<svg ', '<svg x="-18" y="-72" width="36" height="72" ')}</g></g>`;
   const T = (fn, t) => { const id = setTimeout(() => alive && fn(), t); onLeave(() => clearTimeout(id)); };
   function slideRide(svg) {
     svg.insertAdjacentHTML('beforeend', person()); const g = svg.lastElementChild;
@@ -2680,7 +2725,7 @@ SCREENS.welcome = (el) => {
     <div class="wsun"></div>${clouds}${sparks}
     <div class="wtitle">${logoSVG(nm)}</div>
     <svg class="whill" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"><path d="M0 120 Q200 40 420 110 T820 90 T1200 100 V300 H0Z" fill="#9ADFA0"/><path d="M0 170 Q260 110 540 170 T1200 150 V300 H0Z" fill="#7DD87F"/><path d="M0 230 Q300 190 620 230 T1200 220 V300 H0Z" fill="#5CC46A"/></svg>
-    <div class="wchars"><div class="wav" id="wav">${avatarFull(S.avatar, accent(), S.wear.av)}</div><div class="wpet">${S.pet ? petSVG(S.pet) : ''}</div></div>
+    <div class="wchars"><div class="wav" id="wav">${meSVG()}</div><div class="wpet">${S.pet ? petSVG(S.pet) : ''}</div></div>
     <button class="wplay" id="wplay" aria-label="Play"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="#fff"/></svg></button>
   </div>`;
   const av = $('#wav', el), fl = $('.wchars', el);
@@ -4937,7 +4982,7 @@ SCREENS.birthday = el => {
     <div class="bd-head"><div class="bd-banner">Happy Birthday, <b>${esc(name)}</b>!</div>${line ? `<div class="bd-count">${moons}<span>${esc(line)}</span></div>` : ''}</div>
     ${[['l', 0], ['l', 1], ['r', 0], ['r', 1]].map(([s, k], i) => `<button class="bd-bal b${s}${k}" data-i="${i}" aria-label="balloon"><svg viewBox="0 0 60 110"><path d="M30 70 q-6 14 4 22 q8 8 -2 18" stroke="#8F86B4" stroke-width="2" fill="none"/><path d="M30 4 C8 4 2 26 4 38 C8 58 22 68 30 70 C38 68 52 58 56 38 C58 26 52 4 30 4Z" fill="${['#FF8FB0', '#7FC0FF', '#FFD24D', '#8EDCC0'][i]}"/><ellipse cx="20" cy="24" rx="6" ry="10" fill="#fff" opacity=".45"/><path d="M26 70 l4 6 4 -6z" fill="${['#FF8FB0', '#7FC0FF', '#FFD24D', '#8EDCC0'][i]}"/></svg></button>`).join('')}
     <div class="bd-guest g-sama sama p-stand">${samaSVG('partyhat')}</div>
-    <div class="bd-guest g-me avf">${avatarFull(S.avatar, accent(), 'partyhat')}</div>
+    <div class="bd-guest g-me avf">${meSVG('partyhat')}</div>
     <div class="bd-guest g-naya naya p-sit">${nayaSVG('partyhat')}</div>
     ${S.pet ? `<div class="bd-guest g-pet"><div class="gp">${petSVG(S.pet, 'partyhat')}</div></div>` : ''}
     <div class="bd-table"></div>
@@ -5181,7 +5226,7 @@ SCREENS.birthday = el => {
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${BD_GRADS}<rect width="${W}" height="${H}" fill="${info && info.today ? '#FFEFC2' : '#FFE3EE'}"/>${conf}
         <path d="M0 22 Q520 112 ${W} 22" stroke="#C9975B" stroke-width="4" fill="none"/>${flags}
         <rect x="250" y="104" width="540" height="64" rx="32" fill="#fff" stroke="#FFD3E0" stroke-width="5"/><text x="520" y="147" font-family="Fredoka, Arial Rounded MT Bold, Arial, sans-serif" font-weight="700" font-size="34" fill="#C0506A" text-anchor="middle">${esc(name)}'s Birthday Party</text>
-        ${place(samaS, 30, 190, 200, 400)}${place(avatarFull(S.avatar, accent(), 'partyhat'), 220, 170, 210, 420)}${place(nayaS, 700, 410, 170, 170)}${S.pet ? place(petSVG(S.pet, 'partyhat'), 870, 418, 150, 168) : ''}
+        ${place(samaS, 30, 190, 200, 400)}${place(meSVG('partyhat'), 220, 170, 210, 420)}${place(nayaS, 700, 410, 170, 170)}${S.pet ? place(petSVG(S.pet, 'partyhat'), 870, 418, 150, 168) : ''}
         <rect x="-10" y="572" width="${W + 20}" height="210" rx="40" fill="#FFC7DA"/><rect x="-10" y="572" width="${W + 20}" height="14" fill="#fff"/>
         ${place(cakeS, 400, 330, 300, 270)}
         <text x="520" y="${H - 40}" font-family="Arial, sans-serif" font-size="22" fill="#8F86B4" text-anchor="middle">${new Date().toLocaleDateString()}</text></svg>`;
@@ -5251,7 +5296,7 @@ SCREENS.potty = el => {
     <div class="pt-loo" id="loo">${PT_TOILET}<div class="pt-paper" id="paper">${PT_PAPER}</div></div>
     <div class="pt-sink" id="sink">${PT_SINK}<div class="pt-stool">${PT_STOOL}</div></div>
     ${S.pet ? `<div class="pt-pet">${petSVG(S.pet)}</div>` : ''}
-    <div class="pt-me avf" id="me">${avatarFull(S.avatar, accent(), S.wear.av)}<div class="pt-undies">${PT_UNDIES}</div></div>
+    <div class="pt-me avf" id="me">${meSVG()}<div class="pt-undies">${PT_UNDIES}</div></div>
     <div class="pt-tray" id="tray"></div>
     <div class="pt-hands" id="hands" hidden>${PT_HANDS.replace("#FFD9B8", SKIN[S.avatar.skin] || "#FFD9B8")}</div>
     <div class="bd-big" id="big"></div></div>`;
@@ -5567,7 +5612,7 @@ SCREENS.letters = (el, mode) => {
   /* ---------- 3 MY NAME ---------- */
   if (mode === 'name') {
     const letters = [...name.toUpperCase()].filter(c => LSAY[c]).slice(0, 10);
-    el.innerHTML = bar('My name', back) + `<div class="play lt-name"><div class="lt-av avf">${avatarFull(S.avatar, accent(), S.wear.av)}</div>
+    el.innerHTML = bar('My name', back) + `<div class="play lt-name"><div class="lt-av avf">${meSVG()}</div>
       <div class="lt-slots" id="slots">${letters.map((c, i) => `<span class="lt-slot" data-i="${i}">${c}</span>`).join('')}</div><div class="lt-tiles" id="tiles"></div></div>`;
     let at = 0, busy = false;
     const deal = () => {
@@ -5690,7 +5735,7 @@ SCREENS.pizza = el => {
   const flour = [[-52, -20, 22, 12], [30, 56, 26, 13], [58, -34, 18, 9], [-30, 62, 20, 10], [-70, 28, 14, 7]].map(([x, y, rx, ry]) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#fff" opacity=".42"/>`).join('');
   const grain = [-60, -38, -14, 12, 40, 66].map(y => `<path d="M-100 ${y} Q-30 ${y - 7} 20 ${y + 2} T100 ${y - 3}" stroke="#B97E47" stroke-width="1.6" fill="none" opacity=".28"/>`).join('');
   el.innerHTML = bar('Pizza party!', `<span class="bd-steps pz-steps">${dots}</span>`) + `<div class="play pizza" id="pz">${pzScene(nm)}<div class="pz-counter"><i class="pz-cloth"></i></div>
-    ${guestHTML}<div class="pz-me avf" id="me">${avatarFull(S.avatar, accent(), 'chef')}</div>${S.pet && gk !== 'pet' ? `<div class="pz-pet" id="pet">${petSVG(S.pet)}</div>` : ''}
+    ${guestHTML}<div class="pz-me avf" id="me">${meSVG('chef')}</div>${S.pet && gk !== 'pet' ? `<div class="pz-pet" id="pet">${petSVG(S.pet)}</div>` : ''}
     <div class="pz-bubble" id="bub"><b>${esc(who)} wants</b>${wish.map(k => `<span class="pz-w" data-k="${k}"><svg viewBox="0 0 100 100">${PZ_ART[k]}</svg><u></u><u></u><u></u></span>`).join('')}</div>
     <div class="pz-oven" id="oven" hidden>${PZ_OVEN}</div>
     <div class="pz-board" id="board"><svg viewBox="-100 -100 200 200" id="bsvg"><defs id="bdefs"><clipPath id="pzc"><circle r="72"/></clipPath><clipPath id="pzsr"><circle id="sclip" r="0"/></clipPath><clipPath id="pzb"><circle r="94"/></clipPath>
@@ -5867,6 +5912,214 @@ SCREENS.pizza = el => {
     at(beat + 3.5, () => { lyr.hidden = true; dancers.forEach(g => g.classList.remove('sing', 'clap')); done(); });
   }
 };
+/* ===== DRESS-UP BOUTIQUE (v1.60): a dressing room with 7 categories, the outfit she picks shows everywhere she appears.
+     Dresses (9 colours x 7 patterns) · hair & hats (10) · glasses (5) · shoes (7) · wings & capes (5) · something to hold (5) · her pet (9)
+     Surprise! = a random outfit · Show time! = a runway with music, twirls and camera flashes, then a photo saved to My pictures.
+   S.wear = { av: head item, eyes, dress, pat, shoes, back, hand, pet }. avatarFull(a, shirt, acc, S.wear) draws the outfit (03b-town.js);
+   meSVG(acc) is Liyana in her outfit (acc overrides the head item, e.g. the party hat or the chef hat in games).
+   Some special items are unlocked by stickers (the number on the lock). Every name she hears is in the natural-voice pack (wdLines). ===== */
+const WD_COL = { pink: '#FF8FB8', red: '#FF6B6B', orange: '#FFA94D', yellow: '#FFD84D', green: '#6FD38B', blue: '#6CB8FF', purple: '#B79BFF', white: '#F7F3FF' };
+const WD_DRESS = [['fav', 0, 'My favourite colour!'], ['pink', 0, 'Pink!'], ['red', 0, 'Red!'], ['orange', 0, 'Orange!'], ['yellow', 0, 'Yellow!'], ['green', 0, 'Green!'], ['blue', 0, 'Blue!'], ['purple', 0, 'Purple!'], ['white', 0, 'White!']];
+const WD_PATS = [['plain', 0, 'Plain and simple!'], ['dots', 0, 'Polka dots!'], ['hearts', 0, 'Hearts!'], ['stars', 0, 'Stars!'], ['stripes', 0, 'Stripes!'], ['flowers', 2, 'Flowers!'], ['rainbow', 4, 'Rainbow!']];
+const WD_HEAD = [['none', 0, 'No hat!'], ['bow', 0, 'A pretty bow!'], ['flower', 0, 'A flower!'], ['headband', 0, 'A headband!'], ['bunny', 0, 'Bunny ears!'], ['cat', 0, 'Kitty ears!'], ['partyhat', 0, 'A party hat!'], ['flowercrown', 2, 'A flower crown!'], ['tiara', 4, 'A sparkly tiara!'], ['crown', 6, 'A royal crown!']];
+const WD_EYES = [['none', 0, 'No glasses!'], ['sunglasses', 0, 'Cool sunglasses!'], ['heart', 0, 'Heart glasses!'], ['round', 0, 'Round glasses!'], ['star', 3, 'Star glasses!']];
+const WD_SHOES = [['pink', 0, 'Pink shoes!'], ['red', 0, 'Red shoes!'], ['purple', 0, 'Purple shoes!'], ['blue', 0, 'Blue shoes!'], ['mint', 0, 'Green shoes!'], ['gold', 2, 'Golden shoes!'], ['sparkle', 5, 'Sparkly shoes!']];
+const WD_SHOE_COL = { pink: '#FF6FA0', red: '#F2445A', purple: '#9B7BFF', blue: '#4DA3FF', mint: '#4CC08E', gold: '#F2B705', sparkle: '#B9AFE0' };
+const WD_BACK = [['none', 0, 'No wings!'], ['fairy', 0, 'Fairy wings!'], ['cape', 2, 'A super cape!'], ['butterfly', 3, 'Butterfly wings!'], ['angel', 5, 'Angel wings!']];
+const WD_HAND = [['none', 0, 'Empty hands!'], ['balloon', 0, 'A balloon!'], ['bouquet', 0, 'Flowers for you!'], ['lollipop', 0, 'A lollipop!'], ['wand', 2, 'A magic wand!']];
+const WD_PET = [['none', 0, 'No hat!'], ['bowtie', 0, 'A bow tie!'], ['bow', 0, 'A pretty bow!'], ['scarf', 0, 'A cosy scarf!'], ['partyhat', 0, 'A party hat!'], ['flowers', 2, 'A flower necklace!'], ['sunglasses', 2, 'Cool sunglasses!'], ['tiara', 4, 'A sparkly tiara!'], ['crown', 6, 'A royal crown!']];
+const WD_TABS = [['dress', 'Dresses'], ['head', 'Hats'], ['eyes', 'Glasses'], ['shoes', 'Shoes'], ['back', 'Wings'], ['hand', 'Hold'], ['pet', 'Pet']];
+
+/* new head things (head coordinates: face centre 50,54; top of the hair about y 14) */
+const wdStar = (x, y, R, r, fill, stroke) => `<path d="${star5(x, y, R, r)}" fill="${fill}" stroke="${stroke}" stroke-width="2" stroke-linejoin="round"/>`;
+Object.assign(AV_ACC, {
+  tiara: `<path d="M30 21 L35 8 L42 15 L50 -1 L58 15 L65 8 L70 21 Q50 26 30 21Z" fill="#F4F0FF" stroke="#B9A8F0" stroke-width="2" stroke-linejoin="round"/><circle cx="50" cy="12" r="3.6" fill="#FF6B9A"/><circle cx="38.5" cy="15.5" r="2.2" fill="#7FC0FF"/><circle cx="61.5" cy="15.5" r="2.2" fill="#7FC0FF"/><circle cx="47" cy="7" r="1.2" fill="#fff"/>`,
+  bunny: `<path d="M19 34 Q50 6 81 34" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="33" cy="-1" rx="7.5" ry="19" fill="#fff" stroke="#E5DDF5" stroke-width="2" transform="rotate(-14 33 -1)"/><ellipse cx="33" cy="1" rx="3.4" ry="12" fill="#FFC1D6" transform="rotate(-14 33 1)"/><ellipse cx="67" cy="-1" rx="7.5" ry="19" fill="#fff" stroke="#E5DDF5" stroke-width="2" transform="rotate(14 67 -1)"/><ellipse cx="67" cy="1" rx="3.4" ry="12" fill="#FFC1D6" transform="rotate(14 67 1)"/>`,
+  cat: `<path d="M19 34 Q50 6 81 34" stroke="#3D3358" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M21 26 L24 0 L42 15Z" fill="#3D3358"/><path d="M26 20 L27.5 8 L36 15Z" fill="#FF9DB8"/><path d="M79 26 L76 0 L58 15Z" fill="#3D3358"/><path d="M74 20 L72.5 8 L64 15Z" fill="#FF9DB8"/>`,
+  flowercrown: (() => { let s = '<path d="M18 34 Q50 8 82 34" stroke="#4CC95A" stroke-width="3" fill="none" stroke-linecap="round"/>'; for (let i = 0; i < 7; i++) { const t = i / 6, x = 18 + 64 * t, y = (1 - t) * (1 - t) * 34 + 2 * t * (1 - t) * 8 + t * t * 34, c = ['#FF8FB8', '#FFD84D', '#B79BFF', '#FF6B6B', '#7FC0FF', '#FF8FB8', '#FFD84D'][i]; s += [0, 72, 144, 216, 288].map(a => `<circle cx="${(x + Math.cos(a / 57.3) * 3.6).toFixed(1)}" cy="${(y + Math.sin(a / 57.3) * 3.6).toFixed(1)}" r="3" fill="${c}"/>`).join('') + `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2" fill="#fff"/>`; } return s; })(),
+  headband: `<path d="M18 36 Q50 4 82 36" stroke="#FF6B9A" stroke-width="6.5" fill="none" stroke-linecap="round"/><path d="M18 36 Q50 4 82 36" stroke="#fff" stroke-width="1.6" fill="none" stroke-dasharray="1 6" stroke-linecap="round"/><g transform="translate(70 16)"><path d="M0 0 L-11 -7 L-11 7Z M0 0 L11 -7 L11 7Z" fill="#FF6B9A"/><circle r="3.6" fill="#FF3D7F"/></g>`,
+});
+Object.assign(PET_ACC, {
+  bow: `<g transform="translate(80 24)"><path d="M0 0 L-13 -8 L-13 8Z M0 0 L13 -8 L13 8Z" fill="#FF7FA6"/><circle r="4.5" fill="#FF4D80"/></g>`,
+  flowers: [42, 51, 60, 69, 78].map((x, i) => { const y = 86 + Math.abs(x - 60) * -0.12, c = ['#FF8FB8', '#FFD84D', '#B79BFF', '#FFD84D', '#FF8FB8'][i]; return [0, 72, 144, 216, 288].map(a => `<circle cx="${(x + Math.cos(a / 57.3) * 3.4).toFixed(1)}" cy="${(y + Math.sin(a / 57.3) * 3.4).toFixed(1)}" r="2.8" fill="${c}"/>`).join('') + `<circle cx="${x}" cy="${y.toFixed(1)}" r="2" fill="#fff"/>`; }).join(''),
+  tiara: `<path d="M42 30 L46 18 L52 25 L60 10 L68 25 L74 18 L78 30 Q60 35 42 30Z" fill="#F4F0FF" stroke="#B9A8F0" stroke-width="2" stroke-linejoin="round"/><circle cx="60" cy="22" r="3.4" fill="#FF6B9A"/>`,
+});
+/* glasses (head coordinates; eyes at 35,58 and 65,58) */
+const wdHeart = (x, y, k) => `M${x} ${y + 9 * k} C${x - 13 * k} ${y + 1 * k} ${x - 12 * k} ${y - 9 * k} ${x - 5 * k} ${y - 9 * k} C${x - 2 * k} ${y - 9 * k} ${x} ${y - 6 * k} ${x} ${y - 4 * k} C${x} ${y - 6 * k} ${x + 2 * k} ${y - 9 * k} ${x + 5 * k} ${y - 9 * k} C${x + 12 * k} ${y - 9 * k} ${x + 13 * k} ${y + 1 * k} ${x} ${y + 9 * k}Z`;
+const WD_GLASSES = {
+  sunglasses: AV_ACC.sunglasses,
+  heart: `<g><path d="${wdHeart(35, 57, 1.25)}" fill="#FF6B9A" fill-opacity=".35" stroke="#E0457B" stroke-width="2.6" stroke-linejoin="round"/><path d="${wdHeart(65, 57, 1.25)}" fill="#FF6B9A" fill-opacity=".35" stroke="#E0457B" stroke-width="2.6" stroke-linejoin="round"/><path d="M45 54 Q50 51 55 54" stroke="#E0457B" stroke-width="2.6" fill="none"/></g>`,
+  round: `<g fill="#fff" fill-opacity=".15" stroke="#FF6FA0" stroke-width="3"><circle cx="35" cy="58" r="12"/><circle cx="65" cy="58" r="12"/></g><path d="M47 57 Q50 54 53 57" stroke="#FF6FA0" stroke-width="3" fill="none"/><path d="M23 56 L18 53 M77 56 L82 53" stroke="#FF6FA0" stroke-width="3" stroke-linecap="round"/>`,
+  star: `<g>${wdStar(35, 58, 15, 7.5, 'rgba(255,216,77,.4)', '#F2B705')}${wdStar(65, 58, 15, 7.5, 'rgba(255,216,77,.4)', '#F2B705')}<path d="M45 55 H55" stroke="#F2B705" stroke-width="2.6"/></g>`,
+};
+/* wings and capes: drawn behind her (body coordinates of the 100x200 figure) */
+const wdWing = (inner, side) => side < 0 ? `<g class="wgL">${inner}</g>` : `<g transform="translate(100 0) scale(-1 1)"><g class="wgL">${inner}</g></g>`;
+const WD_BACK_SVG = {
+  fairy: [-1, 1].map(s => wdWing('<path d="M48 124 C32 92 4 96 8 120 C10 136 34 138 48 130Z" fill="#BFE6FF" fill-opacity=".9" stroke="#fff" stroke-width="2"/><path d="M48 131 C34 136 16 150 24 162 C32 168 46 150 49 136Z" fill="#FFC9E3" fill-opacity=".9" stroke="#fff" stroke-width="2"/><circle cx="22" cy="114" r="2" fill="#fff"/><circle cx="30" cy="104" r="1.4" fill="#fff"/><circle cx="30" cy="152" r="1.4" fill="#fff"/>', s)).join(''),
+  butterfly: [-1, 1].map(s => wdWing('<path d="M48 124 C30 84 0 92 6 122 C10 140 36 138 48 130Z" fill="#FFA94D" stroke="#7A4A22" stroke-width="2.4"/><path d="M48 131 C30 134 12 154 22 166 C32 172 46 152 49 136Z" fill="#B79BFF" stroke="#7A4A22" stroke-width="2.4"/><circle cx="20" cy="112" r="5" fill="#fff" opacity=".85"/><circle cx="32" cy="102" r="3" fill="#FFE066"/><circle cx="28" cy="154" r="3.6" fill="#fff" opacity=".85"/>', s)).join(''),
+  angel: [-1, 1].map(s => wdWing('<path d="M48 122 C34 100 10 96 4 112 C10 112 12 116 8 122 C14 122 16 126 12 132 C18 132 20 136 18 142 C28 140 40 136 48 132Z" fill="#fff" stroke="#DCD3EE" stroke-width="2" stroke-linejoin="round"/><path d="M40 116 C30 112 22 112 16 116 M38 126 C28 124 22 126 18 130" stroke="#E5DDF5" stroke-width="1.6" fill="none"/>', s)).join(''),
+  cape: '<path d="M33 112 Q50 118 67 112 L82 174 Q50 182 18 174Z" fill="#E8455A"/><path d="M33 112 Q50 118 67 112 L82 174 Q50 182 18 174Z" fill="url(#dsh)" opacity=".7"/><path d="M18 174 Q50 182 82 174" stroke="#FFD84D" stroke-width="3" fill="none"/><path d="M33 112 Q50 118 67 112" stroke="#FFD84D" stroke-width="3" fill="none"/>',
+};
+/* things to hold, in the right hand (inner arm coordinates; the hand is at 76.5,138) */
+const WD_HAND_SVG = {
+  balloon: '<path d="M77 140 Q86 118 94 88" stroke="#8F86B4" stroke-width="1.6" fill="none"/><ellipse cx="98" cy="70" rx="14" ry="17" fill="#FF6B8A"/><path d="M95 87 l3 4 3 -4z" fill="#FF6B8A"/><ellipse cx="93" cy="64" rx="3.8" ry="6.5" fill="#fff" opacity=".5"/>',
+  bouquet: '<path d="M76 140 L82 122 M76 140 L76 120 M76 140 L70 122" stroke="#3FA556" stroke-width="2.4" stroke-linecap="round"/>' + [[82, 118, '#FF6B9A'], [76, 114, '#FFD84D'], [70, 118, '#B79BFF']].map(([x, y, c]) => [0, 72, 144, 216, 288].map(a => `<circle cx="${(x + Math.cos(a / 57.3) * 3.8).toFixed(1)}" cy="${(y + Math.sin(a / 57.3) * 3.8).toFixed(1)}" r="3.2" fill="${c}"/>`).join('') + `<circle cx="${x}" cy="${y}" r="2.4" fill="#fff"/>`).join('') + '<path d="M71 134 L81 134 L78 142 L74 142Z" fill="#FF9DB8"/>',
+  lollipop: '<path d="M77 140 L86 112" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M77 140 L86 112" stroke="#E5DDF5" stroke-width="1" stroke-linecap="round"/><circle cx="88" cy="104" r="10" fill="#FF8FB8" stroke="#E0457B" stroke-width="1.6"/><path d="M88 104 m-2 0 a2 2 0 1 1 4 0 a4 4 0 1 1 -8 0 a6 6 0 1 1 12 0 a8 8 0 1 1 -16 0" stroke="#fff" stroke-width="1.6" fill="none"/>',
+  wand: `<path d="M78 140 L95 112" stroke="#B98149" stroke-width="3.4" stroke-linecap="round"/>${wdStar(97, 107, 10, 4.6, '#FFD84D', '#F2B705')}<path d="M106 96 l1 3 3 1 -3 1 -1 3 -1 -3 -3 -1 3 -1z M88 96 l.8 2.2 2.2 .8 -2.2 .8 -.8 2.2 -.8 -2.2 -2.2 -.8 2.2 -.8z" fill="#fff"/>`,
+};
+/* patterns on the dress (inner body coordinates). White dresses get pink motifs, so they show. */
+function wdPattern(pat, col) {
+  if (!pat || pat === 'plain') return null;
+  const m = /^#F[0-9A-F]F|^#FFD8|^#F7F3/i.test(col) ? '#FF8FB8' : '#fff', id = `wdp-${pat}-${col.replace(/[^0-9a-z]/gi, '')}`;
+  const body = {
+    dots: `<pattern id="${id}" patternUnits="userSpaceOnUse" width="9" height="9"><circle cx="2.5" cy="2.5" r="1.7" fill="${m}" opacity=".85"/><circle cx="7" cy="7" r="1.7" fill="${m}" opacity=".85"/></pattern>`,
+    hearts: `<pattern id="${id}" patternUnits="userSpaceOnUse" width="11" height="11"><path d="M5.5 8.3 C2.4 6.2 2.5 3.4 4.2 3.3 C5 3.3 5.5 4 5.5 4.5 C5.5 4 6 3.3 6.8 3.3 C8.5 3.4 8.6 6.2 5.5 8.3Z" fill="${m}" opacity=".9"/></pattern>`,
+    stars: `<pattern id="${id}" patternUnits="userSpaceOnUse" width="12" height="12"><path d="M6 2.6 l1 2.4 2.4 1 -2.4 1 -1 2.4 -1 -2.4 -2.4 -1 2.4 -1z" fill="${m === '#fff' ? '#FFF6B0' : m}"/></pattern>`,
+    stripes: `<pattern id="${id}" patternUnits="userSpaceOnUse" width="8" height="8"><rect width="3.4" height="8" fill="${m}" opacity=".5"/></pattern>`,
+    flowers: `<pattern id="${id}" patternUnits="userSpaceOnUse" width="14" height="14">${[0, 72, 144, 216, 288].map(a => `<circle cx="${(7 + Math.cos(a / 57.3) * 2.2).toFixed(1)}" cy="${(7 + Math.sin(a / 57.3) * 2.2).toFixed(1)}" r="1.6" fill="${m}" opacity=".9"/>`).join('')}<circle cx="7" cy="7" r="1.2" fill="#FFD84D"/></pattern>`,
+    rainbow: `<pattern id="${id}" patternUnits="userSpaceOnUse" width="100" height="42">${['#FF6B6B', '#FFA94D', '#FFD84D', '#6FD38B', '#6CB8FF', '#B79BFF'].map((c, i) => `<rect y="${i * 7}" width="100" height="7" fill="${c}" opacity=".8"/>`).join('')}</pattern>`,
+  }[pat];
+  return body ? { defs: body, fill: `url(#${id})` } : null;
+}
+/* Liyana in her outfit (acc = a head item that a game puts on her, e.g. 'partyhat' or 'chef') */
+const meSVG = (acc = S.wear.av) => avatarFull(S.avatar, accent(), acc, S.wear);
+/* the old dress-up had sunglasses as a hat: move them to the glasses */
+if (S.wear.av === 'sunglasses') { S.wear.av = 'none'; S.wear.eyes = 'sunglasses'; save(); }
+
+/* every sentence the boutique can say (for tools/voice) */
+function wdLines() {
+  const out = new Set(["Let's get dressed up!", 'Tap the clothes to try them on!', 'Pick a dress colour!', 'Now a pattern!', 'Surprise outfit! Ta-da!', 'Show time! Walk the runway!', 'Strike a pose!', 'Click!', 'What a star! Your photo is in My pictures.', 'Superstar style!', 'Collect more stickers to unlock this!', 'Ooh, so cute!', 'Lovely!', 'Wow, look at that!', 'Twirl!', 'You unlocked something new to wear!']);
+  [WD_DRESS, WD_PATS, WD_HEAD, WD_EYES, WD_SHOES, WD_BACK, WD_HAND, WD_PET].forEach(l => l.forEach(x => out.add(x[2])));
+  [['dress', 'Dresses!'], ['head', 'Hats and hair!'], ['eyes', 'Glasses!'], ['shoes', 'Shoes!'], ['back', 'Wings and capes!'], ['hand', 'Something to hold!']].forEach(x => out.add(x[1]));
+  pzPetNames().forEach(n => out.add(`Dress up ${n}!`));
+  for (let n = 2; n <= 10; n++) out.add(`Collect ${NUMS[n]} stickers to unlock this!`);
+  return [...out];
+}
+const WD_TAB_SAY = { dress: 'Dresses!', head: 'Hats and hair!', eyes: 'Glasses!', shoes: 'Shoes!', back: 'Wings and capes!', hand: 'Something to hold!' };
+
+/* tab icons */
+const WD_TAB_ICON = {
+  dress: '<path d="M38 18 Q50 26 62 18 L66 40 Q84 70 84 86 H16 Q16 70 34 40Z" fill="#FF8FB8"/><path d="M38 18 Q50 26 62 18" stroke="#fff" stroke-width="4" fill="none"/><circle cx="50" cy="44" r="4" fill="#FFD84D"/>',
+  head: '<path d="M18 70 L20 40 L36 54 L50 24 L64 54 L80 40 L82 70Z" fill="#FFD84D" stroke="#F2B705" stroke-width="4" stroke-linejoin="round"/><circle cx="50" cy="58" r="6" fill="#FF6B81"/>',
+  eyes: `<path d="${wdHeart(30, 50, 1.6)}" fill="#FF6B9A" fill-opacity=".4" stroke="#E0457B" stroke-width="4"/><path d="${wdHeart(70, 50, 1.6)}" fill="#FF6B9A" fill-opacity=".4" stroke="#E0457B" stroke-width="4"/><path d="M44 46 Q50 42 56 46" stroke="#E0457B" stroke-width="4" fill="none"/>`,
+  shoes: '<path d="M14 66 Q14 50 26 50 L40 52 Q46 64 60 66 Q74 68 74 78 H14Z" fill="#FF6FA0"/><path d="M14 78 H74" stroke="#C9356E" stroke-width="5"/><path d="M28 56 l8 2" stroke="#fff" stroke-width="3" stroke-linecap="round"/>',
+  back: '<path d="M48 50 C34 18 6 24 10 48 C12 62 34 62 48 56Z" fill="#BFE6FF" stroke="#7FC0FF" stroke-width="3"/><path d="M52 50 C66 18 94 24 90 48 C88 62 66 62 52 56Z" fill="#FFC9E3" stroke="#FF8FB8" stroke-width="3"/><path d="M48 58 C36 62 24 76 32 84 C40 88 48 72 49 62Z M52 58 C64 62 76 76 68 84 C60 88 52 72 51 62Z" fill="#E5D8FF" stroke="#B79BFF" stroke-width="3"/>',
+  hand: `<path d="M34 86 L58 46" stroke="#B98149" stroke-width="6" stroke-linecap="round"/>${wdStar(62, 38, 22, 10, '#FFD84D', '#F2B705')}`,
+};
+const wdLockSVG = '<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="3" fill="#3D3358"/><path d="M8 10V8a4 4 0 0 1 8 0v2" fill="none" stroke="#3D3358" stroke-width="2.6"/></svg>';
+/* item icons */
+function wdIcon(tab, id) {
+  const none = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="none" stroke="#B9B0D6" stroke-width="6" stroke-dasharray="7 9"/><path d="M34 66 L66 34" stroke="#B9B0D6" stroke-width="6" stroke-linecap="round"/></svg>';
+  if (id === 'none') return none;
+  const headOnly = svg => svg.replace(/viewBox="[^"]*"/, 'viewBox="8 -20 84 104"');
+  if (tab === 'head') return headOnly(avatarSVG(S.avatar, accent(), id));
+  if (tab === 'eyes') return avatarSVG(S.avatar, accent(), 'none').replace(/viewBox="[^"]*"/, 'viewBox="14 30 72 52"').replace(/<\/g><\/svg>\s*$/, `${WD_GLASSES[id]}</g></svg>`);
+  if (tab === 'pet') return petSVG(S.pet || 'puppy', id);
+  if (tab === 'shoes') { const c = WD_SHOE_COL[id]; return `<svg viewBox="0 0 100 100"><g transform="translate(0 4)"><ellipse cx="34" cy="62" rx="22" ry="13" fill="${c}"/><ellipse cx="66" cy="62" rx="22" ry="13" fill="${c}"/><path d="M14 66 Q34 74 54 66 M46 66 Q66 74 86 66" stroke="#fff" stroke-width="3.6" fill="none" stroke-linecap="round"/><path d="M26 54 h14 M58 54 h14" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>${id === 'sparkle' ? '<g fill="#fff"><circle cx="28" cy="60" r="2.4"/><circle cx="40" cy="64" r="1.8"/><circle cx="62" cy="58" r="2.4"/><circle cx="74" cy="64" r="1.8"/></g>' : ''}</g></svg>`; }
+  if (tab === 'back') return `<svg viewBox="-4 80 108 100"><defs><linearGradient id="dsh" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset="1" stop-color="#3D3358" stop-opacity=".18"/></linearGradient></defs>${WD_BACK_SVG[id]}<ellipse cx="50" cy="128" rx="10" ry="16" fill="#E5DDF5"/></svg>`;
+  if (tab === 'hand') return `<svg viewBox="60 50 56 100">${WD_HAND_SVG[id]}<circle cx="76.5" cy="138" r="6" fill="#F5C9A0"/></svg>`;
+  return none;
+}
+function wdDressIcon(col, pat) {
+  const p = wdPattern(pat, col), d = 'M38 18 Q50 26 62 18 L66 40 Q84 70 84 86 H16 Q16 70 34 40Z';
+  return `<svg viewBox="0 0 100 100"><defs>${p ? p.defs.replace(/patternUnits="userSpaceOnUse" width="(\d+)" height="(\d+)"/, (_, w, h) => `patternUnits="userSpaceOnUse" width="${w * 1.6}" height="${h * 1.6}" patternTransform="scale(1.6)"`) : ''}</defs><path d="${d}" fill="${col}"/>${p ? `<path d="${d}" fill="${p.fill}"/>` : ''}<path d="M38 18 Q50 26 62 18" stroke="#fff" stroke-width="4" fill="none"/><path d="${d}" fill="none" stroke="rgba(61,51,88,.25)" stroke-width="2"/></svg>`;
+}
+
+SCREENS.wardrobe = el => {
+  const name = (S.name || 'Liyana').trim() || 'Liyana', petNm = S.pet ? petName() : null;
+  let tab = 'dress', busy = false;
+  const tabs = WD_TABS.filter(([k]) => k !== 'pet' || S.pet);
+  el.innerHTML = `<div class="topbar">${homeBtn}<h1>Dress up!</h1><span class="spacer"></span><span class="meterslot"></span></div><div class="play wd" id="wd">${wdRoom()}
+    <div class="wd-spot"></div><div class="wd-stage" id="stage"><div class="wd-walk" id="walk"><div class="wd-me avf" id="me"></div></div>${S.pet ? '<div class="wd-pet" id="pet"></div>' : ''}</div>
+    <div class="wd-panel" id="panel"><div class="wd-tabs">${tabs.map(([k, l]) => `<button class="wd-tab" data-t="${k}" aria-label="${k === 'pet' ? esc(petNm) : l}">${k === 'pet' ? petSVG(S.pet, 'none') : `<svg viewBox="0 0 100 100">${WD_TAB_ICON[k]}</svg>`}<b>${k === 'pet' ? esc(petNm) : l}</b></button>`).join('')}</div><div class="wd-items" id="items"></div></div>
+    <div class="wd-actions"><button class="wd-act wd-surprise" id="surprise" aria-label="Surprise outfit"><svg viewBox="0 0 100 100"><rect x="18" y="18" width="64" height="64" rx="16" fill="#fff" stroke="#3D3358" stroke-width="5"/>${[[36, 36], [64, 36], [50, 50], [36, 64], [64, 64]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="6" fill="#FF6B9A"/>`).join('')}</svg><b>Surprise!</b></button>
+      <button class="wd-act wd-show" id="show" aria-label="Show time"><svg viewBox="0 0 100 100">${wdStar(50, 50, 36, 16, '#FFD84D', '#F2B705')}</svg><b>Show time!</b></button></div></div>`;
+  const wd = $('#wd', el), me = $('#me', el), petEl = $('#pet', el), items = $('#items', el), walk = $('#walk', el);
+  const ctr = e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  const drawMe = () => { me.innerHTML = meSVG(); if (petEl) petEl.innerHTML = petSVG(S.pet); };
+  const pop = (t, cls = 'pop') => { t.classList.remove('pop', 'twirl'); void t.offsetWidth; t.classList.add(cls); };
+  const list = k => ({ dress: WD_DRESS, head: WD_HEAD, eyes: WD_EYES, shoes: WD_SHOES, back: WD_BACK, hand: WD_HAND, pet: WD_PET })[k];
+  const slot = k => ({ dress: 'dress', head: 'av', eyes: 'eyes', shoes: 'shoes', back: 'back', hand: 'hand', pet: 'pet' })[k];
+  const cur = (k, def = 'none') => S.wear[k] || def;
+  const btn = (k, id, need, inner, on) => { const lock = S.stickers.length < need; return `<button class="wd-it ${lock ? 'lock' : ''}" data-k="${k}" data-id="${id}" data-need="${need}" aria-pressed="${on}" aria-label="${id}">${inner}${lock ? `<span class="lk">${wdLockSVG}<b>${need}</b></span>` : ''}</button>`; };
+  const drawItems = () => {
+    $$('.wd-tab', el).forEach(t => t.setAttribute('aria-pressed', t.dataset.t === tab));
+    if (tab === 'dress') {
+      const col = k => k === 'fav' ? accent() : WD_COL[k], dc = cur('dress', 'fav'), pc = cur('pat', 'plain');
+      items.innerHTML = `<div class="wd-sub">Colour</div>` + WD_DRESS.map(([id, need]) => btn('dress', id, need, wdDressIcon(col(id), pc), dc === id)).join('') +
+        `<div class="wd-sub">Pattern</div>` + WD_PATS.map(([id, need]) => btn('pat', id, need, wdDressIcon(col(dc), id), pc === id)).join('');
+    } else items.innerHTML = list(tab).map(([id, need]) => btn(slot(tab), id, need, wdIcon(tab, id), cur(slot(tab), tab === 'shoes' ? 'pink' : 'none') === id)).join('');
+    items.scrollTop = 0;
+  };
+  const named = (k, id) => { const l = k === 'pat' ? WD_PATS : k === 'dress' ? WD_DRESS : k === 'av' ? WD_HEAD : k === 'pet' ? WD_PET : list(k); const f = l.find(x => x[0] === id); return f ? f[2] : 'Lovely!'; };
+  drawMe(); drawItems();
+  $$('.wd-tab', el).forEach(t => t.addEventListener('click', () => { if (busy) return; tab = t.dataset.t; sfx.boop(); drawItems(); say(tab === 'pet' ? `Dress up ${petNm}!` : WD_TAB_SAY[tab]); }));
+  items.addEventListener('click', e => {
+    const b = e.target.closest('.wd-it'); if (!b || busy) return; const need = +b.dataset.need;
+    if (S.stickers.length < need) { b.classList.remove('wig'); void b.offsetWidth; b.classList.add('wig'); sfx.oops(); say(need >= 2 && need <= 10 ? `Collect ${NUMS[need]} stickers to unlock this!` : 'Collect more stickers to unlock this!'); return; }
+    const k = b.dataset.k, id = b.dataset.id; S.wear[k] = id; save(); sfx.pop(); sfx.chime(); drawMe(); drawItems(); renderPet();
+    const tgt = k === 'pet' ? petEl : me; if (tgt) { pop(tgt, k === 'dress' || k === 'pat' || k === 'back' ? 'twirl' : 'pop'); const [x, y] = ctr(tgt); sparkle(x, y, 12, ['#fff', '#FFE066', '#FF9DB8', '#B79BFF']); }
+    if (k === 'pet') petHappy(); say(named(k, id));
+  });
+  /* surprise: a random outfit from what is unlocked */
+  const okList = l => l.filter(x => S.stickers.length >= x[1]).map(x => x[0]);
+  $('#surprise', el).addEventListener('click', () => {
+    if (busy) return; const r = l => pick(okList(l)), maybe = l => Math.random() < .55 ? r(l) : 'none';
+    Object.assign(S.wear, { dress: r(WD_DRESS), pat: r(WD_PATS), av: r(WD_HEAD.filter(x => x[0] !== 'none')), eyes: maybe(WD_EYES), shoes: r(WD_SHOES), back: maybe(WD_BACK), hand: maybe(WD_HAND) });
+    if (S.pet) S.wear.pet = r(WD_PET); save(); sfx.yay(); drawMe(); drawItems(); renderPet(); pop(me, 'twirl'); if (petEl) pop(petEl); const [x, y] = ctr(me); sparkle(x, y, 22, ['#fff', '#FFE066', '#FF9DB8', '#B79BFF', '#7FC0FF']); say('Surprise outfit! Ta-da!');
+  });
+  /* SHOW TIME: runway walk with music, twirls, camera flashes, then a photo for My pictures */
+  $('#show', el).addEventListener('click', () => { if (busy) return; showTime(); });
+  function showTime() {
+    busy = true; coach.off(); wd.classList.add('show'); sfx.whoosh(); say('Show time! Walk the runway!');
+    const sound = ac && ac.state === 'running' && !S.sfxOff, spb = 60 / 128, t0 = (ac ? ac.currentTime : 0) + .3;
+    if (sound) { const mel = [72, 76, 79, 84, 79, 76, 77, 81, 84, 81, 79, 76, 74, 77, 79, 72], ch = [[0, 'C'], [4, 'F'], [8, 'C'], [12, 'G'], [16, 'C']];
+      for (let rep = 0; rep < 2; rep++) mel.forEach((m, i) => mbox(mtof(m), t0 + (rep * 16 + i) * spb, spb * 1.3, .16));
+      for (let rep = 0; rep < 2; rep++) ch.slice(0, 4).forEach(([b, c]) => { padChord(c, t0 + (rep * 16 + b) * spb, 4 * spb, .05); bassNote(CBASS[c], t0 + (rep * 16 + b) * spb, spb * 1.6, .1); bassNote(CBASS[c], t0 + (rep * 16 + b + 2) * spb, spb * 1.6, .08); }); }
+    const W = $('#stage', el).getBoundingClientRect().width;
+    walk.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${-W * .2}px)`, offset: .25 }, { transform: `translateX(${W * .2}px)`, offset: .65 }, { transform: 'translateX(0)' }], { duration: 6200, easing: 'ease-in-out' });
+    me.classList.add('walk'); [1500, 3300, 5000].forEach(t => later(() => { pop(me, 'twirl'); say('Twirl!'); }, t));
+    if (petEl) later(() => pop(petEl), 2400);
+    later(() => { me.classList.remove('walk'); say('Strike a pose!'); me.classList.add('wee'); }, 6300);
+    [7200, 7800, 8400].forEach((t, i) => later(() => { const f = document.createElement('div'); f.className = 'bd-flash'; document.body.appendChild(f); setTimeout(() => f.remove(), 700); sfx.pop(); if (i === 0) say('Click!'); }, t));
+    later(() => { me.classList.remove('wee'); snap(); }, 9000);
+  }
+  function snap() {
+    const W = 1040, H = 760, place = (svg, x, y, w, h) => svg.replace(/^<svg /, `<svg x="${x}" y="${y}" width="${w}" height="${h}" `);
+    const conf = Array.from({ length: 46 }, () => `<circle cx="${rnd(20, W - 20).toFixed(0)}" cy="${rnd(20, 560).toFixed(0)}" r="${rnd(3, 7).toFixed(1)}" fill="${pick(['#FF8FB0', '#FFD24D', '#8EDCC0', '#B79BFF', '#7FC0FF', '#fff'])}" opacity=".85"/>`).join('');
+    const stars = Array.from({ length: 10 }, (_, i) => `<path d="${star5(80 + i * 98, 60 + (i % 2) * 40, 14, 6)}" fill="#FFE066" opacity=".9"/>`).join('');
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><radialGradient id="ph-bg" cx=".5" cy=".55" r=".7"><stop offset="0" stop-color="#FFF4FA"/><stop offset=".55" stop-color="#FFD3E6"/><stop offset="1" stop-color="#C9A8FF"/></radialGradient><radialGradient id="ph-spot" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
+      <rect width="${W}" height="${H}" fill="url(#ph-bg)"/>${conf}${stars}<path d="M0 0 H130 Q110 380 150 760 H0Z" fill="#E8455A"/><path d="M${W} 0 H${W - 130} Q${W - 110} 380 ${W - 150} 760 H${W}Z" fill="#E8455A"/><path d="M40 0 Q30 380 60 760 M${W - 40} 0 Q${W - 30} 380 ${W - 60} 760" stroke="#C93B4E" stroke-width="10" fill="none"/>
+      <ellipse cx="${W / 2}" cy="640" rx="300" ry="54" fill="#fff" opacity=".7"/><ellipse cx="${W / 2}" cy="430" rx="270" ry="300" fill="url(#ph-spot)"/>
+      ${place(meSVG(), 360, 120, 280, 560)}${S.pet ? place(petSVG(S.pet), 640, 470, 170, 190) : ''}
+      <rect x="${W / 2 - 230}" y="22" width="460" height="64" rx="32" fill="#fff" stroke="#FFB3C8" stroke-width="5"/><text x="${W / 2}" y="66" font-family="Fredoka, Arial Rounded MT Bold, Arial, sans-serif" font-weight="700" font-size="34" fill="#E0457B" text-anchor="middle">${esc(name)}'s Fashion Show</text>
+      <text x="${W / 2}" y="${H - 28}" font-family="Arial, sans-serif" font-size="22" fill="#8F86B4" text-anchor="middle">${new Date().toLocaleDateString()}</text></svg>`;
+    const done = () => { wd.classList.remove('show'); busy = false; S.shows = (S.shows || 0) + 1; save(); if (S.shows % 2 === 1) later(() => reward('Superstar style!'), 300); };
+    const im = new Image();
+    im.onload = () => { const c = document.createElement('canvas'); c.width = 780; c.height = 570; c.getContext('2d').drawImage(im, 0, 0, 780, 570); let url = null; try { url = c.toDataURL('image/jpeg', .82); } catch (e) { }
+      if (!url) return done(); gallery.unshift(url); gallery = gallery.slice(0, 30); saveGallery(); sfx.star();
+      const o = document.createElement('div'); o.className = 'showtime wd-photo'; o.innerHTML = `<div class="stframe"><img src="${url}" alt="Fashion show photo"></div><div class="stname">Saved in My pictures!</div>`; document.body.appendChild(o); onLeave(() => o.remove());
+      say('What a star! Your photo is in My pictures.'); let gone = false; const end = () => { if (gone) return; gone = true; o.remove(); done(); }; o.onclick = end; later(end, 4200); };
+    im.onerror = done; im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+  say("Let's get dressed up!");
+  coach(() => busy ? null : 'Tap the clothes to try them on!', () => busy ? null : $('.wd-it:not(.lock)[aria-pressed="false"]', el), { max: 2 });
+};
+/* the dressing room behind her: wallpaper, a clothes rail, a lit mirror, curtains, a round stage */
+function wdRoom() {
+  const bulbs = Array.from({ length: 14 }, (_, i) => { const a = Math.PI * (1.05 + i / 13 * .9), x = 420 + Math.cos(a) * 170, y = 300 + Math.sin(a) * 205; return `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="9" fill="#FFF3B0" stroke="#F2C14E" stroke-width="2"/>`; }).join('');
+  const dress = (x, c, p) => `<g transform="translate(${x} 214)"><path d="M0 0 V16" stroke="#8F86B4" stroke-width="3"/><path d="M-8 16 Q0 12 8 16" stroke="#8F86B4" stroke-width="3" fill="none"/><path d="M-12 18 Q0 24 12 18 L14 34 Q30 62 30 78 H-30 Q-30 62 -14 34Z" fill="${c}"/>${p}<path d="M-12 18 Q0 24 12 18" stroke="#fff" stroke-width="3" fill="none"/></g>`;
+  const dots = '<g fill="#fff" opacity=".8"><circle cx="-10" cy="50" r="2.6"/><circle cx="4" cy="58" r="2.6"/><circle cx="16" cy="48" r="2.6"/><circle cx="-2" cy="70" r="2.6"/><circle cx="18" cy="68" r="2.6"/></g>';
+  return `<svg class="wd-room" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><pattern id="wdwall" width="60" height="60" patternUnits="userSpaceOnUse"><rect width="60" height="60" fill="#FFE6F1"/><path d="M30 6 L36 30 L30 54 L24 30Z" fill="#FFD3E6" opacity=".7"/><circle cx="0" cy="0" r="3" fill="#fff"/><circle cx="60" cy="60" r="3" fill="#fff"/><circle cx="60" cy="0" r="3" fill="#fff"/><circle cx="0" cy="60" r="3" fill="#fff"/></pattern>
+      <linearGradient id="wdfloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E8C7F2"/><stop offset="1" stop-color="#CFA8E6"/></linearGradient><linearGradient id="wdmirror" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E9F7FF"/><stop offset=".6" stop-color="#C9E9FF"/><stop offset="1" stop-color="#B3DCF7"/></linearGradient></defs>
+    <rect width="1200" height="800" fill="url(#wdwall)"/><rect y="560" width="1200" height="240" fill="url(#wdfloor)"/><rect y="552" width="1200" height="14" fill="#fff" opacity=".8"/>
+    <path d="M0 0 H120 Q96 280 140 560 H0Z" fill="#B79BFF"/><path d="M40 0 Q30 280 60 560 M84 0 Q70 280 100 560" stroke="#9D84E6" stroke-width="7" fill="none"/><path d="M0 0 H150 Q140 30 120 40 Q90 34 60 44 Q30 34 0 42Z" fill="#9D84E6"/>
+    <g><rect x="160" y="196" width="190" height="10" rx="5" fill="#C9975B"/><path d="M168 206 V540 M342 206 V540" stroke="#C9975B" stroke-width="9" stroke-linecap="round"/><path d="M150 540 H190 M320 540 H360" stroke="#C9975B" stroke-width="9" stroke-linecap="round"/>
+      ${dress(196, '#FF8FB8', dots)}${dress(255, '#7FC0FF', '')}${dress(314, '#FFD84D', dots)}</g>
+    <g><path d="M250 300 Q250 95 420 95 Q590 95 590 300 V470 H250Z" fill="#fff" stroke="#E5C8F5" stroke-width="10"/><path d="M272 300 Q272 117 420 117 Q568 117 568 300 V450 H272Z" fill="url(#wdmirror)"/><path d="M310 200 L360 150 M318 240 L400 158" stroke="#fff" stroke-width="12" stroke-linecap="round" opacity=".7"/>${bulbs}</g>
+    <g transform="translate(1000 470)"><rect x="-70" y="0" width="140" height="90" rx="12" fill="#fff" stroke="#E5C8F5" stroke-width="6"/><path d="M-70 30 H70 M-70 60 H70" stroke="#F1E4FA" stroke-width="5"/>${[-40, 0, 40].map((x, i) => `<g transform="translate(${x} -4)"><ellipse cx="0" cy="0" rx="16" ry="8" fill="${['#FF6FA0', '#9B7BFF', '#F2B705'][i]}"/></g>`).join('')}<g transform="translate(-20 -44)"><path d="M0 0 L-14 -9 L-14 9Z M0 0 L14 -9 L14 9Z" fill="#FF7FA6"/><circle r="5" fill="#FF4D80"/></g><g transform="translate(30 -40)"><path d="M-14 8 L-14 -6 L-7 0 L0 -12 L7 0 L14 -6 L14 8Z" fill="#FFD84D" stroke="#F2B705" stroke-width="2.5" stroke-linejoin="round"/></g></g>
+    <ellipse cx="420" cy="690" rx="300" ry="60" fill="#fff" opacity=".55"/><ellipse cx="420" cy="682" rx="270" ry="48" fill="#FFC1DA"/><ellipse cx="420" cy="676" rx="250" ry="40" fill="#FFD9E8"/>${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(i => { const a = i / 12 * 6.283; return `<circle cx="${(420 + Math.cos(a) * 262).toFixed(0)}" cy="${(682 + Math.sin(a) * 45).toFixed(0)}" r="5" fill="#FFF3B0"/>`; }).join('')}</svg>`;
+}
 /* ===== games ===== */
 const speakerIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
 const later = (fn, ms) => { const id = navId; setTimeout(() => { if (id === navId) fn(); }, ms); };
