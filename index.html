@@ -1877,7 +1877,7 @@ const onLeave = fn => cleanups.push(fn);
 let screen = 'home', screenArg = null;
 function go(name, arg) {
   cleanups.forEach(f => { try { f(); } catch (e) { } }); cleanups = []; navId++;
-  if (window.__lwUpdate && (name === 'home' || name === 'welcome')) { location.reload(); return; }
+  if (window.__lwUpdate && (name === 'home' || name === 'welcome')) { try { if (name === 'home') sessionStorage.setItem('lwNext', 'home'); } catch (e) { } location.reload(); return; }   /* v1.59: land on home after the update reload (Play used to need a second tap) */
   screen = name; screenArg = arg; try { trackPlay(name, arg); } catch (e) { } document.body.dataset.screen = name; startMusic();
   const fn = SCREENS[name]; const el = document.createElement('div'); el.className = 'screen';
   app.replaceChildren(el); fn(el, arg); renderPet();
@@ -2032,7 +2032,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v58';
+const APP_V = 'lw-v59';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -6182,7 +6182,8 @@ setInterval(() => { const t = $$('.tiles .tile'); if (!t.length || document.hidd
   setTimeout(() => requestAnimationFrame(tick), 2500);
 })();
 renderWorld(); renderPet();
-go('welcome');
+let bootTo = 'welcome'; try { if (sessionStorage.getItem('lwNext') === 'home') { sessionStorage.removeItem('lwNext'); if (S.done && S.pet) bootTo = 'home'; } } catch (e) { }
+go(bootTo);
 </script>
-<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http')){var had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener('controllerchange',function(){if(had)window.__lwUpdate=1});navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
+<script>if('serviceWorker' in navigator&&location.protocol.startsWith('http')){var had=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener('controllerchange',function(){if(!had)return;window.__lwUpdate=1;try{if(screen==='welcome'&&!window.__lwTouched)location.reload()}catch(e){}});document.addEventListener('pointerdown',function(){window.__lwTouched=1},{capture:true,passive:true});navigator.serviceWorker.register('sw.js').catch(function(){});}</script>
 </body></html>
