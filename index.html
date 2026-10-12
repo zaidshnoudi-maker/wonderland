@@ -1503,6 +1503,86 @@ body[data-screen=potty] #petbox{display:none}
 @media (prefers-reduced-motion:reduce){.wd .wgL,.wd-me.walk>svg{animation:none}}
 body[data-screen=wardrobe] #petbox{display:none}
 </style>
+<style>.pz-ing.wig{animation:wiggle .5s}</style>
+<style>
+/* ===== v1.61 home grid: 17 tiles = 9 + 8 (second row centred); portrait 5/5/5/2 ===== */
+.tiles.g10{grid-template-columns:repeat(18,1fr)}.tiles.g10>.tile:nth-child(n){grid-column:auto / span 2}.tiles.g10>.tile:nth-child(10){grid-column:2 / span 2}
+@media (min-width:1001px){.tiles.g10 .tile .pill{font-size:clamp(12px,1.3vw,18px);padding-left:7px;padding-right:7px}}
+@media (max-width:1000px){.tiles.g10{grid-template-columns:repeat(10,1fr)}.tiles.g10>.tile:nth-child(n){grid-column:auto / span 2}.tiles.g10>.tile:nth-child(16){grid-column:4 / span 2}}
+/* ===== v1.61 Doctor Liyana (fixed vh/vw sizes: Safari-safe) ===== */
+.dc{position:relative;overflow:hidden;border-radius:28px;background:#E4F6F1;--h:min(58vh,40vw)}
+.dc-bg{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+.dc-bed{position:absolute;left:50%;bottom:13%;width:calc(var(--h)*1.1);height:calc(var(--h)*.38);margin-left:calc(var(--h)*-.55);z-index:2}
+.dc-bed svg{width:100%;height:100%;display:block}
+.dc-me{position:absolute;left:5%;bottom:9%;width:calc(var(--h)*.5);height:var(--h);z-index:3;cursor:default}
+.dc-me svg{width:100%;height:100%;display:block;overflow:visible}
+.dc-pat{position:absolute;left:50%;z-index:4;bottom:calc(13% + var(--h)*.24)}
+.dc-p-sama{height:calc(var(--h)*.92);width:calc(var(--h)*.46);margin-left:calc(var(--h)*-.23)}
+.dc-p-naya{height:calc(var(--h)*.62);width:calc(var(--h)*.62);margin-left:calc(var(--h)*-.31);bottom:calc(13% + var(--h)*.2)}
+.dc-p-pet{height:calc(var(--h)*.6);width:calc(var(--h)*.54);margin-left:calc(var(--h)*-.27);bottom:calc(13% + var(--h)*.22)}
+.dc-pat>.sama,.dc-pat>.naya,.dc-pat>.gp{position:absolute;left:0;top:0;width:100%;height:100%;transform:none;cursor:default}
+.dc-pat>.gp svg,.dc-pat .nsv{width:100%;height:100%;display:block;overflow:visible}
+.dc-pat .dc-hop{animation:bdhop .5s ease-in-out 2}
+.dc-pat.rub{touch-action:none;cursor:pointer}
+.dc-fx{position:absolute;inset:0;pointer-events:none}
+.dc-mark{position:absolute;transform:translate(-50%,-50%)}
+.dc-mark svg{width:100%;height:100%;display:block;overflow:visible}
+.dc-hot{width:56%;height:22%;border-radius:50%;background:radial-gradient(rgba(255,90,90,.45),rgba(255,90,90,0) 70%);transition:opacity .8s}
+.dc-hot i{position:absolute;top:-55%;width:10%;height:60%;border-left:4px solid #FF6B6B;border-radius:50%;animation:dcheat 1.2s ease-in-out infinite}
+.dc-hot i:nth-child(1){left:22%}.dc-hot i:nth-child(2){left:46%;animation-delay:.3s}.dc-hot i:nth-child(3){left:70%;animation-delay:.6s}
+@keyframes dcheat{0%{opacity:0;transform:translateY(8px)}50%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+.dc-hot.cooler{background:radial-gradient(rgba(255,150,150,.3),rgba(255,150,150,0) 70%)}.dc-hot.gone{opacity:0}
+.dc-scrape{width:18%;height:9%;transition:opacity .4s}.dc-scrape.creamed::after{content:"";position:absolute;inset:10% 15%;border-radius:50%;background:rgba(255,255,255,.7)}.dc-scrape.gone{opacity:0!important}
+.dc-p-pet .dc-scrape,.dc-p-naya .dc-scrape{width:26%;height:13%}
+.dc-rumble{width:60%;height:28%;transition:opacity .6s}.dc-rumble i{position:absolute;top:10%;bottom:10%;width:18%;border:4px solid #9B7BFF;border-radius:50%;animation:dcrumble .5s ease-in-out infinite alternate}
+.dc-rumble i:nth-child(1){left:-10%;border-right-color:transparent;border-top-color:transparent;border-bottom-color:transparent}.dc-rumble i:nth-child(2){right:-10%;border-left-color:transparent;border-top-color:transparent;border-bottom-color:transparent}
+@keyframes dcrumble{to{transform:scale(1.15)}}.dc-rumble.gone{opacity:0}
+.dc-cough{width:30%;height:16%;margin-left:22%;animation:dccough 1.2s ease-out forwards}
+@keyframes dccough{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}25%{opacity:1}100%{opacity:0;transform:translate(0,-80%) scale(1.3)}}
+.dc-aah{width:16%;height:9%;animation:stpop .4s cubic-bezier(.3,1.5,.5,1)}
+.dc-p-pet .dc-aah,.dc-p-naya .dc-aah{width:22%;height:12%}
+.dc-tool-on{width:34%;height:auto;aspect-ratio:auto;filter:drop-shadow(0 4px 3px rgba(61,51,88,.25))}
+.dc-tool-on svg{width:100%;height:auto}
+.dc-p-sama .dc-tool-on{width:48%}
+.dc-t-thermo{margin-left:14%;margin-top:-6%}.dc-t-medicine{margin-left:18%}.dc-t-light{margin-left:22%;margin-top:-4%}
+.dc-t-thermo .tf{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(.12);transition:transform 1.4s ease-out,fill .4s}
+.dc-t-thermo.reading .tf{transform:scaleY(.5)}.dc-t-thermo.hot .tf{transform:scaleY(.95);fill:#FF4D4D}.dc-t-thermo.ok .tf{transform:scaleY(.45);fill:#4CC976}
+.dc-t-bandage.stuck{width:26%}.dc-p-sama .dc-t-bandage.stuck{width:30%}
+.dc-tool-on.rubbing{width:30%;transition:none}
+.dc-kiss{width:16%;height:auto;animation:pzheart 1.4s ease-out forwards}
+.dc-lolly{width:20%;height:auto;opacity:0;margin-left:26%;transition:opacity .4s,transform .4s}.dc-lolly.show{opacity:1;transform:translate(-50%,-70%) rotate(-10deg)}
+.dc-mood{position:absolute;left:80%;top:-4%;width:calc(var(--h)*.2);height:calc(var(--h)*.2);padding:6px;background:#fff;border-radius:50%;box-shadow:0 6px 0 rgba(61,51,88,.12),0 0 0 5px rgba(255,255,255,.7);z-index:2}
+.dc-p-naya .dc-mood,.dc-p-pet .dc-mood{left:84%;top:-14%}
+.dc-mood svg{width:100%;height:100%;display:block}.dc-mood.pop{animation:wdpop .5s cubic-bezier(.3,1.6,.5,1)}
+.dc-zoom{position:absolute;left:calc(50% + var(--h)*.42);bottom:calc(13% + var(--h)*.5);width:calc(var(--h)*.36);height:calc(var(--h)*.36);z-index:6;background:#fff;border-radius:50%;border:6px solid #8EDCC0;box-shadow:0 8px 20px rgba(61,51,88,.2);padding:8%;animation:stpop .45s cubic-bezier(.3,1.5,.5,1)}
+.dc-zoom[hidden]{display:none}.dc-zoom svg{width:100%;height:100%;display:block}
+.dc-zoom.heart .hb{transform-box:fill-box;transform-origin:50% 50%;animation:dcbeat .7s ease-in-out infinite}@keyframes dcbeat{15%{transform:scale(1.14)}30%{transform:scale(1)}45%{transform:scale(1.1)}}
+.dc-zoom.tummy .rb{animation:dcrumble .4s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 50%}
+.dc-tray{position:absolute;left:50%;bottom:2%;transform:translateX(-50%);z-index:7;display:flex;gap:clamp(8px,1.4vw,16px);padding:8px 14px;background:rgba(255,255,255,.88);border:5px solid #fff;border-radius:28px;box-shadow:0 8px 18px rgba(61,51,88,.15)}
+.dc-tool{width:clamp(62px,10vh,92px);height:clamp(62px,10vh,92px);border:4px solid #fff;border-radius:22px;background:#EEF8F5;padding:6px;cursor:pointer;box-shadow:0 4px 0 rgba(61,51,88,.12);animation:tilein .4s cubic-bezier(.3,1.5,.5,1) backwards;animation-delay:calc(var(--i)*60ms)}
+.dc-tool svg{width:100%;height:100%;display:block}.dc-tool:active{transform:scale(.93)}.dc-tool.wig{animation:wiggle .5s}
+.dc-fly{position:fixed;z-index:70;width:84px;height:84px;pointer-events:none}.dc-fly svg{width:100%;height:100%}
+.dc-end{position:absolute;right:4%;bottom:4%;z-index:8}
+@media (max-aspect-ratio:1/1){
+ .dc{--h:min(40vh,72vw)}
+ .dc-me{left:2%;bottom:auto;top:12%;width:calc(var(--h)*.36);height:calc(var(--h)*.72)}
+ .dc-bed{bottom:20%}.dc-pat{bottom:calc(20% + var(--h)*.24)}.dc-p-naya{bottom:calc(20% + var(--h)*.2)}.dc-p-pet{bottom:calc(20% + var(--h)*.22)}
+ .dc-zoom{left:auto;right:3%;bottom:auto;top:14%}
+ .dc-tray{flex-wrap:wrap;justify-content:center;width:92%}
+ .dc-end{right:50%;transform:translateX(50%);bottom:auto;top:12%}
+}
+@media (prefers-reduced-motion:reduce){.dc-hot i,.dc-rumble i,.dc-zoom .hb,.dc-zoom .rb{animation:none}}
+body[data-screen=doctor] #petbox{display:none}
+</style>
+<style>/* v1.61 doctor fixes */
+.dc-p-sama .dc-mood{left:88%;top:8%}
+.dc.done .dc-tray{opacity:0;pointer-events:none;transition:opacity .4s}
+.dc-end{right:auto;left:50%;transform:translateX(-50%);bottom:5%}
+@media (max-aspect-ratio:1/1){.dc-end{top:auto;bottom:6%}}
+</style>
+<style>/* v1.61: 9 tiles a row - longest label (Peek-a-boo) must fit its pill */
+@media (min-width:1001px){.tiles.g10 .tile .pill{font-size:clamp(11px,1.12vw,16px);padding-left:5px;padding-right:5px;letter-spacing:-.02em;max-width:96%}}</style>
+<style>@media (min-width:1001px) and (max-width:1100px){.tiles.g10 .tile .pill{font-size:11px;padding-left:3px;padding-right:3px;letter-spacing:-.03em}}</style>
 <script>
 /* ===== Liyana's Wonderland v1.1 — core ===== */
 const $ = (s, r = document) => r.querySelector(s);
@@ -2088,7 +2168,7 @@ const coach = (() => {
 /* ===== GET THE LATEST VERSION (grown-up panel). The app normally updates itself on the next launch with Wi-Fi; this does it right now:
    check we're online, drop every stored copy, ask the service worker to fetch the new sw.js, then restart the page from the network.
    Offline it changes nothing (so the app never loses its offline copy). APP_V is filled in by build.sh from sw.js. ===== */
-const APP_V = 'lw-v60';
+const APP_V = 'lw-v61';
 async function getLatest(btn) {
   const msg = t => { btn.textContent = t; };
   if (!navigator.onLine) { msg('No internet - connect to Wi-Fi first'); return; }
@@ -2419,7 +2499,7 @@ function avatarFull(a, shirt, acc, ex) {
   /* v1.60 outfit (ex = S.wear): dress colour + pattern, shoes, glasses, wings/cape behind, something in the right hand */
   const W = ex || null; if (W && W.dress && WD_COL[W.dress]) shirt = WD_COL[W.dress];
   const pat = W ? wdPattern(W.pat, shirt) : null, shoe = (W && WD_SHOE_COL[W.shoes]) || '#FF6FA0', glit = W && W.shoes === 'sparkle';
-  const backSVG = (W && WD_BACK_SVG[W.back]) || '', handSVG = (W && WD_HAND_SVG[W.hand]) || '', eyesSVG = (W && WD_GLASSES[W.eyes]) || '';
+  const neckSVG = (W && W.neck && typeof WD_NECK_SVG !== 'undefined' && WD_NECK_SVG[W.neck]) || '', backSVG = (W && WD_BACK_SVG[W.back]) || '', handSVG = (W && WD_HAND_SVG[W.hand]) || '', eyesSVG = (W && WD_GLASSES[W.eyes]) || '';
   const sparkleShoe = x => glit ? `<circle cx="${x - 5}" cy="178" r="1.6" fill="#fff"/><circle cx="${x + 3}" cy="181" r="1.3" fill="#fff"/><circle cx="${x + 6}" cy="176" r="1.1" fill="#fff"/>` : '';
   const skin = SKIN[a.skin];
   const shd = (h, t) => { const n = parseInt(h.slice(1), 16); const f = c => Math.round(t < 0 ? c * (1 + t) : c + (255 - c) * t); return `rgb(${f(n >> 16)},${f((n >> 8) & 255)},${f(n & 255)})`; }; const dk = shd(shirt, -0.28), lt = shd(shirt, 0.45);
@@ -2440,7 +2520,7 @@ function avatarFull(a, shirt, acc, ex) {
   <path d="M27 121 Q50 129 73 121" stroke="${dk}" stroke-width="5.5" fill="none" stroke-linecap="round"/>
   <circle cx="50" cy="125" r="4.6" fill="#FFD84D"/><circle cx="48.6" cy="123.6" r="1.6" fill="#fff"/>
   <g fill="#fff" opacity=".9"><circle cx="30" cy="142" r="1.5"/><circle cx="70" cy="140" r="1.5"/><circle cx="40" cy="150" r="1.2"/><circle cx="62" cy="149" r="1.2"/><path d="M22 136 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2z" opacity=".8"/><path d="M78 146 l1 2.6 2.6 1 -2.6 1 -1 2.6 -1 -2.6 -2.6 -1 2.6 -1z" opacity=".8"/></g>
-  </g><g class="hd" transform="translate(50 122) scale(1.32) translate(-50 -90)">${head}${eyesSVG}</g><g transform="translate(50 186) scale(.8) translate(-50 -186)">
+  ${neckSVG}</g><g class="hd" transform="translate(50 122) scale(1.32) translate(-50 -90)">${head}${eyesSVG}</g><g transform="translate(50 186) scale(.8) translate(-50 -186)">
   <g class="armL"><rect x="19" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="23.5" cy="138" r="6" fill="${skin}"/><circle cx="23.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="23.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="22" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="17" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/></g><g class="armR"><rect x="72" y="104" width="9" height="32" rx="4.5" fill="${skin}"/><circle cx="76.5" cy="138" r="6" fill="${skin}"/><circle cx="76.5" cy="106" r="9.5" fill="${shirt}"/><circle cx="76.5" cy="106" r="9.5" fill="url(#dsh)"/><circle cx="75" cy="103" r="3" fill="#fff" opacity=".35"/><rect x="70" y="112.5" width="13" height="4.2" rx="2.1" fill="#fff"/>${handSVG}</g></g></svg>`;
 }
 
@@ -2670,7 +2750,7 @@ const VIEW_ICON = {
 const HOME_GAMES = [
   ['studio', 'Draw', 't-pink', "Let's draw!"], ['bubbles', 'Bubbles', 't-sky', 'Pop the bubbles!'], ['animals', 'Animals', 't-butter', 'Animal friends!'], ['shapes', 'Shapes', 't-lilac', "Let's match shapes!"],
   ['spy', 'Find it!', 't-mint', 'Can you find it?'], ['count', 'Count', 't-peach', "Let's count!"], ['memory', 'Memory', 't-lilac', 'Find the pairs!'], ['peek', 'Peek-a-boo', 't-pink', 'Peek a boo!'],
-  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'], ['letters', 'ABC', 't-butter', "Let's learn letters!"], ['birthday', 'Birthday', 't-pink', "It's party time!"], ['potty', 'Potty', 't-sky', 'Potty time!'], ['pizza', 'Pizza', 't-peach', "Let's make pizza!"],
+  ['music', 'Music', 't-sky', "Let's make music!"], ['puzzle', 'Puzzles', 't-mint', 'Puzzle time!'], ['letters', 'ABC', 't-butter', "Let's learn letters!"], ['doctor', 'Doctor', 't-mint', "Let's play doctor!"], ['birthday', 'Birthday', 't-pink', "It's party time!"], ['potty', 'Potty', 't-sky', 'Potty time!'], ['pizza', 'Pizza', 't-peach', "Let's make pizza!"],
   ['playarea', 'Play area', 't-peach', "Let's go to the play area!"], ['petcare', 'My pet', 't-pink', "Let's play with my pet!"],
 ];
 SCREENS.playarea = () => { S.view = 'world'; save(); go('home'); };
@@ -3724,7 +3804,7 @@ function liyanaHouse() {
 }
 /* the tappable part: the roof and upper floor above the welcome board (the board covers the rest, like a garden gate) */
 const LHOUSE_HIT = { x: LHOUSE_X - 210, y: 40, w: 470, h: 250 };
-const HOME_ACTS = [['potty', 'Potty', 't-sky', 'Potty time!'], ['pizza', 'Pizza', 't-peach', "Let's make pizza!"], ['birthday', 'Party', 't-pink', "It's party time!"], ['petcare', 'My pet', 't-peach', "Let's play with my pet!"], ['wardrobe', 'Dress up', 't-lilac', "Let's get dressed up!"]];
+const HOME_ACTS = [['potty', 'Potty', 't-sky', 'Potty time!'], ['pizza', 'Pizza', 't-peach', "Let's make pizza!"], ['doctor', 'Doctor', 't-mint', "Let's play doctor!"], ['birthday', 'Party', 't-pink', "It's party time!"], ['petcare', 'My pet', 't-peach', "Let's play with my pet!"], ['wardrobe', 'Dress up', 't-lilac', "Let's get dressed up!"]];
 function houseMenu(onGo) {
   const o = document.createElement('div'); o.className = 'lhmenu'; o.innerHTML = `<div class="lhcard" role="dialog" aria-label="My house"><button class="lhx" aria-label="Close">&times;</button>
     <h2>${esc((S.name || 'Liyana').trim() || 'Liyana')}'s House</h2><div class="lhacts">${HOME_ACTS.filter(([id]) => id !== 'petcare' || S.pet).map(([id, l, tone, s], i) => `<button class="lhact ${tone}" data-id="${id}" data-say="${esc(s)}" style="--i:${i}" aria-label="${l}"><span>${tileIcon(id)}</span><b>${l}</b></button>`).join('')}</div></div>`;
@@ -5752,7 +5832,7 @@ SCREENS.pizza = el => {
   const pz = $('#pz', el), board = $('#board', el), bsvg = $('#bsvg', el), tool = $('#tool', el), tray = $('#tray', el), oven = $('#oven', el), big = $('#big', el), guest = $('#guest', el), me = $('#me', el), petEl = $('#pet', el), lyr = $('#lyr', el);
   const dough = $('#dough', el), crust = $('#crust', el), crusthl = $('#crusthl', el), sauce = $('#sauce', el), sauce2 = $('#sauce2', el), sclip = $('#sclip', el), cheese = $('#cheese', el), melt = $('#melt', el), tops = $('#tops', el), charG = $('#char', el), steam = $('#steam', el);
   const SVGNS = 'http://www.w3.org/2000/svg';
-  let step = -1, phase = 'roll', drag = false, last = null, dist = 0, nCheese = 0; const placed = {}, pts = [];
+  let step = -1, phase = 'roll', drag = false, last = null, dist = 0, nCheese = 0, extras = 0; const placed = {}, pts = [];
   const setStep = i => { step = i; $$('.pz-steps i', el).forEach((d, k) => { d.classList.toggle('on', k === i); d.classList.toggle('done', k < i); }); };
   const ctr = e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
   const cheerAll = () => { guest.classList.add('hop'); me.classList.add('wee'); if (petEl) petEl.classList.add('hop'); later(() => { guest.classList.remove('hop'); me.classList.remove('wee'); if (petEl) petEl.classList.remove('hop'); }, 1800); };
@@ -5814,7 +5894,10 @@ SCREENS.pizza = el => {
     tray.innerHTML = shuffle(KEYS.slice()).map((k, i) => `<button class="pz-ing pz-top" data-k="${k}" style="--i:${i}" aria-label="${PZ_TOPS[k]}">${pzDish(k)}</button>`).join('');
     coach(() => phase === 'tops' ? 'Tap the toppings!' : null, () => { const k = wish.find(w => (placed[w] || 0) < 3); return $(`.pz-top[data-k="${k}"]`, el); });
     $$('.pz-top', el).forEach(b => b.addEventListener('click', () => {
-      if (phase !== 'tops') return; const k = b.dataset.k, tot = pts.length; if (tot >= 16) { say('Wow, so many toppings!'); return; }
+      if (phase !== 'tops') return; const k = b.dataset.k, need = wish.filter(w => (placed[w] || 0) < 3);
+      /* v1.61: the wished toppings ALWAYS fit (they used to share 16 spots with extras, so wrong taps could fill the pizza and freeze the game). Extras: up to 4, then a gentle nudge to what is still wished. */
+      if (!need.includes(k) && (extras >= 4 || pts.length >= 18)) { b.classList.remove('wig'); void b.offsetWidth; b.classList.add('wig'); sfx.oops(); say(`Put on ${pzList(need)}!`); const nb = $(`.pz-top[data-k="${need[0]}"]`, el); if (nb) { nb.classList.remove('coach-glow'); void nb.offsetWidth; nb.classList.add('coach-glow'); } return; }
+      if (!need.includes(k)) extras++;
       let best = null, bd = -1; for (let t = 0; t < 14; t++) { const a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * 56, p = [Math.cos(a) * r, Math.sin(a) * r], d = Math.min(99, ...pts.map(q => Math.hypot(q[0] - p[0], q[1] - p[1]))); if (d > bd) { bd = d; best = p; } }
       pts.push(best); const [cx, cy] = best; shade(tops, cx, cy, 15); const s = document.createElementNS(SVGNS, 'svg'); s.setAttribute('x', cx - 18); s.setAttribute('y', cy - 18); s.setAttribute('width', 36); s.setAttribute('height', 36); s.setAttribute('viewBox', '0 0 100 100'); s.setAttribute('class', 'pz-pop'); s.innerHTML = `<g transform="rotate(${Math.round(rnd(-25, 25))} 50 50)">${PZ_ART[k]}</g>`; tops.appendChild(s);
       sfx.pop(); const br = board.getBoundingClientRect(); sparkle(br.left + (cx + 100) / 200 * br.width, br.top + (cy + 100) / 200 * br.height, 4);
@@ -6120,6 +6203,176 @@ function wdRoom() {
     <g transform="translate(1000 470)"><rect x="-70" y="0" width="140" height="90" rx="12" fill="#fff" stroke="#E5C8F5" stroke-width="6"/><path d="M-70 30 H70 M-70 60 H70" stroke="#F1E4FA" stroke-width="5"/>${[-40, 0, 40].map((x, i) => `<g transform="translate(${x} -4)"><ellipse cx="0" cy="0" rx="16" ry="8" fill="${['#FF6FA0', '#9B7BFF', '#F2B705'][i]}"/></g>`).join('')}<g transform="translate(-20 -44)"><path d="M0 0 L-14 -9 L-14 9Z M0 0 L14 -9 L14 9Z" fill="#FF7FA6"/><circle r="5" fill="#FF4D80"/></g><g transform="translate(30 -40)"><path d="M-14 8 L-14 -6 L-7 0 L0 -12 L7 0 L14 -6 L14 8Z" fill="#FFD84D" stroke="#F2B705" stroke-width="2.5" stroke-linejoin="round"/></g></g>
     <ellipse cx="420" cy="690" rx="300" ry="60" fill="#fff" opacity=".55"/><ellipse cx="420" cy="682" rx="270" ry="48" fill="#FFC1DA"/><ellipse cx="420" cy="676" rx="250" ry="40" fill="#FFD9E8"/>${[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(i => { const a = i / 12 * 6.283; return `<circle cx="${(420 + Math.cos(a) * 262).toFixed(0)}" cy="${(682 + Math.sin(a) * 45).toFixed(0)}" r="5" fill="#FFF3B0"/>`; }).join('')}</svg>`;
 }
+/* ===== DOCTOR LIYANA (v1.61): a cosy clinic where she looks after Sama, baby Naya and her pet.
+   Each visit = a patient with one problem (fever, boo-boo, cough, tummy ache), 4 or 5 steps with real tools:
+   stethoscope (heartbeat / noisy tummy / cough), thermometer (hot, then all better), cool cloth, medicine (strawberry!),
+   wipe + cream (rub), star bandage, "say aaah" light, warm bottle. A mood bubble goes from sad to happy, the patient hops,
+   says thank you, gets a lollipop; she gets a sticker. Tools are TAPPED (rub only to clean / cream a boo-boo).
+   Wrong tool = a gentle "Let's use the thermometer!" + the right tool glows. Extra tools on the tray by age (2: none, 3: one, 4: two).
+   Patients rotate with the illness (S.patients). Positions on each patient = fractions of its box (DC_SPOTS), checked on screenshots.
+   Layout: fixed vh/vw sizes, no aspect-ratio + % padding (Safari). Every line is in dcLines() for the natural voice. ===== */
+const DC_SPOTS = {   /* x, y as fractions of the patient's box */
+  sama: { forehead: [.5, .34], mouth: [.5, .575], chest: [.5, .68], tummy: [.5, .775], knee: [.43, .925] },
+  naya: { forehead: [.5, .3], mouth: [.5, .5], chest: [.5, .64], tummy: [.5, .72], knee: [.66, .9] },
+  pet: { forehead: [.5, .33], mouth: [.5, .55], chest: [.5, .7], tummy: [.5, .79], knee: [.35, .92] },
+};
+const DC_TOOLS = {
+  steth: ['stethoscope', '<path d="M28 12 V34 Q28 56 50 56 Q72 56 72 34 V12" stroke="#4A5578" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="28" cy="10" r="5.5" fill="#9AA3B8"/><circle cx="72" cy="10" r="5.5" fill="#9AA3B8"/><path d="M50 56 V68 Q50 82 64 82" stroke="#4A5578" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="74" cy="82" r="13" fill="#C9D0E0" stroke="#4A5578" stroke-width="4"/><circle cx="74" cy="82" r="5.5" fill="#fff"/>'],
+  thermo: ['thermometer', '<g transform="rotate(-35 50 50)"><rect x="40" y="6" width="20" height="72" rx="10" fill="#fff" stroke="#3D3358" stroke-width="4"/><rect x="46" y="16" width="8" height="60" rx="4" fill="#ECE8F6"/><rect class="tf" x="46" y="16" width="8" height="60" rx="4" fill="#FF6B6B"/><circle cx="50" cy="82" r="12" fill="#FF6B6B" stroke="#3D3358" stroke-width="4"/><path d="M60 26 h6 M60 38 h6 M60 50 h6 M60 62 h6" stroke="#B9B0D6" stroke-width="2.5"/></g>'],
+  cloth: ['cool cloth', '<path d="M14 40 Q50 24 86 40 L80 74 Q50 60 20 74Z" fill="#9FD3FF" stroke="#3D78B8" stroke-width="4" stroke-linejoin="round"/><path d="M20 52 Q50 38 82 52" stroke="#fff" stroke-width="4" fill="none" opacity=".7"/><path d="M30 80 q-4 8 0 10 q4 -2 0 -10z M50 74 q-4 8 0 10 q4 -2 0 -10z M70 80 q-4 8 0 10 q4 -2 0 -10z" fill="#4DA3FF"/>'],
+  medicine: ['medicine', '<rect x="16" y="30" width="34" height="52" rx="10" fill="#FF8FB8" stroke="#3D3358" stroke-width="4"/><rect x="22" y="18" width="22" height="14" rx="4" fill="#fff" stroke="#3D3358" stroke-width="4"/><path d="M33 48 c-3 -4 -9 -1 -6 4 l6 6 6 -6 c3 -5 -3 -8 -6 -4z" fill="#fff"/><path d="M52 74 L86 46" stroke="#B9B0D6" stroke-width="7" stroke-linecap="round"/><ellipse cx="86" cy="42" rx="10" ry="7" fill="#fff" stroke="#3D3358" stroke-width="3.5" transform="rotate(-40 86 42)"/><ellipse cx="86" cy="42" rx="6" ry="3.5" fill="#FF6B9A" transform="rotate(-40 86 42)"/>'],
+  wipe: ['wipe', '<rect x="18" y="20" width="64" height="62" rx="10" fill="#fff" stroke="#7FC0FF" stroke-width="5" transform="rotate(-8 50 51)"/><g fill="#BFE2FF" transform="rotate(-8 50 51)"><circle cx="34" cy="36" r="4"/><circle cx="56" cy="44" r="4"/><circle cx="40" cy="62" r="4"/><circle cx="66" cy="66" r="4"/></g><path d="M74 14 q3 6 0 8 q-3 -2 0 -8z" fill="#4DA3FF"/>'],
+  cream: ['cream', '<path d="M18 62 L64 30 L78 50 L32 82Z" fill="#B8F0CB" stroke="#2F9E44" stroke-width="4" stroke-linejoin="round"/><path d="M64 30 L72 22 L86 42 L78 50Z" fill="#fff" stroke="#2F9E44" stroke-width="4" stroke-linejoin="round"/><path d="M38 64 c-3 -4 -9 -1 -6 4 l6 6 6 -6 c3 -5 -3 -8 -6 -4z" fill="#fff"/>'],
+  bandage: ['bandage', '<g transform="rotate(-25 50 50)"><rect x="8" y="34" width="84" height="32" rx="16" fill="#FFC9A8" stroke="#E29A6A" stroke-width="3.5"/><rect x="34" y="36" width="32" height="28" rx="6" fill="#FFE8D6"/><path d="M50 42 l2 4.5 5 .6 -3.7 3.4 1 5 -4.3 -2.5 -4.3 2.5 1 -5 -3.7 -3.4 5 -.6z" fill="#FF6B9A"/><g fill="#E29A6A"><circle cx="18" cy="44" r="1.8"/><circle cx="24" cy="54" r="1.8"/><circle cx="76" cy="44" r="1.8"/><circle cx="82" cy="54" r="1.8"/></g></g>'],
+  light: ['light', '<path d="M14 72 L52 34" stroke="#7B849B" stroke-width="13" stroke-linecap="round"/><path d="M14 72 L52 34" stroke="#C9D0E0" stroke-width="6" stroke-linecap="round"/><path d="M52 34 L60 26" stroke="#FFD84D" stroke-width="15" stroke-linecap="round"/><path d="M62 24 L92 10 L86 40Z" fill="#FFF3A8" opacity=".85"/><rect x="60" y="62" width="30" height="9" rx="4.5" fill="#F2D2A9" stroke="#C99A6B" stroke-width="2.5" transform="rotate(-20 75 66)"/>'],
+  bottle: ['warm bottle', '<path d="M24 34 Q24 22 36 22 H64 Q76 22 76 34 V78 Q76 88 64 88 H36 Q24 88 24 78Z" fill="#FF9DB8" stroke="#C9356E" stroke-width="4"/><rect x="40" y="10" width="20" height="14" rx="4" fill="#fff" stroke="#C9356E" stroke-width="4"/><path d="M50 62 c-5 -7 -15 -2 -10 6 l10 10 10 -10 c5 -8 -5 -13 -10 -6z" fill="#fff"/><path d="M34 40 q4 -6 8 0 q4 6 8 0 q4 -6 8 0 q4 6 8 0" stroke="#fff" stroke-width="3" fill="none" opacity=".7"/>'],
+};
+const dcToolSVG = k => `<svg viewBox="0 0 100 100" aria-hidden="true">${DC_TOOLS[k][1]}</svg>`;
+/* the 4 problems: what she hears first, the symptom drawn on the patient, then the steps (tool, where, tap|rub, before line, after line) */
+const DC_AILS = {
+  fever: { intro: w => `${w} feels hot. Let's help!`, fx: 'hot', steps: [['steth', 'chest', 'tap', 'Listen to the heart!', 'Thump thump! A happy heart.'], ['thermo', 'mouth', 'tap', 'Check the temperature!', 'Ooh, hot! A fever.'], ['cloth', 'forehead', 'tap', 'A cool cloth on the head!', 'Ahh, nice and cool.'], ['medicine', 'mouth', 'tap', 'Some medicine!', 'Gulp! Yummy strawberry medicine.'], ['thermo', 'mouth', 'tap', 'Check again!', 'All better! Not hot any more.']] },
+  booboo: { intro: w => `${w} has a boo-boo on the knee.`, fx: 'scrape', steps: [['steth', 'chest', 'tap', 'Listen to the heart!', 'Thump thump! A happy heart.'], ['wipe', 'knee', 'rub', 'Clean the boo-boo! Rub gently.', 'All clean!'], ['cream', 'knee', 'rub', 'Now some cream! Rub it in.', 'Soft and soothing.'], ['bandage', 'knee', 'tap', 'A bandage!', 'A bandage with stars! Kiss it better!']] },
+  cough: { intro: w => `${w} has a cough.`, fx: 'cough', steps: [['steth', 'chest', 'tap', 'Listen to the chest!', 'Cough cough! A tickly cough.'], ['light', 'mouth', 'tap', 'Say aaah!', 'Aaah! A sore throat.'], ['medicine', 'mouth', 'tap', 'Some medicine!', 'Gulp! Yummy strawberry medicine.'], ['steth', 'chest', 'tap', 'Listen again!', 'All clear!']] },
+  tummy: { intro: w => `${w} has a tummy ache.`, fx: 'rumble', steps: [['steth', 'tummy', 'tap', 'Listen to the tummy!', 'Grumble grumble! A noisy tummy.'], ['medicine', 'mouth', 'tap', 'Some medicine!', 'Gulp! Yummy strawberry medicine.'], ['bottle', 'tummy', 'tap', 'A warm bottle for the tummy!', 'So cosy and warm.'], ['steth', 'tummy', 'tap', 'Listen again!', 'All quiet! Tummy feels better.']] },
+};
+const DC_AIL_ORDER = ['fever', 'booboo', 'cough', 'tummy'];
+TILE.doctor = '<path d="M10 90 H90" stroke="#E5DDF5" stroke-width="6" stroke-linecap="round"/><path d="M50 82 C18 60 10 40 18 26 C26 12 44 14 50 30 C56 14 74 12 82 26 C90 40 82 60 50 82Z" fill="#FF8FB0"/><path d="M44 36 H56 V46 H66 V58 H56 V68 H44 V58 H34 V46 H44Z" fill="#fff"/><path d="M14 10 V24 Q14 40 28 40" stroke="#4A5578" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="32" cy="42" r="7" fill="#C9D0E0" stroke="#4A5578" stroke-width="3"/>';
+/* Doctor Liyana: white coat with lapels, pockets and a stethoscope (drawn on her body, see avatarFull ex.neck), a head mirror */
+const WD_NECK_SVG = {
+  doctor: '<path d="M38 97 L46 118 M62 97 L54 118" stroke="#9FC9F0" stroke-width="3.4" stroke-linecap="round"/><circle cx="50" cy="128" r="2.4" fill="#7FC0FF"/><circle cx="50" cy="138" r="2.4" fill="#7FC0FF"/><rect x="25" y="134" width="14" height="11" rx="3" fill="none" stroke="#9FC9F0" stroke-width="2.6"/><rect x="61" y="134" width="14" height="11" rx="3" fill="none" stroke="#9FC9F0" stroke-width="2.6"/><path d="M66 134 V126" stroke="#FF6B9A" stroke-width="3" stroke-linecap="round"/>' +
+    '<path d="M35 99 Q33 116 43 121 M65 99 Q67 116 57 121" stroke="#4A5578" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M43 121 Q50 125 57 121 M50 123 V131" stroke="#4A5578" stroke-width="2.6" fill="none" stroke-linecap="round"/><circle cx="50" cy="134" r="4.6" fill="#C9D0E0" stroke="#4A5578" stroke-width="2"/>',
+};
+AV_ACC.docmirror = '<path d="M18 36 Q50 6 82 36" stroke="#9AA3B8" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle cx="36" cy="18" r="10" fill="#E4E9F2" stroke="#7B849B" stroke-width="2.6"/><circle cx="36" cy="18" r="4" fill="#fff"/><path d="M31 13 l4 -2" stroke="#fff" stroke-width="2" stroke-linecap="round"/>';
+const dcMe = () => avatarFull(S.avatar, accent(), 'docmirror', { dress: 'white', pat: 'plain', shoes: S.wear.shoes || 'pink', neck: 'doctor' });
+/* mood faces: 0 sad (tear) … 3 big smile */
+const dcFace = lv => `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="${['#9FC9F0', '#FFE08A', '#FFD84D', '#FFD84D'][lv]}" stroke="#3D3358" stroke-width="4"/><circle cx="36" cy="44" r="5" fill="#3D3358"/><circle cx="64" cy="44" r="5" fill="#3D3358"/>${lv === 0 ? '<path d="M29 36 L41 29 M71 36 L59 29" stroke="#3D3358" stroke-width="4" stroke-linecap="round"/><path d="M34 74 Q50 60 66 74" stroke="#3D3358" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M30 54 q-4 9 0 12 q4 -3 0 -12z" fill="#4DA3FF"/>' : lv === 1 ? '<path d="M36 70 H64" stroke="#3D3358" stroke-width="5" stroke-linecap="round"/>' : lv === 2 ? '<path d="M34 64 Q50 76 66 64" stroke="#3D3358" stroke-width="5" fill="none" stroke-linecap="round"/>' : '<path d="M30 60 Q50 86 70 60Z" fill="#3D3358"/><path d="M40 70 Q50 78 60 70" fill="#FF8FB0"/><circle cx="26" cy="58" r="6" fill="#FF8FB0" opacity=".6"/><circle cx="74" cy="58" r="6" fill="#FF8FB0" opacity=".6"/>'}</svg>`;
+const dcCap = s => s.replace(/^./, c => c.toUpperCase());
+/* every sentence the clinic can say (tools/voice/doctor.txt) */
+function dcLines() {
+  const out = new Set(), who = ['Sama', 'Naya', ...pzPetNames()];
+  who.forEach(w => { DC_AIL_ORDER.forEach(a => out.add(DC_AILS[a].intro(w))); out.add(`${w} feels all better!`); });
+  DC_AIL_ORDER.forEach(a => DC_AILS[a].steps.forEach(s => { out.add(s[3]); out.add(s[4]); }));
+  Object.values(DC_TOOLS).forEach(([n]) => { out.add(`Let's use the ${n}!`); out.add(`Tap the ${n}!`); });
+  ['Thank you, Doctor Liyana!', 'A lollipop for being brave!', 'You are a super doctor!', 'Next patient!', 'Rub gently!', 'Hello, Doctor Liyana! Who needs help today?'].forEach(x => out.add(x));
+  return [...out];
+}
+function dcScene(nm) {
+  const chart = [[3, 30, 0], [4, 22, 1], [5, 16, 2], [6, 11, 3]].map(([n, s, r]) => Array.from({ length: n }, (_, i) => { const x = 1032 + (i - (n - 1) / 2) * s * 1.7, y = 150 + r * 46, c = ['#FF6B8A', '#3FA9F5', '#4CC976', '#F7A931', '#9B7BFF', '#FF6B8A'][i % 6]; return [`<circle cx="${x}" cy="${y}" r="${s / 2}" fill="${c}"/>`, `<path d="${star5(x, y, s / 2 + 2, s / 4)}" fill="${c}"/>`, `<rect x="${x - s / 2}" y="${y - s / 2}" width="${s}" height="${s}" rx="${s / 5}" fill="${c}"/>`][(i + r) % 3]; }).join('')).join('');
+  const ruler = Array.from({ length: 9 }, (_, i) => `<rect x="38" y="${210 + i * 36}" width="44" height="36" fill="${['#FF8FB0', '#FFD24D', '#8EDCC0', '#7FC0FF', '#B79BFF'][i % 5]}"/><path d="M38 ${210 + i * 36} h16" stroke="#fff" stroke-width="3"/>`).join('');
+  const len = `Dr. ${nm}'s Clinic`.length, fs = Math.max(26, Math.min(40, Math.round(420 / len)));
+  return `<svg class="dc-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><pattern id="dcwall" width="80" height="80" patternUnits="userSpaceOnUse"><rect width="80" height="80" fill="#E4F6F1"/><rect width="40" height="80" fill="#DAF2EB"/></pattern>
+      <pattern id="dcfloor" width="70" height="70" patternUnits="userSpaceOnUse"><rect width="70" height="70" fill="#D7ECFF"/><rect width="35" height="35" fill="#C5E3FF"/><rect x="35" y="35" width="35" height="35" fill="#C5E3FF"/></pattern></defs>
+    <rect width="1200" height="800" fill="url(#dcwall)"/><rect y="560" width="1200" height="240" fill="url(#dcfloor)"/><rect y="548" width="1200" height="16" fill="#fff"/><rect y="560" width="1200" height="6" fill="#B5D6F2"/>
+    <g><rect x="24" y="190" width="72" height="350" rx="10" fill="#fff" stroke="#B5D6F2" stroke-width="5"/>${ruler}<g transform="translate(60 170)"><ellipse cx="0" cy="0" rx="20" ry="17" fill="#FFD24D" stroke="#C9975B" stroke-width="3"/><circle cx="-6" cy="-3" r="2.6" fill="#3D3358"/><circle cx="6" cy="-3" r="2.6" fill="#3D3358"/><path d="M-12 -14 L-10 -26 M12 -14 L10 -26" stroke="#C9975B" stroke-width="4" stroke-linecap="round"/><path d="M-5 6 Q0 10 5 6" stroke="#3D3358" stroke-width="2" fill="none"/></g></g>
+    <g transform="translate(150 120)"><rect x="0" y="0" width="230" height="200" rx="18" fill="#fff" stroke="#9FC9F0" stroke-width="8"/><rect x="12" y="12" width="206" height="176" rx="10" fill="#9ED8FF"/><circle cx="170" cy="56" r="22" fill="#FFE066"/><path d="M12 150 Q70 114 120 140 T218 128 V188 H12Z" fill="#8FDC7E"/><path d="M40 56 q14 -16 30 0 q14 -8 22 4 h-60z" fill="#fff"/><path d="M115 12 V188 M12 100 H218" stroke="#fff" stroke-width="8"/></g>
+    <g transform="translate(600 92)"><rect x="-220" y="-38" width="440" height="80" rx="28" fill="#fff" stroke="#8EDCC0" stroke-width="6"/><g transform="translate(-180 2) scale(.42)"><svg x="-50" y="-50" width="100" height="100" viewBox="0 0 100 100">${TILE.doctor}</svg></g><g transform="translate(180 2) scale(.42)"><svg x="-50" y="-50" width="100" height="100" viewBox="0 0 100 100">${TILE.doctor}</svg></g><text x="0" y="${(fs * .34 + 2).toFixed(0)}" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="700" font-size="${fs}" fill="#2F8F72">Dr. ${esc(nm)}'s Clinic</text></g>
+    <g><rect x="958" y="90" width="148" height="250" rx="14" fill="#fff" stroke="#B5D6F2" stroke-width="5"/>${chart}<rect x="972" y="104" width="120" height="16" rx="6" fill="#E4F6F1"/></g>
+    <g transform="translate(940 380)"><rect x="0" y="0" width="200" height="170" rx="14" fill="#fff" stroke="#B5D6F2" stroke-width="5"/><path d="M0 58 H200 M0 114 H200 M100 114 V170" stroke="#DCEBF7" stroke-width="5"/>${[[24, 22, '#FF8FB8'], [58, 18, '#7FC0FF'], [92, 26, '#FFD24D'], [130, 20, '#8EDCC0'], [164, 24, '#B79BFF']].map(([x, h, c]) => `<rect x="${x - 10}" y="${54 - h}" width="20" height="${h}" rx="5" fill="${c}"/><rect x="${x - 6}" y="${48 - h}" width="12" height="7" rx="2" fill="#fff" stroke="${c}" stroke-width="2"/>`).join('')}<path d="M100 72 C84 60 72 72 82 84 L100 102 L118 84 C128 72 116 60 100 72Z" fill="#FF8FB0"/><path d="M95 76 H105 V82 H111 V92 H105 V98 H95 V92 H89 V82 H95Z" fill="#fff"/><circle cx="88" cy="142" r="5" fill="#B5D6F2"/><circle cx="112" cy="142" r="5" fill="#B5D6F2"/></g>
+    <g transform="translate(1160 560)"><path d="M-20 0 L-24 -40 H24 L20 0Z" fill="#FF9F7F"/><path d="M0 -40 Q-30 -80 -12 -110 Q0 -80 0 -40 Q6 -86 26 -100 Q20 -66 0 -40" fill="#4CC95A"/></g></svg>`;
+}
+const DC_BED = '<svg viewBox="0 0 400 140" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="200" cy="132" rx="190" ry="8" fill="rgba(61,51,88,.15)"/><path d="M40 64 V128 M360 64 V128" stroke="#9AA3B8" stroke-width="10" stroke-linecap="round"/><circle cx="40" cy="128" r="8" fill="#7B849B"/><circle cx="360" cy="128" r="8" fill="#7B849B"/><rect x="10" y="30" width="380" height="42" rx="20" fill="#8EDCC0" stroke="#4FB08F" stroke-width="4"/><rect x="60" y="26" width="280" height="14" rx="6" fill="#fff" opacity=".85"/><path d="M60 33 H340" stroke="#E5DDF5" stroke-width="2" stroke-dasharray="6 6"/><rect x="18" y="14" width="74" height="26" rx="13" fill="#fff" stroke="#DCD3EE" stroke-width="3"/></svg>';
+
+SCREENS.doctor = el => {
+  const name = (S.name || 'Liyana').trim() || 'Liyana', petN = S.pet ? petName() : null, n0 = S.patients || 0, age = S.age || 3;
+  const pats = [['Sama', 'sama'], ['Naya', 'naya'], ...(S.pet ? [[petN, 'pet']] : [])], [who, pk] = pats[n0 % pats.length], ail = DC_AILS[DC_AIL_ORDER[n0 % 4]];   /* 3 patients x 4 problems: every pairing comes round */
+  const steps = ail.steps, need = [...new Set(steps.map(s => s[0]))], extra = shuffle(Object.keys(DC_TOOLS).filter(k => !need.includes(k))).slice(0, age <= 2 ? 0 : age === 3 ? 1 : 2), tray = shuffle([...need, ...extra]);
+  const patHTML = pk === 'sama' ? `<div class="sama p-stand">${samaSVG('flower')}</div>` : pk === 'naya' ? `<div class="naya p-sit">${nayaSVG('bow')}</div>` : `<div class="gp">${petSVG(S.pet)}</div>`;
+  el.innerHTML = bar('Doctor ' + esc(name), `<span class="bd-steps dc-steps">${steps.map((_, i) => `<i data-s="${i}"></i>`).join('')}</span>`) + `<div class="play dc" id="dc">${dcScene(name)}
+    <div class="dc-bed">${DC_BED}</div><div class="dc-me avf" id="me">${dcMe()}</div>
+    <div class="dc-pat dc-p-${pk}" id="pat">${patHTML}<div class="dc-fx" id="fx"></div><div class="dc-mood" id="mood">${dcFace(0)}</div></div>
+    <div class="dc-zoom" id="zoom" hidden></div>
+    <div class="dc-tray" id="tray">${tray.map((k, i) => `<button class="dc-tool" data-k="${k}" style="--i:${i}" aria-label="${DC_TOOLS[k][0]}">${dcToolSVG(k)}</button>`).join('')}</div>
+    <div class="dc-end" id="end"></div></div>`;
+  const dc = $('#dc', el), pat = $('#pat', el), fx = $('#fx', el), mood = $('#mood', el), zoom = $('#zoom', el), me = $('#me', el), endBox = $('#end', el);
+  const inner = pat.firstElementChild, spots = DC_SPOTS[pk];
+  let si = -1, busy = true, rubbing = null;
+  const setStep = i => $$('.dc-steps i', el).forEach((d, k) => { d.classList.toggle('on', k === i); d.classList.toggle('done', k < i); });
+  const at = (part, cls, html = '') => { const [x, y] = spots[part], d = document.createElement('div'); d.className = 'dc-mark ' + cls; d.style.left = (x * 100) + '%'; d.style.top = (y * 100) + '%'; d.innerHTML = html; fx.appendChild(d); return d; };
+  const ctr = e => { const r = e.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  const setMood = lv => { mood.innerHTML = dcFace(lv); mood.classList.remove('pop'); void mood.offsetWidth; mood.classList.add('pop'); };
+  const hop = () => { inner.classList.remove('dc-hop'); void inner.offsetWidth; inner.classList.add('dc-hop'); };
+  /* symptoms */
+  let symptom = null, coughT = 0;
+  if (ail.fx === 'hot') symptom = at('forehead', 'dc-hot', '<i></i><i></i><i></i>');
+  if (ail.fx === 'scrape') symptom = at('knee', 'dc-scrape', '<svg viewBox="0 0 40 30"><path d="M4 16 Q8 4 20 6 Q34 4 36 14 Q36 26 22 25 Q6 28 4 16Z" fill="#FF7B7B"/><path d="M10 14 L28 12 M12 19 L30 18" stroke="#E04F5F" stroke-width="2" stroke-linecap="round"/></svg>');
+  if (ail.fx === 'rumble') symptom = at('tummy', 'dc-rumble', '<i></i><i></i>');
+  const coughOnce = () => { const c = at('mouth', 'dc-cough', '<svg viewBox="0 0 60 40"><circle cx="16" cy="24" r="10" fill="#fff"/><circle cx="32" cy="16" r="12" fill="#fff"/><circle cx="46" cy="24" r="9" fill="#fff"/></svg>'); setTimeout(() => c.remove(), 1200); glide(420, 220, .14, .08); glide(380, 200, .14, .07, .2); hop(); };
+  if (ail.fx === 'cough') { coughT = setInterval(() => { if (!document.hidden && ail.fx === 'cough') coughOnce(); }, 4200); onLeave(() => clearInterval(coughT)); }
+  /* sounds */
+  const heartbeat = () => { for (let i = 0; i < 3; i++) { note(55, { dur: .2, vol: .32, kind: 'soft', when: i * .7 }); note(50, { dur: .22, vol: .26, kind: 'soft', when: i * .7 + .2 }); } };
+  const grumble = () => { glide(150, 70, .5, .13); glide(120, 60, .45, .1, .55); };
+  const gulp = () => { glide(260, 520, .12, .09); glide(260, 520, .12, .08, .25); };
+  /* zoom bubble beside the patient: a beating heart, a cough cloud or a rumbly tummy */
+  const showZoom = kind => { zoom.innerHTML = kind === 'heart' ? '<svg viewBox="0 0 100 100"><path class="hb" d="M50 84 C18 62 8 40 16 26 C24 12 42 14 50 30 C58 14 76 12 84 26 C92 40 82 62 50 84Z" fill="#FF6B8A" stroke="#C9356E" stroke-width="3"/><path d="M8 52 H30 L36 40 L44 64 L52 46 L58 52 H92" stroke="#fff" stroke-width="4" fill="none" stroke-linejoin="round"/></svg>' : kind === 'cough' ? '<svg viewBox="0 0 100 100"><circle cx="34" cy="56" r="20" fill="#E4E9F2"/><circle cx="58" cy="44" r="24" fill="#E4E9F2"/><circle cx="72" cy="62" r="16" fill="#E4E9F2"/><path d="M28 52 q6 -8 12 0 M52 40 q6 -8 12 0" stroke="#9AA3B8" stroke-width="4" fill="none" stroke-linecap="round"/></svg>' : kind === 'quiet' ? '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="#B8F0CB"/><path d="M36 50 L46 60 L66 40" stroke="#2F9E44" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<svg viewBox="0 0 100 100"><ellipse cx="50" cy="54" rx="30" ry="26" fill="#FFD9B8" stroke="#C99A6B" stroke-width="3"/><path class="rb" d="M26 40 q-8 14 0 28 M74 40 q8 14 0 28 M16 34 q-10 20 0 40 M84 34 q10 20 0 40" stroke="#9B7BFF" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M38 52 q6 6 12 0 q6 6 12 0" stroke="#C99A6B" stroke-width="3" fill="none"/></svg>'; zoom.className = 'dc-zoom ' + kind; zoom.hidden = false; };
+  /* intro */
+  const greet = 'Hello, Doctor Liyana! Who needs help today?';
+  later(() => say(name === 'Liyana' ? greet : `Hello, Doctor ${name}!`), 300);
+  later(() => { say(ail.intro(who)); if (ail.fx === 'cough') coughOnce(); }, 3200);
+  later(() => next(), 6000);
+  function next() {
+    si++; setStep(si); busy = false; zoom.hidden = true;
+    if (si >= steps.length) return finish();
+    const [k, part, kind, before] = steps[si]; say(before);
+    coach(() => rubbing ? 'Rub gently!' : `Tap the ${DC_TOOLS[k][0]}!`, () => rubbing ? pat : $(`.dc-tool[data-k="${k}"]`, el));
+  }
+  $$('.dc-tool', el).forEach(b => b.addEventListener('click', () => {
+    if (busy || si < 0 || si >= steps.length) return; const k = b.dataset.k, [want, part, kind, , after] = steps[si];
+    if (k !== want) { b.classList.remove('wig'); void b.offsetWidth; b.classList.add('wig'); sfx.oops(); coach.miss(); say(`Let's use the ${DC_TOOLS[want][0]}!`); const g = $(`.dc-tool[data-k="${want}"]`, el); g.classList.remove('coach-glow'); void g.offsetWidth; g.classList.add('coach-glow'); return; }
+    busy = true; coach.off(); sfx.boop(); b.classList.add('used');
+    /* the tool flies from the tray onto the patient */
+    const tool = at(part, 'dc-tool-on dc-t-' + k, dcToolSVG(k)); tool.style.visibility = 'hidden';
+    const fly = document.createElement('div'); fly.className = 'dc-fly'; fly.innerHTML = dcToolSVG(k); document.body.appendChild(fly); onLeave(() => fly.remove());
+    const [x0, y0] = ctr(b), [x1, y1] = ctr(tool); fly.style.left = x0 + 'px'; fly.style.top = y0 + 'px';
+    fly.animate([{ transform: 'translate(-50%,-50%) scale(1)' }, { transform: `translate(calc(-50% + ${(x1 - x0) / 2}px),calc(-50% + ${(y1 - y0) / 2 - 80}px)) scale(1.15)`, offset: .5 }, { transform: `translate(calc(-50% + ${x1 - x0}px),calc(-50% + ${y1 - y0}px)) scale(.9)` }], { duration: 650, easing: 'ease-in-out' }).onfinish = () => {
+      fly.remove(); tool.style.visibility = ''; sfx.pop();
+      if (kind === 'rub') return startRub(k, tool, after);
+      act(k, tool, after);
+    };
+  }));
+  function act(k, tool, after) {
+    const doneIn = (ms, keep) => later(() => { if (!keep) tool.remove(); stepDone(after); }, ms);
+    if (k === 'steth') { const tummy = steps[si][1] === 'tummy', last = si === steps.length - 1;
+      if (last) { showZoom('quiet'); sfx.chime(); } else if (tummy) { showZoom('tummy'); grumble(); } else if (ail.fx === 'cough') { showZoom('cough'); coughOnce(); } else { showZoom('heart'); heartbeat(); }
+      return doneIn(2400); }
+    if (k === 'thermo') { const second = steps.slice(0, si).some(s => s[0] === 'thermo'); tool.classList.add('reading'); later(() => { tool.classList.add(second ? 'ok' : 'hot'); second ? sfx.star() : sfx.oops(); }, 900); return doneIn(2600); }
+    if (k === 'cloth') { sfx.chime(); if (symptom) symptom.classList.add('cooler'); return doneIn(1500, true); }
+    if (k === 'medicine') { later(() => { gulp(); hop(); }, 500); if (ail.fx === 'cough') { clearInterval(coughT); ail_fx_off(); } if (ail.fx === 'hot' && symptom) symptom.classList.add('gone'); return doneIn(1900); }
+    if (k === 'light') { const m = at('mouth', 'dc-aah', '<svg viewBox="0 0 40 30"><ellipse cx="20" cy="15" rx="15" ry="12" fill="#7A2E3B"/><ellipse cx="20" cy="21" rx="9" ry="5" fill="#FF8FA0"/><ellipse cx="20" cy="13" rx="17" ry="14" fill="none" stroke="#FFF3A8" stroke-width="3" opacity=".8"/></svg>'); glide(220, 200, 1.1, .05); later(() => m.remove(), 2200); return doneIn(2400); }
+    if (k === 'bandage') { if (symptom) symptom.classList.add('gone'); tool.classList.add('stuck'); later(() => { sfx.chime(); const kiss = at('knee', 'dc-kiss', '<svg viewBox="0 0 40 36"><path d="M20 34 C6 24 2 14 6 8 C10 2 18 4 20 10 C22 4 30 2 34 8 C38 14 34 24 20 34Z" fill="#FF6B8A"/></svg>'); later(() => kiss.remove(), 1400); }, 900); return doneIn(2200, true); }
+    if (k === 'bottle') { if (symptom) symptom.classList.add('gone'); sfx.chime(); return doneIn(1800, true); }
+    doneIn(1500);
+  }
+  function ail_fx_off() { if (symptom) symptom.classList.add('gone'); }
+  /* rub to clean / cream the boo-boo */
+  function startRub(k, tool, after) {
+    let dist = 0, last = null; rubbing = { k }; busy = false; pat.classList.add('rub'); tool.classList.add('rubbing');
+    coach(() => 'Rub gently!', () => pat);
+    const mv = e => { if (!rubbing || !last) return; const d = Math.hypot(e.clientX - last[0], e.clientY - last[1]); last = [e.clientX, e.clientY]; dist += d; const r = pat.getBoundingClientRect(), [fx0, fy0] = spots.knee;
+      tool.style.left = Math.max(5, Math.min(95, (e.clientX - r.left) / r.width * 100)) + '%'; tool.style.top = Math.max(5, Math.min(98, (e.clientY - r.top) / r.height * 100)) + '%';
+      if (Math.floor(dist / 60) > Math.floor((dist - d) / 60)) { sfx.paint(); const [x, y] = ctr(tool); sparkle(x, y, 3, k === 'wipe' ? ['#fff', '#BFE2FF'] : ['#fff', '#B8F0CB']); }
+      if (symptom) symptom.style.opacity = Math.max(k === 'wipe' ? .45 : .2, 1 - dist / 700).toFixed(2);
+      if (dist >= 380) end(); };
+    const dn = e => { if (!rubbing) return; last = [e.clientX, e.clientY]; try { pat.setPointerCapture(e.pointerId); } catch (_) { } };
+    const up = () => { last = null; };
+    const end = () => { rubbing = null; busy = true; coach.off(); pat.classList.remove('rub'); pat.removeEventListener('pointerdown', dn); pat.removeEventListener('pointermove', mv); pat.removeEventListener('pointerup', up); pat.removeEventListener('pointercancel', up);
+      if (k === 'cream' && symptom) { symptom.classList.add('creamed'); } tool.remove(); stepDone(after); };
+    pat.addEventListener('pointerdown', dn); pat.addEventListener('pointermove', mv); pat.addEventListener('pointerup', up); pat.addEventListener('pointercancel', up);
+    say(steps[si][3]);
+  }
+  function stepDone(after) {
+    say(after); sfx.star(); const lv = Math.min(3, Math.round((si + 1) / steps.length * 3)); setMood(lv === 3 && si < steps.length - 1 ? 2 : lv);
+    const [x, y] = ctr(pat); sparkle(x, y - 40, 6, ['#fff', '#FFE066', '#8EDCC0']); later(next, 2400);
+  }
+  function finish() {
+    coach.off(); zoom.hidden = true; clearInterval(coughT); dc.classList.add('done'); setMood(3); hop(); inner.classList.add('clap'); me.classList.add('wee'); cheer(); sfx.yay();
+    say(`${who} feels all better!`); S.patients = n0 + 1; save();
+    const lp = at('mouth', 'dc-lolly', WD_HAND_SVG.lollipop.replace(/^/, '<svg viewBox="66 88 34 56">') + '</svg>');
+    later(() => say(name === 'Liyana' ? 'Thank you, Doctor Liyana!' : `Thank you, Doctor ${name}!`), 2600);
+    later(() => { say('A lollipop for being brave!'); lp.classList.add('show'); }, 5000);
+    later(() => { inner.classList.remove('clap'); me.classList.remove('wee'); reward('You are a super doctor!'); }, 7200);
+    later(() => { endBox.innerHTML = '<button class="btn go big" id="nextpat">Next patient!</button>'; $('#nextpat', el).onclick = () => { say('Next patient!'); go('doctor'); }; }, 9200);
+  }
+};
 /* ===== games ===== */
 const speakerIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="#3D3358" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
 const later = (fn, ms) => { const id = navId; setTimeout(() => { if (id === navId) fn(); }, ms); };
